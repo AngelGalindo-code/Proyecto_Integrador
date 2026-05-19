@@ -122,3 +122,63 @@ def crear_plato():
 
     except Exception as e:
         return jsonify(server_error), 500
+
+
+@platos_bp.route("/platos/<int:id>", methods=["PATCH"])
+def actualizar_plato(id):
+    try:
+        datos = request.get_json()
+        if not datos:
+            return jsonify(bad_request), 400
+        campos_permitidos = [
+            "nombre",
+            "descripcion",
+            "precio",
+            "disponible",
+            "imagen",
+            "id_categoria",
+        ]
+
+        valores = []
+        clausulas = []
+
+        for llave, valor in datos.items():
+            if llave in campos_permitidos:
+                clausulas.append(f"{llave} = %s")
+                valores.append(valor)
+            else:
+                return jsonify(bad_request), 400  # campo no permitido
+
+        if not clausulas:
+            return jsonify(bad_request), 400  # no se enviaron campos para actualizar
+
+        query = f"UPDATE platos SET {', '.join(clausulas)} WHERE id_plato = %s"
+        valores.append(id)
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(query, valores)
+        conn.commit()
+
+        filas_afectadas = (
+            cursor.rowcount
+        )  # rowcount cuenta cuántas filas se modificaron
+
+        cursor.close()
+        conn.close()
+
+        if filas_afectadas == 0:
+            return (
+                jsonify(
+                    {
+                        "mensaje": "No se realizaron cambios (el plato no existe o los datos son idénticos)"
+                    }
+                ),
+                200,
+            )
+
+        return jsonify({"mensaje": "Plato actualizado exitosamente"}), 200
+
+    except Exception as e:
+        return jsonify(server_error), 500
