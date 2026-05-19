@@ -182,3 +182,36 @@ def actualizar_plato(id):
 
     except Exception as e:
         return jsonify(server_error), 500
+
+
+@platos_bp.route("/platos/<int:id>", methods=["DELETE"])
+def eliminar_plato(id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        # soft delete
+        query = """
+            UPDATE platos 
+            SET eliminado = 1, disponible = 0 
+            WHERE id_plato = %s AND eliminado = 0
+        """
+
+        cursor.execute(query, (id,))
+        conn.commit()
+
+        filas_afectadas = cursor.rowcount
+
+        cursor.close()
+        conn.close()
+
+        if filas_afectadas == 0:
+            return (
+                jsonify(not_found),
+                404,
+            )  # El plato no existe o ya fue eliminado anteriormente
+
+        return jsonify({"mensaje": f"Plato con ID {id} eliminado exitosamente"}), 200
+
+    except Exception as e:
+        return jsonify(server_error), 500
