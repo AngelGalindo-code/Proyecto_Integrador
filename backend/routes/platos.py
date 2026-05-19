@@ -5,7 +5,7 @@ from db import get_connection
 platos_bp = Blueprint("platos", __name__)
 
 
-def construir_query_platos(
+def _construir_query_platos(
     categoria_id=None, disponible=None, precio_max=None, precio_min=None
 ):
     query = "SELECT * FROM platos WHERE eliminado = 0"
@@ -42,7 +42,7 @@ def obtener_todos_platos():
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        query, valores = construir_query_platos(
+        query, valores = _construir_query_platos(
             categoria_id=categoria_id,
             disponible=disponible,
             precio_max=precio_max,
