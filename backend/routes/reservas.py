@@ -10,7 +10,7 @@ reservas_bp = Blueprint("reservas", __name__)
 # Implementar el uso de sessions
 
 
-# Crear reserva
+#Crear reserva
 @reservas_bp.route('/reservas', methods=['POST'])
 def crearReserva():
 
@@ -48,6 +48,36 @@ def crearReserva():
             message='Error al crear reserva'
         )
 
+
+#Ver reservas admin
+@reservas_bp.route('/admin/reservas', methods=['GET'])
+def adminReservas():
+
+    try:
+
+        
+        reservas = getReservas()
+
+        
+        if not reservas:
+
+            return render_template(
+                'sinreservas.html',
+                message='No existen reservas'
+            )
+
+        return render_template(
+            'adminReservas.html',
+            title='Reservas',
+            reservas=reservas
+        )
+
+    except Exception:
+
+        return render_template(
+            'errorGenerico.html',
+            message='Error al obtener reservas'
+        )
 
 # Copiando el modelo del backend del trabajo del fixture 
 @reservas_bp.route('/', methods=['GET'])
