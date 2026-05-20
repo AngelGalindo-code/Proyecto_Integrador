@@ -22,3 +22,11 @@ CREATE TABLE ranking_usuarios(
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
+CREATE TABLE reseñas(
+    id_comentario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    id_usuario INT NOT NULL,
+    comentario TEXT,
+    valoracion INT NOT NULL,
+
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
+);
