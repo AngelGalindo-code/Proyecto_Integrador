@@ -82,3 +82,57 @@ ON c.id_categoria = p.id_categoria
             cur.close()
         if conn:
             conn.close()
+
+@categorias_bp.route("/nombres", methods=["GET"])
+def obtener_nombres_categorias():
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor(dictionary=True)
+
+        query_obtener_categorias =  """
+        SELECT * FROM categorias ORDER BY nombre_categoria
+        """
+
+        cur.execute(
+           query_obtener_categorias
+        )
+
+        categorias = cur.fetchall()
+
+        if not categorias:
+            error_404 = {
+                "errors": [
+                    {
+                        "code": "404",
+                        "message": "Not Found",
+                        "level": "error",
+                        "description": "No se encontro ninguna comida de esta categoria",
+                    }
+                ]
+            }
+            return jsonify(error_404), 404
+        
+
+        return jsonify({"categoria": categorias}), 200
+
+    except Exception as e:
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+
