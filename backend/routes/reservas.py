@@ -71,6 +71,22 @@ def modificarRerserva(id_reserva):
     return redirect(url_for('reservasList'))
 
 
+@reservas_bp.route('/reservar', methods=['POST'])
+def crearReserva():
+
+    if request.method == "POST":
+        id_usuario = request.form['id_usuario']
+        fecha = request.form['fecha']
+        hora = request.form['hora']
+        mesa = request.form['mesa']
+        cantidadPersonas = request.form['cantidad']
+        preferencia = request.form['preferencia']
+
+        return redirect(url_for('getReservaPorId', id_reserva=id_reserva)) 
+    else:
+        return render_template('formularioReserva.html')
+
+
 @reservas_bp.route('/<id_reserva>/eliminar', methods=['DELETE'])
 def cancelarReserva():
     try:
