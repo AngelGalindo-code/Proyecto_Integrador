@@ -10,6 +10,45 @@ reservas_bp = Blueprint("reservas", __name__)
 # Implementar el uso de sessions
 
 
+# Crear reserva
+@reservas_bp.route('/reservas', methods=['POST'])
+def crearReserva():
+
+    try:
+
+        
+        form_data = request.form
+
+        
+        id_usuario = form_data.get('id_usuario')
+        fecha = form_data.get('fecha')
+        hora = form_data.get('hora')
+        mesa = form_data.get('mesa')
+        cantidad_personas = form_data.get(
+            'cantidad_personas'
+        )
+
+        #Llamar a la función DB
+
+        flash(
+            'Reserva creada correctamente',
+            'success'
+        )
+
+        return redirect(
+            url_for(
+                'reservas.reservasList'
+            )
+        )
+
+    except Exception:
+
+        return render_template(
+            'errorGenerico.html',
+            message='Error al crear reserva'
+        )
+
+
 # Copiando el modelo del backend del trabajo del fixture 
 @reservas_bp.route('/', methods=['GET'])
 def reservasList():
