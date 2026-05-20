@@ -147,3 +147,79 @@ def actualizar_completamente_usuario(id):
             cursor.close()
         if conn:
             conn.close()
+            
+@usuarios_bp.route('/usuarios/<int:id>', methods=['PATCH'])
+
+def actualizar_parcialmente_ususario(id):
+    
+    if id <= 0:
+        return jsonify({"error" : "Bad Request", "message" : "Id invalido"}), 400
+    
+    body = request.get_json()
+
+    if body == None:
+        return jsonify({"error" : "Bad Request", "message" : "No se recibio informacion en el cuerpo de la peticion"}), 400
+    
+    nombre = body.get("nombre")
+    numero = body.get("numero")
+    email = body.get("email")
+     
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor
+
+        check_query = """
+        SELECT * FROM usuarios WHERE id = %s
+        """
+        cursor.execute(check_query, id)
+
+        usuario = cursor.fetchone
+
+        if not usuario:
+             return jsonfy({"error": "Not Found", "message": "Usuario no encontrado"}), 404
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        campos = []
+        valores = []
+
+        if nombre is not None:
+            campos.append("nombre = %s")
+            valores.append(nombre)
+
+        if numero is not None:
+            campos.append("numero = %s")
+            valores.append(numero)
+
+        if email is not None:
+            campos.append("email = %s")
+            valores.append(email)
+
+        if not campos:
+            cursor.close()
+            conn.close()
+
+            return jsonify({"error": "Bad Request", "message": "no se enviaron campos para actualizar"}), 400
+        else:
+            query = f"""
+            UPDATE usuarios SET {', '. join(campos)} WHERE id = %s
+            """
+            valores.append(id)
+
+            cursor.execute(query, tuple(valores))
+        
+        return jsonify({"message": "usuario actualizado correctamente"}), 200
+
+    except Exception :
+        return jsonify({"message" : "Error del servidor"}), 500
+        
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+   
