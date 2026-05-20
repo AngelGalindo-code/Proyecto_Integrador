@@ -15,3 +15,10 @@ CREATE TABLE reservas(
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
+CREATE TABLE ranking_usuarios(
+    id_ranking INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    id_usuario INT NOT NULL,
+    cant_cancelaciones INT,
+
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
+);
