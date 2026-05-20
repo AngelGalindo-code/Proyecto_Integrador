@@ -53,3 +53,40 @@ def crear_usuario():
         if conn:
                 conn.close()
 
+@usuarios_bp.route('/login', methods=['POST'])
+
+def login():
+    body = request.get_json()
+
+    email = body.get("email")
+
+    if email is None:
+        return jsonify({"error": "Bad Request", "message": "no se ingreso ningun email"}), 400
+
+    try: 
+        conn = get_conection()
+        cursor = conn.cursor()
+
+        query = """
+        SELECT id, rol FROM usuarios WHERE email = %s
+        """
+        cursor.execute(query, (email,))
+        usuario = cursor.fetchone() 
+        
+
+        if not usuario:
+            return jsonify({"error": "Not Found", "message": "El email no está registrado"}), 404
+        
+        else:
+            session["id_usuario"] = usuario[0]
+            session["rol"] = usuario[1]
+
+            return jsonify({"message": f"Has ingresado como {usuario[1]}", "id": usuario[0], "rol": usuario[1]}), 200
+    except Exception:
+        return jsonify({"message" : "Error del servidor"}), 500
+         
+    finally:
+        if cursor:
+                cursor.close()
+        if conn:
+                conn.close()
