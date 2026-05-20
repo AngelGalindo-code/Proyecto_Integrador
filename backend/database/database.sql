@@ -34,3 +34,13 @@ CREATE TABLE categorias(
     id_categoria INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre_categoria VARCHAR(50) NOT NULL
 );
+CREATE TABLE platos(
+    id_plato INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    id_categoria INT NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    precio DECIMAL(8,0) NOT NULL,
+    disponible BOOLEAN NOT NULL,
+    descripcion TEXT,
+
+    FOREIGN KEY(id_categoria) REFERENCES categorias(id_categoria)
+)
