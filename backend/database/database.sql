@@ -30,3 +30,7 @@ CREATE TABLE reseñas(
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
+CREATE TABLE categorias(
+    id_categoria INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nombre_categoria VARCHAR(50) NOT NULL
+);
