@@ -136,7 +136,7 @@ def obtener_nombres_categorias():
             conn.close()
 
 
-@categorias_bp.route("/", methods=["POST"]) #usuario admin
+@categorias_bp.route("/categorias", methods=["POST"]) #usuario admin
 def agregar_categoria():
     data = request.json
     nombre_categoria = data.get("nombre_categoria")
@@ -191,6 +191,92 @@ INSERT INTO categorias (nombre_categoria) VALUES
         conn.commit()
 
         return "", 201
+    except Exception as e:
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
+@categorias_bp.route("/categorias/<int:id>", methods=["PUT"]) #usuario admin
+def modificar_nombre(id):
+    data = request.json
+    if not data or id <= 0 or "nombre_categoria" not in data:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido o no se recibio el nombre de la categoria a cambiar.",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+
+
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor(dictionary=True)
+        nombre_categoria = data.get("nombre_categoria")
+        cur.execute("SELECT * FROM categorias WHERE nombre_categoria = %s", (nombre_categoria,))
+
+        categoria = cur.fetchone()
+        if categoria:
+            error_409 = {
+                "errors": [
+                    {
+                        "code": "409",
+                        "message": "Conflict",
+                        "level": "error",
+                        "description": "La categoria ya existe",
+                    }
+                ]
+            }
+            return jsonify(error_409), 409
+        cur.execute("SELECT * FROM categorias WHERE id_categoria = %s", (id,))
+        categoria = cur.fetchone()
+
+       
+        
+        if not categoria:
+            error_404 = {
+                "errors": [
+                    {
+                        "code": "404",
+                        "message": "Not Found",
+                        "level": "error",
+                        "description": "No se encontro una categoria con ese id",
+                    }
+                ]
+            }
+            return jsonify(error_404), 404
+
+        cur.execute(
+            """
+UPDATE categorias 
+SET nombre_categoria = %s
+WHERE id_categoria = %s 
+""",
+            (nombre_categoria, id),
+        )
+        conn.commit()
+
+        return "", 204
+    
     except Exception as e:
         error_500 = {
             "errors": [
