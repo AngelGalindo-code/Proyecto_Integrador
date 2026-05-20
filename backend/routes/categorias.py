@@ -136,7 +136,7 @@ def obtener_nombres_categorias():
             conn.close()
 
 
-@categorias_bp.route("/categorias", methods=["POST"]) #usuario admin
+@categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
     data = request.json
     nombre_categoria = data.get("nombre_categoria")
@@ -209,7 +209,7 @@ INSERT INTO categorias (nombre_categoria) VALUES
         if conn:
             conn.close()
 
-@categorias_bp.route("/categorias/<int:id>", methods=["PUT"]) #usuario admin
+@categorias_bp.route("/admin/<int:id>", methods=["PUT"]) #usuario admin
 def modificar_nombre(id):
     data = request.json
     if not data or id <= 0 or "nombre_categoria" not in data:
@@ -295,7 +295,7 @@ WHERE id_categoria = %s
         if conn:
             conn.close()
 
-@categorias_bp.route("/categorias/<int:id>", methods=["DELETE"]) #usuario admin
+@categorias_bp.route("/admin/<int:id>", methods=["DELETE"]) #usuario admin
 def eliminar_categoria(id):
     if id <= 0:
         error_400 = {
