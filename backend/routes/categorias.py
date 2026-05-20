@@ -294,3 +294,64 @@ WHERE id_categoria = %s
             cur.close()
         if conn:
             conn.close()
+
+@categorias_bp.route("/categorias/<int:id>", methods=["DELETE"]) #usuario admin
+def eliminar_categoria(id):
+    if id <= 0:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+
+    conn = None
+    cur = None
+    try:
+        conn = get_connection()
+        cur = conn.cursor(dictionary=True)
+        query_borrar_categoria = """
+DELETE FROM categorias 
+WHERE id_categoria = %s
+"""
+        cur.execute(query_borrar_categoria,(id,))
+   
+        if cur.rowcount == 0:
+            error_404 = {
+                "errors": [
+                    {
+                        "code": "404",
+                        "message": "Not Found",
+                        "level": "error",
+                        "description": "No se encontro ninguna categoria con ese id",
+                    }
+                ]
+            }
+            return jsonify(error_404), 404
+        conn.commit()
+
+        return "", 204
+
+    except Exception as e:
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
+   
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
