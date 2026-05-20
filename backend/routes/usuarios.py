@@ -90,3 +90,60 @@ def login():
                 cursor.close()
         if conn:
                 conn.close()
+
+@usuarios_bp.route('/usuarios/<int:id>', methods=['PUT'])
+
+def actualizar_completamente_usuario(id):
+     
+    if id <= 0:
+        return jsonify({"error" : "Bad Request", "message" : "Id invalido"}), 400
+
+    body = request.get_json(silent= True)
+
+    if body == None:
+        return jsonify({"error" : "Bad Request", "message" : "No se recibio informacion en el cuerpo de la peticion"}), 400
+    
+    nombre = body.get("nombre")
+    numero = body.get("numero")
+    email = body.get("email")
+
+    if nombre is None or numero is None or email is None:
+        return jsonify({"error": "Bad Request", "message": "Faltan campos obligatorios"}), 400
+    
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        check_query = """
+        SELECT * FROM usuarios WHERE id = %s
+        """
+        cursor.execute(check_query, id,)
+
+        usuario = cursor.fetchone()
+
+        if not usuario:
+             return jsonify({"error": "Not Found", "message": "Usuario no encontrado"}), 404
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE usuarios SET nombre = %s, numero = %s,
+        email = %s WHERE id = %s
+        """
+        cursor.execute(query, id)
+        conn.commit()
+        
+        return jsonify({"message": "Usuario actualizado por completo"}), 200
+    
+    except Exception :
+        return jsonify({"message" : "Error del servidor"}), 500
+        
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
