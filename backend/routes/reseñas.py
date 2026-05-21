@@ -202,3 +202,59 @@ def modificar_reseña(id_comentario):
             cursor.close()
         if con:
             con.close()
+
+#Usuario elimina reseña
+@reseñas_bp.route ('/reseñas/<int:id_comentario>', methods = ['DELETE'])
+def eliminar_reseña (id_comentario):
+    con = None
+    cursor = None
+
+    try:
+        con = get_db()
+        cursor = con.cursor(dictionary=True)
+        data = request.json
+
+        if not data:
+            return jsonify({"mensaje": "Campo vacio"}), 400 
+    
+        id_usuario = data.get("id_usuario")
+
+        if id_usuario is None:
+            return jsonify({"mensaje": "Falta id_usuario"}), 400
+
+        #verificar si existe la reseña
+        cursor.execute(
+            "SELECT * FROM reseñas WHERE id_comentario = %s",
+            (id_comentario,)
+            )
+        reseña = cursor.fetchone()
+
+        if reseña is None:
+            return jsonify ({"mensaje":"La reseña no existe."}), 404
+        
+        #verificar que solo el autor de la reseña sea capaz de eliminarla.
+        
+        if reseña["id_usuario"] != id_usuario:
+            return jsonify({"mensaje": "No tiene permisos para eliminar esta reseña"}), 403
+        
+        cursor.execute(
+        'DELETE FROM reseñas WHERE id_comentario = %s', 
+        (id_comentario,)
+        )
+        con.commit()
+
+        return jsonify ({"mensaje":"Reseña eliminada con exito."}), 200
+    
+    except Exception:
+
+        return jsonify ({"mensaje":"Error del servidor"}), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+            
+        if con:
+            con.close()
+            
+
