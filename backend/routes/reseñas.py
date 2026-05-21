@@ -140,3 +140,65 @@ def crear_reseña ():
             cursor.close()
         if con:
             con.close()
+
+#Usuario edita reseña
+@reseñas_bp.route('/reseñas/<int:id_comentario>', methods=['PUT'])
+def modificar_reseña(id_comentario):
+
+    con = None
+    cursor = None
+
+    try:
+        con = get_db()
+        cursor = con.cursor(dictionary=True)
+        data = request.json
+
+        if not data:
+            return jsonify({"mensaje":"campo vacio"}), 400
+
+        comentario = data.get("comentario")
+        valoracion = data.get("valoracion")
+        id_usuario = data.get("id_usuario")
+
+        if comentario is None or valoracion is None or id_usuario is None:
+            return jsonify({ "mensaje": "Faltan datos"}), 400
+
+        # verificar valoración este entre los valores estimados
+        if valoracion < 1 or valoracion > 5:
+            return jsonify({"mensaje": "La valoración debe ser entre 1 y 5"}), 400
+
+        # verificar si existe la reseña
+        cursor.execute(
+            "SELECT * FROM reseñas WHERE id_comentario = %s",
+            (id_comentario,)
+        )
+        reseña = cursor.fetchone()
+
+        if reseña is None:
+            return jsonify({"mensaje": "La reseña no existe."}), 404
+
+        # verificar que el usuario que quiera modificar la reseña el autor
+        if reseña["id_usuario"] != id_usuario:
+            return jsonify({
+                "mensaje": "No tiene permisos para modificar esta reseña"
+            }), 403
+
+
+        # modificar reseña
+        cursor.execute(
+            'UPDATE reseñas SET comentario = %s, valoracion = %s WHERE id_comentario = %s',
+            (comentario, valoracion, id_comentario)
+        )
+
+        con.commit()
+
+        return jsonify({"mensaje": "Cambios guardados con éxito."}), 200
+
+    except Exception:
+        return jsonify({"mensaje":"Error del servidor"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
