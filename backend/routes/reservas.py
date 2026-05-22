@@ -109,7 +109,7 @@ def getReservaPorId(id_reserva):
 
 
 
-@reservas_bp.route('/<id_reserva>/modificar', meethods=['GET', 'POST'])
+@reservas_bp.route('/<id_reserva>/modificar', methods=['GET', 'POST'])
 def modificarRerserva(id_reserva):
 
     try:
