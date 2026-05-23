@@ -27,7 +27,7 @@ def mostrar_todas_reseñas (id_usuario):
         cursor = con.cursor()
         
         cursor.execute(
-            'SELECT * FROM reseñas WHERE id_usuario = %s',
+            'SELECT * FROM resenas WHERE id_usuario = %s',
             (id_usuario,)
                        )
         reseñas = cursor.fetchall()
@@ -58,7 +58,7 @@ def mostrar_reseña (id_comentario):
         
         #verificamos que exista la reseña
         cursor.execute(
-            'SELECT * FROM reseñas WHERE id_comentario = %s',
+            'SELECT * FROM resenas WHERE id_comentario = %s',
             (id_comentario,)
                        )
         reseña = cursor.fetchone()
@@ -124,7 +124,7 @@ def crear_reseña ():
          
          #Agregar la reseña
          cursor.execute(
-             'INSERT INTO reseñas (id_usuario, comentario, valoracion) VALUES (%s, %s, %s)',
+             'INSERT INTO resenas (id_usuario, comentario, valoracion) VALUES (%s, %s, %s)',
              (id_usuario, comentario, valoracion)
              )
          
@@ -169,7 +169,7 @@ def modificar_reseña(id_comentario):
 
         # verificar si existe la reseña
         cursor.execute(
-            "SELECT * FROM reseñas WHERE id_comentario = %s",
+            "SELECT * FROM resenas WHERE id_comentario = %s",
             (id_comentario,)
         )
         reseña = cursor.fetchone()
@@ -186,7 +186,7 @@ def modificar_reseña(id_comentario):
 
         # modificar reseña
         cursor.execute(
-            'UPDATE reseñas SET comentario = %s, valoracion = %s WHERE id_comentario = %s',
+            'UPDATE resenas SET comentario = %s, valoracion = %s WHERE id_comentario = %s',
             (comentario, valoracion, id_comentario)
         )
 
@@ -224,7 +224,7 @@ def eliminar_reseña (id_comentario):
 
         #verificar si existe la reseña
         cursor.execute(
-            "SELECT * FROM reseñas WHERE id_comentario = %s",
+            "SELECT * FROM resenas WHERE id_comentario = %s",
             (id_comentario,)
             )
         reseña = cursor.fetchone()
@@ -238,7 +238,7 @@ def eliminar_reseña (id_comentario):
             return jsonify({"mensaje": "No tiene permisos para eliminar esta reseña"}), 403
         
         cursor.execute(
-        'DELETE FROM reseñas WHERE id_comentario = %s', 
+        'DELETE FROM resenas WHERE id_comentario = %s', 
         (id_comentario,)
         )
         con.commit()
@@ -256,5 +256,3 @@ def eliminar_reseña (id_comentario):
             
         if con:
             con.close()
-            
-
