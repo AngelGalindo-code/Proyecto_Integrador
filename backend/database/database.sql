@@ -12,6 +12,9 @@ CREATE TABLE reservas(
     id_reserva INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_usuario INT NOT NULL,
     fecha DATETIME NOT NULL,
+    hora DATETIME NOT NULL,
+    mesa INT NOT NULL,
+    cantidad_personas INT NOT NULL,
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
