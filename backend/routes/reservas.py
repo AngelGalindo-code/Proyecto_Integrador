@@ -1,5 +1,8 @@
 from flask import Flask, render_template, Blueprint, flash, request, redirect, url_for
-from validators.db_sqlalchemy import *
+from database.validators.db_mysql import *
+from validaciones.reservas import *
+
+
 
 # Se toman funciones de validaciones de un archivo llamado db_sqlalchemy.py
 # Se toma el nombre de templates que validan errores, listas, etc
@@ -8,6 +11,17 @@ from validators.db_sqlalchemy import *
 reservas_bp = Blueprint("reservas", __name__)
 
 # Implementar el uso de sessions
+
+
+# Errores ---> Ver manejo de errores con BluePrint ---> Errores especificos segun la ruta /reservas
+@reservas_bp.errorhandler(404)
+def page_not_found(e):
+    return render_template('404_notFound.html'), 404
+
+@reservas_bp.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500_serverError.html'), 500
+
 
 
 #Crear reserva
@@ -100,6 +114,11 @@ def reservasList():
 @reservas_bp.route('/<id_reserva>/mireserva', methods=['GET'])
 def getReservaPorId(id_reserva):
 
+    id_valido = validarId(id_reserva)
+
+    if not id_valido:
+        return render_template('errors/404_notFound.html')
+
     miReserva = getReservaPorId(id_reserva) # Ver implementacion del try-except y validacion de id
 
     if not miReserva:
@@ -115,10 +134,11 @@ def getReservaPorId(id_reserva):
 @reservas_bp.route('/<id_reserva>/modificar', meethods=['GET', 'POST']) 
 def modificarRerserva(id_reserva):
 
-    # Validar si se pasa id incorrecto
+    id_valido = validarId(id_reserva)
+    if not id_valido:
+        return render_template('errors/404_notFound.html')
+    
 
-
-    # Hacer el formulario html!!!!!!
     if request.method == 'POST':
 
         actualizada = actualizarReserva(
@@ -170,12 +190,12 @@ def cancelarReserva():
         flash("El ID de la reserva a eliminar no es válido.", "danger")
         return redirect(url_for('reservas.get_reservas'))
 
-    eliminado = eliminarReservaPorId(id_reserva)
+    eliminado = eliminarReserva(id_reserva)
 
     if not eliminado:
         # En vez de jsonify, mostramos un template de error 404 estructurado
         return render_template('404_notfound.html', mensaje=f"No se encontró la reserva con ID {id_reserva} para ser cancelada.")
 
-    flash('La reserva ha sido cancelada exitosamente.', 'warning')
+    flash('La reserva ha sido cancelada exitosamente.') # Ver que ya esta contemplado en eliminarReserva
     
     return redirect(url_for('reservas.get_reservas'))
