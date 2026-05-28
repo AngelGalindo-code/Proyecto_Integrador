@@ -1,4 +1,6 @@
 from flask import request, jsonify, session
+# Agregar uso de session 
+# Agregar librerias 
 
 usuarios_bp = Blueprint("usuarios", __name__) 
 
@@ -223,3 +225,50 @@ def actualizar_parcialmente_ususario(id):
         if conn:
             conn.close()
    
+   
+@usuarios_bp.route('/usuarios/<id>/eliminar', methods=['POST'])
+
+def eliminarUsuario(id):
+
+    try:
+
+        id = int(id)
+
+        if session.get('rol') != 'admin':
+
+            flash(
+                'No tiene permisos para eliminar usuarios'
+            )
+
+            return redirect('/')
+
+        eliminado = eliminarUsuarioPorId(id)
+
+        if not eliminado:
+
+            flash(
+                'No existe un usuario con ese ID :(')
+
+            return render_template(
+                'errors/404_notFound.html')
+
+        flash(
+            'Usuario eliminado correctamente'
+        )
+
+        return redirect(
+            url_for('usuarios.adminUsuarios'))
+
+    except ValueError:
+
+        flash(
+            'ID inválido'
+        )
+
+        return render_template(
+            'errors/404_notFound.html')
+
+    except Exception:
+
+        return render_template(
+            'errorGenerico.html', message='Error al eliminar usuario')
