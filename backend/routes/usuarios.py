@@ -235,7 +235,7 @@ def eliminarUsuario(id):
 
         if session.get('rol') != 'admin':
 
-            flash('Usted no tiene permisos para eliminar usuarios')
+            flash('No tiene permisos para eliminar usuarios')
 
             return redirect('/') 
 
@@ -256,15 +256,43 @@ def eliminarUsuario(id):
 
     except ValueError:
 
-        flash('ID inválido')
+        flash('El ID es invalido')
 
         return render_template('errors/404_notFound.html') 
 
     except Exception:
-
-        return render_template(
-            'errorGenerico.html', message='Error al eliminar usuario')
+        return render_template('errorGenerico.html', message='Error al eliminar usuario')
         
+        
+         
+@usuarios_bp.route('/admin/usuarios', methods=['GET'])
+
+def adminUsuarios():
+
+    try:
+
+        if session.get('rol') != 'admin':
+
+            flash('Acceso denegado')
+
+            return redirect('/')
+
+        usuarios = getUsuarios()
+
+        if not usuarios:
+
+            flash('No hay usuarios registrados')
+
+            return render_template('errors/sinusuarios.html')
+
+        return render_template('adminUsuarios.html', title='Usuarios',usuarios=usuarios)
+
+    except Exception:
+        return render_template('errorGenerico.html',message='Error al obtener usuarios')       
+        
+        
+        
+            
 @usuarios_bp.route('/admin/usuarios/<id>', methods=['GET'])
 
 def adminUsuarioPorId(id):
@@ -283,7 +311,7 @@ def adminUsuarioPorId(id):
 
         if not usuario:
 
-            flash('Usuario no encontrado')
+            flash('El usuario no fue encontrado')
 
             return render_template('errors/404_notFound.html')
 
@@ -291,11 +319,10 @@ def adminUsuarioPorId(id):
 
     except ValueError:
 
-        flash(
-            'ID inválido')
+        flash('El ID es invalido')
 
         return render_template('errors/404_notFound.html')
 
     except Exception:
-
         return render_template('errorGenerico.html', message='Error al obtener el usuario')
+    
