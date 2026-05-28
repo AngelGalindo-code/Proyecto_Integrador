@@ -1,4 +1,10 @@
-from flask import Blueprint, render_template
+from flask import Flask, Blueprint, render_template
+
+app = Flask(
+    __name__, 
+    template_folder='frontend/templates', 
+    static_folder='frontend/static'
+)
 
 publicas_bp = Blueprint('publicas', __name__)
 

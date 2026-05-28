@@ -1,0 +1,55 @@
+*{
+    margin: 0;
+}
+.seccion_cartas{
+    min-height: 100vh;
+    width: 100%;
+    justify-content: center;
+    background-image: url('/frontend/public/gastronomia.jpg'); 
+    background-size: 100%;
+    display: flex;
+
+}
+.contenedor_columnas {
+    display: flex;            
+    flex-direction: row;      
+    justify-content: center;  
+    gap: 70px;                
+    width: 100%;
+    max-width: 1050px;     
+}
+
+.carta {
+    background-color: #000000; 
+    border: 1px solid #222;   
+    border-radius: 4px;       
+    width: 80%;
+    margin: 25px 0;
+    padding: 20px;
+    color: #ffffff;  
+    border-radius: 5px;
+}
+
+.carta h3 {
+    margin-top: 10px;
+    color: #ffffff;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.plato {
+    width: 100%;
+    border-bottom: 1px solid orange;
+    margin-bottom: 35px;   
+    padding-bottom: 20px;  
+  
+}
+.encabezado_plato {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+}
+.precio{
+    color: orange;
+}
