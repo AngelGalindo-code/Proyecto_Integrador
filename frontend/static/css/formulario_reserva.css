@@ -14,7 +14,7 @@
     flex-direction: row;
     width: 95%;
 }
-.carta-col-izq, tit-izq{
+.carta-col-izq{
     flex: 1;
     margin: 40px 80px;
 }
@@ -30,29 +30,11 @@
 .carta-col-der{
     flex: 1;
 }
-.form-col-der, tit-reserva{
+.form-col-der{
     padding: 40px  ;
     width: 40%;
 }
-form .fecha{
-    position: relative;
-    margin: 30px 0;
-    outline: none;
-    font-size: 30px;
-}
-.numero{
-    position: relative;
-    margin: 30px 0;
-    outline: none;
-    font-size: 30px;
-}
-.comensales{
-    position: relative;
-    margin: 30px 0;
-    outline: none;
-    font-size: 30px;
-}
-.nombre{
+.fecha, .numero, .comensales, .nombre{
     position: relative;
     margin: 30px 0;
     outline: none;
@@ -70,9 +52,38 @@ button{
     margin-bottom: 50px;
 }
 input[type="text"]{
-    padding: 12 20;
     height: 50px;
     width: 100%;
     text-align: left;
     font-size: 15px;
+}
+@media(max-width:768px){
+    .carta-seccion{
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: auto;
+        padding: 20px 0;
+    }
+    .carta-contenedor{
+        flex-direction: column;
+        width: 100%;
+    }
+    .carta-col-izq{
+        margin: 20px;
+        text-align: center;
+    }
+    .carta-izq-top{
+        margin-bottom: 20px;
+    }
+    .form-col-der{
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .fecha, .numero, .comensales, .nombre{
+        margin: 20px 0;
+    }
 }
