@@ -53,9 +53,40 @@
     display:flex;
     justify-content:center;
 }
+
 .columnas{
     width: 35%;
     margin:25px 25px;
     background: rgba(1, 1, 1, 0.8);
     padding: 35px;
+}
+
+.columnas h2{
+    font-size: 2rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    margin-bottom:20px;
+    color: aliceblue;
+}
+
+.columnas h3{
+    color:aliceblue;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.plato{
+    display:flex;
+    margin-bottom:50px;
+}
+
+.plato h3{
+    display:flex;
+}
+
+.descripcion {
+    color: #b3b3b3;        
+    font-size: 0.95rem;     
+    line-height: 1.5;       
+    font-weight: 300;        
+    margin-top: 5px;       
+    max-width: 250px;      
 }
