@@ -1,0 +1,238 @@
+:root {
+    --color-fondo-principal: #121212;
+    --color-fondo-seccion: #1e1e1e;
+    --color-fondo-tarjeta: #252525;
+    --color-texto-blanco: #ffffff;
+    --color-texto-gris: #aaaaaa;
+    --color-marca-dorado: #e6b800; /* Coincide con los destaques del menú principal */
+    --color-sistema-alerta: #ff4d4d;
+    --borde-sutil: 1px solid #333333;
+}
+
+body {
+    background-color: var(--color-fondo-principal);
+    color: var(--color-texto-blanco);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 30px 20px;
+}
+
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Encabezado del Dashboard */
+.dashboard-header {
+    border-bottom: var(--borde-sutil);
+    margin-bottom: 35px;
+    padding-bottom: 20px;
+}
+
+.dashboard-header h1 {
+    color: var(--color-marca-dorado);
+    font-size: 2.2rem;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-header p {
+    color: var(--color-texto-gris);
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+/* Distribución de Tarjetas con Grid */
+.tarjetas-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 45px;
+}
+
+.tarjeta {
+    background-color: var(--color-fondo-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tarjeta h3 {
+    color: var(--color-texto-gris);
+    font-size: 1rem;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tarjeta .numero-destacado {
+    color: var(--color-marca-dorado);
+    font-size: 2.8rem;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    line-height: 1;
+}
+
+/* Modificador de alertas para cancelaciones */
+.tarjeta.alerta .numero-destacado {
+    color: var(--color-sistema-alerta);
+}
+
+.tarjeta .subtexto {
+    color: var(--color-texto-gris);
+    font-size: 0.85rem;
+    display: block;
+}
+
+/* Contenedor principal de tablas */
+.tablas-contenedor-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    margin-bottom: 40px;
+}
+
+
+/* Adaptación responsiva */
+@media (max-width: 1200px) {
+    .tablas-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.seccion-tabla {
+    background-color: var(--color-fondo-seccion);
+    border: var(--borde-sutil);
+    border-radius: 8px;
+    padding: 25px;
+}
+
+.seccion-tabla h2 {
+    color: var(--color-texto-blanco);
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-left: 5px solid var(--color-marca-dorado);
+    padding-left: 12px;
+}
+
+/* Control de desbordamiento horizontal en tablas pequeñas */
+.tabla-scroll {
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    text-align: left;
+    width: 100%;
+}
+
+th, td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #2d2d2d;
+}
+
+th {
+    background-color: #161616;
+    color: var(--color-marca-dorado);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    color: #e0e0e0;
+    font-size: 0.95rem;
+}
+
+/* Efectos visuales de fila */
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.fila-peligro {
+    background-color: rgba(255, 77, 77, 0.04);
+}
+
+.fila-peligro:hover {
+    background-color: rgba(255, 77, 77, 0.07);
+}
+
+.tabla-vacia {
+    color: var(--color-texto-gris);
+    font-style: italic;
+    padding: 40px;
+    text-align: center;
+}
+
+/* Acción e Interacción */
+.btn-enlace {
+    border: 1px solid var(--color-marca-dorado);
+    border-radius: 4px;
+    color: var(--color-marca-dorado);
+    display: inline-block;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-enlace:hover {
+    background-color: var(--color-marca-dorado);
+    color: #000000;
+}
+
+.form-sincronico {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.btn-tabla-accion {
+    background-color: transparent;
+    border: 1px solid var(--color-sistema-alerta);
+    border-radius: 4px;
+    color: var(--color-sistema-alerta);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-tabla-accion:hover {
+    background-color: var(--color-sistema-alerta);
+    color: var(--color-texto-blanco);
+}
+
+/* Etiquetas de Estado */
+.etiqueta {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.etiqueta.ok {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.etiqueta.peligro {
+    background-color: rgba(255, 77, 77, 0.15);
+    color: var(--color-sistema-alerta);
+    border: 1px solid rgba(255, 77, 77, 0.3);
+}
+
+/* Clases Utilitarias */
+.texto-centro {
+    text-align: center;
+}
+
+.font-bold {
+    font-weight: bold;
+}
