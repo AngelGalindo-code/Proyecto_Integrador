@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel_usuario.css') }}">
+</head>
+<body>
+
+    <main id="panel-usuario">
+
+        <section id="perfil">
+            <h1>Información General</h1>
+
+            <p><strong>ID de usuario:</strong> {{ usuario.id }}</p>
+            <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+            <p><strong>Email:</strong> {{ usuario.email }}</p>
+            <p><strong>Teléfono:</strong> {{ usuario.numero }}</p>
+        </section>
+
+        <section id="ranking">
+            <h2>Cancelaciones</h2>
+            <p><strong>Cancelaciones Totales:</strong> {{ ranking.cancelaciones }}</p>
+        </section>
+
+        <section id="reservas">
+            <h2>Mis reservas</h2>
+
+            {% if reservas %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N° Reserva</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                            <tr>
+                                <td>{{ reserva.id_reserva }}</td>
+                                <td>{{ reserva.fecha }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No tenés reservas registradas.</p>
+            {% endif %}
+        </section>
+
+        <section id="resenas">
+            <h2>Mis reseñas</h2>
+
+            {% if resenas %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valoración</th>
+                            <th>Comentario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resena in resenas %}
+                            <tr>
+                                <td>{{ resena.valoracion }}</td>
+                                <td>{{ resena.comentario }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No tenés reseñas registradas.</p>
+            {% endif %}
+        </section>
+
+    </main>
+
+</body>
+</html>
