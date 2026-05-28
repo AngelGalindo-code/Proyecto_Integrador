@@ -95,13 +95,6 @@ body {
 }
 
 
-/* Adaptación responsiva */
-@media (max-width: 1200px) {
-    .tablas-container {
-        grid-template-columns: 1fr;
-    }
-}
-
 .seccion-tabla {
     background-color: var(--color-fondo-seccion);
     border: var(--borde-sutil);
