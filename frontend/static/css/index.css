@@ -139,3 +139,70 @@
 	75% {margin-left: -300%;}
 	100% {margin-left: -300%;}
 }
+
+.seccion_sobre_nosotros{
+    background-image: url("/frontend/public/imagen3.png");
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-size: cover;
+    background-position: center;    
+    padding: 40px; 
+}
+
+.contenedor_sobre_nosotros{
+    width:100%;
+    max-width:1050px;
+    gap: 40px;
+    display:flex;
+    justify-content:right;
+}
+
+.columnas_sobre_nosotros{
+    width: 50%;
+    margin:25px 25px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 35px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 15px 12px rgba(0, 0, 0, 0.5);
+    min-height: 60vh;
+    color: white;
+}
+
+.descripcion_sobre_nosotros{
+    line-height: 30px;
+    font-style: italic;
+    margin-top: 30px;
+    color: white;
+}
+
+.estrellas {
+    color: #ffcc00;         
+    font-size: 1.1rem;       
+    letter-spacing: 2px;    
+    line-height: 1;          
+    margin-bottom: 5px;      
+}
+
+.reseñas{
+    margin-bottom: 40px;
+}
+
+.reseñas p{
+    padding-top: 20px;
+}
+
+.contenedor_reseñas{
+    display: flex;
+    gap: 30px;
+    
+}
+
+.estrellas{
+    margin-top: 15px;
+}
+
+.tarjeta_reseña p{
+    font-style: italic;
+}
