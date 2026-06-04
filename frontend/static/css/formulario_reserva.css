@@ -57,6 +57,12 @@ input[type="text"]{
     text-align: left;
     font-size: 15px;
 }
+.fecha input{
+    height: 50px;
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+}
 @media(max-width:768px){
     .carta-seccion{
         position: relative;
