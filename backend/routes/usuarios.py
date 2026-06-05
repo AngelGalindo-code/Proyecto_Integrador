@@ -6,21 +6,22 @@ usuarios_bp = Blueprint("usuarios", __name__)
 @usuarios_bp.route('/usuarios', methods=['POST'])
 
 def crear_usuario():
-    body = request.get_json(silent=True)
 
-    if not body:
-        return jsonify({"error": "Bad Request", "message": "cuerpo vacio"}), 400
+    if not request.form:
+        flash("No se recibió información en el formulario.")
+        return redirect('/registro'), 400
 
-    nombre = body.get("nombre")
-    numero = body.get("numero")
-    email = body.get("email")
+    nombre = request.form.get("nombre")
+    numero = request.form.get("numero")
+    email = request.form.get("email")
 
-    if nombre is None or numero is None or email is None:
-        return jsonify({"error": "Bad request", "message" : "Faltan datos"}), 400
+    if not nombre or not numero or not email:
+        flash("Faltan datos obligatorios por completar")
+        return redirect('/registro'), 400
     
-    
-    if len(str(nombre)) == 0 or not numero.isdigit() or '@' not in email:
-        return jsonify({"error": "Bad Request", "message": "Formatos de campos invalidos"}), 400
+    if len(str(nombre).strip()) == 0 or not numero.isdigit() or '@' not in email:
+        flash("Formatos de campos invalidos. Por favor, revisa los datos ingresados")
+        return redirect('/registro'), 400
     
     conn = None
     cursor = None
@@ -35,18 +36,19 @@ def crear_usuario():
         existe = cursor.fetchone
 
         if existe:
-            return jsonify({"error": "Conflict", "message": "Este email ya está registrado"}), 409
-        else:
-            rol_por_defecto = "usuario"
+                flash("Este email ya está registrado.", "error")
+                return render_template('registro.html')
 
-            query = """INSERT into usuarios (nombre, numero, email, rol) VALUES (%s, %s, %s, %s)
+        query = """INSERT into usuarios (nombre, numero, email, rol) VALUES (%s, %s, %s, %s)
             """
         cursor.execute(query, (nombre, numero, email, rol_por_defecto))
         conn.commit()
-        return jsonify({"message" : "usuario creado"}), 201
+
+        flash("¡Usuario creado con exito!")
+        return redirect(url_for('publicas.index'))
     
     except Exception:
-        return jsonify({"message" : "Error del servidor"}), 500
+        return render_template('errorGenerico.html', message="Error del servidor al intentar crear el usuario")
          
     finally:
         if cursor:
@@ -57,12 +59,14 @@ def crear_usuario():
 @usuarios_bp.route('/login', methods=['POST'])
 
 def login():
-    body = request.get_json()
+    if request.method == 'POST':
 
-    email = body.get("email")
+        email = request.form.get("email")
 
-    if email is None:
-        return jsonify({"error": "Bad Request", "message": "no se ingreso ningun email"}), 400
+    if email is None :
+
+        flash("No se ingresó ningún email.", "error")
+        return render_template('registro.html'), 400
 
     try: 
         conn = get_conection()
@@ -76,15 +80,18 @@ def login():
         
 
         if not usuario:
-            return jsonify({"error": "Not Found", "message": "El email no está registrado"}), 404
-        
+            flash("El usuario no fue encontrado o el email es incorrecto.", "error")
+            return render_template('login.html'), 404
+            
         else:
             session["id_usuario"] = usuario[0]
             session["rol"] = usuario[1]
 
-            return jsonify({"message": f"Has ingresado como {usuario[1]}", "id": usuario[0], "rol": usuario[1]}), 200
+            flash(f"¡Bienvenido! Has ingresado como {usuario[1]}.", "success")
+                
+            return redirect(url_for('publicas.index'))
     except Exception:
-        return jsonify({"message" : "Error del servidor"}), 500
+        return render_template('errorGenerico.html', message="Error del servidor al intentar logearse")
          
     finally:
         if cursor:
@@ -92,24 +99,21 @@ def login():
         if conn:
                 conn.close()
 
-@usuarios_bp.route('/usuarios/<int:id>', methods=['PUT'])
+@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 
 def actualizar_completamente_usuario(id):
-     
-    if id <= 0:
-        return jsonify({"error" : "Bad Request", "message" : "Id invalido"}), 400
 
-    body = request.get_json(silent= True)
-
-    if body == None:
-        return jsonify({"error" : "Bad Request", "message" : "No se recibio informacion en el cuerpo de la peticion"}), 400
+    if not request.form:
+        flash("No se recibió información en el formulario.")
+        return redirect('/panel-usuario'), 400
     
-    nombre = body.get("nombre")
-    numero = body.get("numero")
-    email = body.get("email")
+    nombre = request.form.get("nombre")
+    numero = request.form.get("numero")
+    email = request.form.get("email")
 
-    if nombre is None or numero is None or email is None:
-        return jsonify({"error": "Bad Request", "message": "Faltan campos obligatorios"}), 400
+    if not nombre or not numero or not email:
+        flash("Faltan datos obligatorios por completar")
+        return redirect('/panel-usuario'), 400
     
     conn = None
     cursor = None
@@ -121,12 +125,13 @@ def actualizar_completamente_usuario(id):
         check_query = """
         SELECT * FROM usuarios WHERE id = %s
         """
-        cursor.execute(check_query, id,)
+        cursor.execute(check_query, (id,))
 
         usuario = cursor.fetchone()
 
         if not usuario:
-             return jsonify({"error": "Not Found", "message": "Usuario no encontrado"}), 404
+            flash('El usuario no fue encontrado')
+            return render_template('errors/404_notFound.html')
         
         conn = get_connection()
         cursor = conn.cursor()
@@ -138,10 +143,11 @@ def actualizar_completamente_usuario(id):
         cursor.execute(query, id)
         conn.commit()
         
-        return jsonify({"message": "Usuario actualizado por completo"}), 200
+        flash("Tus datos se actualizaron correctamente", "success")
+        return redirect(url_for('usuarios.panel_usuario'))
     
     except Exception :
-        return jsonify({"message" : "Error del servidor"}), 500
+        return render_template('errorGenerico.html', message='Error al actualizar usuario')
         
     finally:
         if cursor:
@@ -149,21 +155,21 @@ def actualizar_completamente_usuario(id):
         if conn:
             conn.close()
             
-@usuarios_bp.route('/usuarios/<int:id>', methods=['PATCH'])
+@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 
 def actualizar_parcialmente_ususario(id):
     
     if id <= 0:
-        return jsonify({"error" : "Bad Request", "message" : "Id invalido"}), 400
+        flash("ID de usuario inválido", "error")
+        return render_template('panel_usuario.html'), 400
     
-    body = request.get_json()
-
-    if body == None:
-        return jsonify({"error" : "Bad Request", "message" : "No se recibio informacion en el cuerpo de la peticion"}), 400
+    if not request.form:
+        flash("No se recibió información en el formulario.")
+        return redirect('/registro'), 400
     
-    nombre = body.get("nombre")
-    numero = body.get("numero")
-    email = body.get("email")
+    nombre = request.form.get("nombre")
+    numero = request.form.get("numero")
+    email = request.form.get("email")
      
     conn = None
     cursor = None
@@ -180,7 +186,8 @@ def actualizar_parcialmente_ususario(id):
         usuario = cursor.fetchone
 
         if not usuario:
-             return jsonfy({"error": "Not Found", "message": "Usuario no encontrado"}), 404
+            flash('El usuario no fue encontrado')
+            return render_template('errors/404_notFound.html')
         
         conn = get_connection()
         cursor = conn.cursor()
@@ -213,10 +220,11 @@ def actualizar_parcialmente_ususario(id):
 
             cursor.execute(query, tuple(valores))
         
-        return jsonify({"message": "usuario actualizado correctamente"}), 200
+        flash("Campos modificados con exito.", "success")
+        return redirect(url_for('usuarios.panel_usuario'))
 
     except Exception :
-        return jsonify({"message" : "Error del servidor"}), 500
+        return render_template('errorGenerico.html', message='Error al actualizar usuario')
         
     finally:
         if cursor:
