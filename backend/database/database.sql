@@ -1,6 +1,3 @@
-CREATE DATABASE restaurante;
-USE restaurante
-
 CREATE TABLE usuarios(
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
