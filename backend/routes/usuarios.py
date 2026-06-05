@@ -56,39 +56,73 @@ def crear_usuario():
 @usuarios_bp.route('/login', methods=['POST'])
 
 def login():
+    body = request.get_json()
 
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No se recibieron credenciales."}), 400
+    nombre_usuario = body.get("usuario")
+    email = body.get("email")
 
-    email = data.get("email")
-    if not email:
-        return jsonify({"message": "El email es obligatorio."}), 400
+    if email is None or nombre_usuario is None:
+        return (
+            jsonify(
+                {
+                    "error": "Bad Request",
+                    "message": "el nombre o el usuario no han sido ingresados",
+                }
+            ),
+            400,
+        )
 
     conn = None
     cursor = None
-    try: 
+    try:
         conn = get_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
         usuario = obtener_usuario_por_email(cursor, email)
-        if not usuario:
-            return jsonify({"message": "El usuario no fue encontrado o el email es incorrecto."}), 404
-            
-        return jsonify({
-            "id": usuario[0],
-            "rol": usuario[1],
-            "message": "Logeo exitoso."
-        }), 200
 
-    except Exception:
-        return jsonify({"message": "Error del servidor al intentar logearse."}), 500
+        if not usuario:
+            return (
+                jsonify(
+                    {"error": "Not Found", "message": "El usuario no está registrado"}
+                ),
+                404,
+            )
+
+        ahora = datetime.now(timezone.utc)
+        payload = {
+            "sub": str(usuario["id"]),
+            "rol": usuario["rol"],
+            "iat": ahora,
+            "exp": ahora + timedelta(hours=8),  # expira en 8 horas
+        }
+
+        token = jwt.encode(
+            payload, os.getenv("JWT_SECRET", "change-me-please"), algorithm="HS256"
+        )
+
+        return (
+            jsonify(
+                {
+                    "usuario": {
+                        "id": usuario["id"],
+                        "nombre": usuario["nombre"],
+                        "email": usuario["email"],
+                        "numero": usuario["numero"],
+                        "rol": usuario["rol"],
+                    },
+                    "token": token,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return jsonify({"message": f"Error del servidor {str(e)}"}), 500
+
     finally:
         if cursor:
             cursor.close()
         if conn:
             conn.close()
-   
 
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 
