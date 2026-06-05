@@ -1,8 +1,14 @@
-from flask import request, jsonify, session
-# Agregar librerias 
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
-usuarios_bp = Blueprint("usuarios", __name__) 
 
+from database.queries_entidades.db_usuarios import (
+    obtener_usuario_por_email,
+    obtener_usuario_por_id,
+    insertar_usuario,
+    actualizar_usuario_completo,
+    actualizar_usuario_parcial
+)
+usuarios_bp = Blueprint("usuarios", __name__)
 @usuarios_bp.route('/usuarios', methods=['POST'])
 
 def crear_usuario():
@@ -30,18 +36,13 @@ def crear_usuario():
         conn = get_conection()
         cursor = conn.cursor()
         
-        check_query = "SELECT id FROM usuarios WHERE email = %s"
-        cursor.execute(check_query, (email,))
-
-        existe = cursor.fetchone
+        existe = obtener_usuario_por_email(cursor, email)
 
         if existe:
                 flash("Este email ya está registrado.", "error")
                 return render_template('registro.html')
 
-        query = """INSERT into usuarios (nombre, numero, email, rol) VALUES (%s, %s, %s, %s)
-            """
-        cursor.execute(query, (nombre, numero, email, rol_por_defecto))
+        insertar_usuario(cursor, nombre, numero, email)
         conn.commit()
 
         flash("¡Usuario creado con exito!")
@@ -72,12 +73,7 @@ def login():
         conn = get_conection()
         cursor = conn.cursor()
 
-        query = """
-        SELECT id, rol FROM usuarios WHERE email = %s
-        """
-        cursor.execute(query, (email,))
-        usuario = cursor.fetchone() 
-        
+        usuario = obtener_usuario_por_email(cursor, email)
 
         if not usuario:
             flash("El usuario no fue encontrado o el email es incorrecto.", "error")
@@ -103,6 +99,10 @@ def login():
 
 def actualizar_completamente_usuario(id):
 
+    if id <= 0:
+        flash("ID de usuario invalido", "error")
+        return render_template('panel_usuario.html'), 400
+    
     if not request.form:
         flash("No se recibió información en el formulario.")
         return redirect('/panel-usuario'), 400
@@ -122,12 +122,7 @@ def actualizar_completamente_usuario(id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        check_query = """
-        SELECT * FROM usuarios WHERE id = %s
-        """
-        cursor.execute(check_query, (id,))
-
-        usuario = cursor.fetchone()
+        usuario = obtener_usuario_por_id(cursor, id)
 
         if not usuario:
             flash('El usuario no fue encontrado')
@@ -136,11 +131,7 @@ def actualizar_completamente_usuario(id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        query = """
-        UPDATE usuarios SET nombre = %s, numero = %s,
-        email = %s WHERE id = %s
-        """
-        cursor.execute(query, id)
+        actualizar_usuario_completo(cursor, id, nombre, numero, email)
         conn.commit()
         
         flash("Tus datos se actualizaron correctamente", "success")
@@ -160,7 +151,7 @@ def actualizar_completamente_usuario(id):
 def actualizar_parcialmente_ususario(id):
     
     if id <= 0:
-        flash("ID de usuario inválido", "error")
+        flash("ID de usuario invalido", "error")
         return render_template('panel_usuario.html'), 400
     
     if not request.form:
@@ -192,34 +183,9 @@ def actualizar_parcialmente_ususario(id):
         conn = get_connection()
         cursor = conn.cursor()
 
-        campos = []
-        valores = []
+        actualizar_usuario_parcial(cursor, id, campos_a_editar)
+        conn.commit()
 
-        if nombre is not None:
-            campos.append("nombre = %s")
-            valores.append(nombre)
-
-        if numero is not None:
-            campos.append("numero = %s")
-            valores.append(numero)
-
-        if email is not None:
-            campos.append("email = %s")
-            valores.append(email)
-
-        if not campos:
-            cursor.close()
-            conn.close()
-
-            return jsonify({"error": "Bad Request", "message": "no se enviaron campos para actualizar"}), 400
-        else:
-            query = f"""
-            UPDATE usuarios SET {', '. join(campos)} WHERE id = %s
-            """
-            valores.append(id)
-
-            cursor.execute(query, tuple(valores))
-        
         flash("Campos modificados con exito.", "success")
         return redirect(url_for('usuarios.panel_usuario'))
 
