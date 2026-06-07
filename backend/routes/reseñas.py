@@ -24,7 +24,7 @@ def mostrar_todas_reseñas (id_usuario):
     cursor = None
     try:
         con = get_db()
-        cursor = con.cursor()
+        cursor = con.cursor(dictionary=True)
         
         cursor.execute(
             'SELECT * FROM resenas WHERE id_usuario = %s',
@@ -54,7 +54,7 @@ def mostrar_reseña (id_comentario):
 
     try:
         con = get_db()
-        cursor = con.cursor()
+        cursor = con.cursor(dictionary=True)
         
         #verificamos que exista la reseña
         cursor.execute(
@@ -85,7 +85,7 @@ def crear_reseña ():
 
     try:
          con = get_db()
-         cursor = con.cursor()
+         cursor = con.cursor(dictionary=True)
          data = request.json
 
          if not data:
