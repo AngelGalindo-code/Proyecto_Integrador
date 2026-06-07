@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
-from errores import bad_request, not_found, server_error, conflict
-from db import get_connection
+from database.conexion import get_connection
 
 platos_bp = Blueprint("platos", __name__)
 
