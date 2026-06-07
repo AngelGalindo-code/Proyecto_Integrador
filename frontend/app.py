@@ -1,37 +1,20 @@
-from flask import Blueprint, render_template
+from flask import Flask
+from dotenv import load_dotenv 
+import os
 
-publicas_bp = Blueprint('publicas', __name__)
+# Cargamos las variables del archivo .env al sistema operativo
+load_dotenv()
 
-@publicas_bp.route('/')
-def index():
-    return render_template('index.html')
+from routes.usuarios import usuarios_bp
+from routes.admin import admin_bp
 
-@publicas_bp.route('/menu')
-def menu():
-    return render_template('menu.html')
+app = Flask(__name__)
 
-
-usuarios_bp = Blueprint('usuarios', __name__)
-
-@usuarios_bp.route('/reserva')
-def formulario_reserva():
-    return render_template('formulario_reserva.html')
-
-@usuarios_bp.route('/reserva/exito')
-def reserva_exito():
-    return render_template('reserva_exito.html')
-
-@usuarios_bp.route('/panel-usuario')
-def panel_usuario():
-    return render_template('panel_usuario.html')
+app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
 
 
-admin_bp = Blueprint('admin', __name__)
+app.register_blueprint(usuarios_bp)
+app.register_blueprint(admin_bp)
 
-@admin_bp.route('/login')
-def formulario_login():
-    return render_template('formulario_login.html')
-
-@admin_bp.route('/admin/dashboard')
-def admin_dashboard():
-    return render_template('admin_dashboard.html')
+if __name__ == '__main__':
+    app.run(debug=True, port=8080)
