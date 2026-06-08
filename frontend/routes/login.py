@@ -11,10 +11,15 @@ def iniciar_sesion():
 
         if not nombre or not email:
             flash("Nombre o email no ingresados", "error")
-
+            return redirect(url_for("formulario_login.iniciar_sesion"))
+    
         resultado = obtener_usuario(nombre, email)
 
         if not resultado:
             flash("Usuario o email incorrecto", "error")
+            return redirect(url_for("formulario_login.iniciar_sesion"))
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")
+        return redirect(url_for("principal.pagina_principal"))
+
+    return render_template("formulario_login.html")
