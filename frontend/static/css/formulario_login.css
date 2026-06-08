@@ -15,8 +15,7 @@ h2 {
     
 }
 
-
-.formulario {
+#formulario {
     background-color: rgba(10, 10, 12, 0.75);
     width: 400px;
     height: 350px;
@@ -39,11 +38,7 @@ label {
     color: white;
 }
 
-.nombre {
-    margin-top: 15px;
-}
-
-.gmail {
+.dato_ingreso {
     margin-top: 15px;
 }
 
@@ -57,8 +52,7 @@ input {
     color: white
 }
 
-
-.boton_ingresar {
+#boton_ingresar {
     margin-top: 30px;
     height: 40px;
     width: 160px;
@@ -70,11 +64,7 @@ input {
     
 }
 
-.link_ingresar {
-    margin-left: 115px;
-}
-
-.link_crear_cuenta {
+#link_crear_cuenta {
     margin-left: 162px;
     margin-top: 50px;
     color:white
@@ -86,6 +76,13 @@ input {
     color:white;
 }
 
+.error {
+    display: block;
+    margin-top: 5px;
+    color:red;
+    text-align: center;
+}
+
 body {
     margin:0;
     padding: 0;
@@ -93,12 +90,13 @@ body {
     background-size: 1900px 1000px;
 }
 
-a:hover {
+#link_crear_cuenta:hover {
     cursor: pointer;
     color: blue;
 
 }
-button:hover {
+
+#boton_ingresar:hover {
     cursor: pointer;
     background-color: rgb(83, 219, 83);
     border-color: rgb(83, 219, 83)
