@@ -1,5 +1,6 @@
 import requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from constantes import URL_BACKEND
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
