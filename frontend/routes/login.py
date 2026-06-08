@@ -18,6 +18,9 @@ def iniciar_sesion():
         if not resultado:
             flash("Usuario o email incorrecto", "error")
             return redirect(url_for("formulario_login.iniciar_sesion"))
+        
+        session['token'] = resultado['token']
+        session['usuario'] = resultado['usuario']
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")
         return redirect(url_for("principal.pagina_principal"))
