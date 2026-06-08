@@ -4,7 +4,7 @@ h1 {
     background-color: rgba(192, 192, 192, 0.1);
     color: white;
     border-bottom: 2px solid #F0C36A;
-    margin: 0;
+    margin-top: 0;
 }
 
 h2 {
@@ -17,8 +17,8 @@ h2 {
 
 #formulario {
     background-color: rgba(10, 10, 12, 0.75);
-    width: 400px;
-    height: 350px;
+    width: 410px;
+    height: 360px;
     border-radius: 10px;
     border: 2px solid #F0C36A;
     
@@ -43,7 +43,7 @@ label {
 }
 
 input {
-    width: 330px;
+    width: 340px;
     height: 25px;
     margin-left: 30px;
     margin-top: 10px;
@@ -53,7 +53,8 @@ input {
 }
 
 #boton_ingresar {
-    margin-top: 30px;
+    margin-top: 25px;
+    margin-left: 120px;
     height: 40px;
     width: 160px;
     border-radius: 10px;
@@ -65,14 +66,14 @@ input {
 }
 
 #link_crear_cuenta {
-    margin-left: 162px;
+    margin-left: 165px;
     margin-top: 50px;
     color:white
 }
 
-.separador {
+#separador {
     margin-top: 10px;
-    margin-left: 190px;
+    margin-left: 195px;
     color:white;
 }
 
@@ -93,7 +94,6 @@ body {
 #link_crear_cuenta:hover {
     cursor: pointer;
     color: blue;
-
 }
 
 #boton_ingresar:hover {
