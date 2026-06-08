@@ -12,27 +12,26 @@
     </div>
     
     <div id="formulario">
-        <form>
+        <form action="{{ url_for('formulario_login.iniciar_sesion') }}" method="post">
             <h2> INICIAR SESIÓN </h2>
             <div class="dato_ingreso">
-                <label > Nombre de usuario </label>
+                <label for="nombre"> Nombre de usuario </label>
             
-                <input id="nombre" placeholder="Ingresa tu usuario">
+                <input type="text" id="nombre" name="unombre" placeholder="Ingresa tu usuario">
             </div>
             <div class="dato_ingreso">        
-                <label > Email </label> 
+                <label for="email"> Email </label> 
         
-                <input id="email" placeholder="Ingresa tu email">
+                <input type="text" id="email" name="uemail" placeholder="Ingresa tu email">
             </div>
             <div>
-                
                 <button type="submit" id="boton_ingresar"> Ingresar </button> 
                 
                 <div>
                     <span id="separador"> o </span>  
                 </div>              
             
-                <a id="link_crear_cuenta" href=""> 
+                <a id="link_crear_cuenta" href="{{ url_for('formulario_login.crear_cuenta') }}"> 
                     Registrarse 
                 </a> 
             </div>
