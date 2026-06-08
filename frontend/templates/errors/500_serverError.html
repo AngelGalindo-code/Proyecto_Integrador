@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container" style="text-align: center; max-width: 600px; margin: 50px auto; padding: 40px;">
+    
+    <div class="error-icon" style="font-size: 72px; margin-bottom: 20px; color: #dc3545;">
+        ⚠️
+    </div>
+
+    <h1 style="font-size: 36px; margin-bottom: 10px; color: #333;">Error Interno del Servidor</h1>
+    
+    <h2 style="font-size: 20px; color: #6c757d; font-weight: normal; margin-bottom: 30px;">
+        Código 500 — Algo salió mal de nuestro lado
+    </h2>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 30px;">
+
+    <p style="font-size: 16px; color: #495057; line-height: 1.6; margin-bottom: 30px;">
+        Estamos experimentando dificultades técnicas momentáneas en este módulo. 
+        Si el problema persiste después de intentar ingresar nuevamente, por favor contactate con el administrador del sistema de reservas.
+    </p>
+
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('reservas.reservasList') }}" class="table-footer-link" 
+           style="display: inline-block; background-color: #007bff; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: background-color 0.2s;">
+            🔄 Volver a la lista de reservas
+        </a>
+    </div>
+
+</div>
+
+<style>
+    .table-footer-link:hover {
+        background-color: #0056b3 !important;
+    }
+</style>
+{% endblock %}
