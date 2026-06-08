@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/frontend/static/css/index.css">
+  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <title>Los Horneros</title>
 </head>
 <body>
+    {% include 'components/navbar.html' %}
     <section class="fondo">
         <div class = "contenido">
             <div class="cartel">
@@ -178,5 +183,8 @@
 
         </div>
     </section>
+    {% include 'formulario_reserva.html' %}
+
+    {% include 'components/footer.html' %}
 </body>
 </html>
