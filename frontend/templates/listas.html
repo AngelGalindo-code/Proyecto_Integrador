@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container wide">
+    <h1>{{ title }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert-container alert-{{ category if category != 'error' else 'error' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>Mesa</th>
+                    <th>Personas</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                    <tr>
+                        <td class="text-muted">{{ reserva['id_reserva'] }}</td>
+                        <td class="text-bold">{{ reserva['usuario'] }}</td>
+                        <td>{{ reserva['fecha'] }}</td>
+                        <td>Mesa {{ reserva['mesa'] }}</td>
+                        <td>{{ reserva['cantidad_personas'] }} comensales</td>
+                        <td style="text-align: center;">
+                            
+                            <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" <!-- No se por que lo subraya-->
+                                  method="POST" 
+                                  onsubmit="return confirm('¿Seguro que querés cancelar esta reserva?');" 
+                                  style="display:inline;">
+                                <button type="submit" class="btn-action-delete">
+                                    Cancelar
+                                </button>
+                            </form>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div style="text-align: center;">
+        <a href="{{ url_for('reservas.crearReserva') }}" class="table-footer-link"> <!-- No se por que lo subraya -->
+            + Crear una nueva reserva
+        </a>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
+{% endblock %}

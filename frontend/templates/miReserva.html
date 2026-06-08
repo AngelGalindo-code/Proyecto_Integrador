@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container">
+    <div class="ticket-header">
+        <h1>{{ title }}</h1>
+        <p class="ticket-subtitle">Código de reserva: <span class="text-bold">#{{ reserva['id_reserva'] }}</span></p>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="detail-label">Nombre del Titular:</span>
+            <span class="detail-value text-bold">{{ reserva['nombre'] }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Fecha del Turno:</span>
+            <span class="detail-value">{{ reserva['fecha'] }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Hora:</span>
+            <span class="detail-value">{{ reserva['hora'] }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Mesa Asignada:</span>
+            <span class="detail-value">Mesa N° {{ reserva['mesa'] }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Comensales:</span>
+            <span class="detail-value">{{ reserva['cantidad_personas'] }} personas</span>
+        </div>
+    </div>
+
+    <div class="ticket-actions">
+        <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" 
+              method="POST" 
+              onsubmit="return confirm('¿Estás seguro de que deseas cancelar definitivamente esta reserva?');">
+            <button type="submit" class="btn-cancel-ticket">
+                Cancelar Reserva
+            </button>
+        </form>
+        
+        <a href="{{ url_for('reservas.reservasList') }}" class="table-footer-link" style="margin-top: 15px;">
+            Volver al listado
+        </a>
+    </div>
+</div>
+{% endblock %}
