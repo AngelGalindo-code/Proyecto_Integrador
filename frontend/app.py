@@ -1,43 +1,25 @@
-from flask import Flask, Blueprint, render_template
+from flask import Flask, render_template
+from dotenv import load_dotenv 
+import os
 
-app = Flask(
-    __name__, 
-    template_folder='frontend/templates', 
-    static_folder='frontend/static'
-)
+# Cargamos las variables del archivo .env al sistema operativo
+load_dotenv()
 
-publicas_bp = Blueprint('publicas', __name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
-@publicas_bp.route('/')
+from routes.usuarios import usuarios_bp
+from routes.admin import admin_bp
+
+
+app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
+
+
+app.register_blueprint(usuarios_bp)
+app.register_blueprint(admin_bp)
+
+@app.route('/')
 def index():
     return render_template('index.html')
 
-@publicas_bp.route('/menu')
-def menu():
-    return render_template('menu.html')
-
-
-usuarios_bp = Blueprint('usuarios', __name__)
-
-@usuarios_bp.route('/reserva')
-def formulario_reserva():
-    return render_template('formulario_reserva.html')
-
-@usuarios_bp.route('/reserva/exito')
-def reserva_exito():
-    return render_template('reserva_exito.html')
-
-@usuarios_bp.route('/panel-usuario')
-def panel_usuario():
-    return render_template('panel_usuario.html')
-
-
-admin_bp = Blueprint('admin', __name__)
-
-@admin_bp.route('/login')
-def formulario_login():
-    return render_template('formulario_login.html')
-
-@admin_bp.route('/admin/dashboard')
-def admin_dashboard():
-    return render_template('admin_dashboard.html')
+if __name__ == '__main__':
+    app.run(debug=True, port=8080)
