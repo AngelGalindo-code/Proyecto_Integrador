@@ -1,6 +1,5 @@
 const boton_ingresar = document.getElementById("boton_ingresar")
-const ingreso_usuario = document.getElementsByClassName("dato_ingreso")
-const datos = document.getElementsByClassName("dato_a_ingreso")
+const datos = document.getElementsByClassName("dato_ingreso")
 
 const errores = document.getElementsByClassName("error")
 
@@ -12,8 +11,8 @@ boton_ingresar.addEventListener("click", function(event) {
         errores[0].remove()
     }
 
-    const nombre_usuario = ingreso_usuario[0].value.trim()
-    const email_usuario = ingreso_usuario[1].value.trim()
+    const nombre_usuario = document.getElementById("nombre").value.trim()
+    const email_usuario = document.getElementById("email").value.trim()
 
         
     if (nombre_usuario == "") {
@@ -23,7 +22,6 @@ boton_ingresar.addEventListener("click", function(event) {
        crearError("El nombre debe tener entre 4 a 15 letras", datos[0])
        
     }
-
 
     if (email_usuario == "") {
        crearError("Este campo debe estar completo", datos[1])
