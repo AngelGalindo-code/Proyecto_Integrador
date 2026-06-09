@@ -1,8 +1,6 @@
 from flask import Flask, render_template, Blueprint, flash, request, redirect, url_for, abort, session 
-from decorators import adminRequired, loginRequired
 from constantes import URL_BACKEND
-from database.db_reservas import *
-from validaciones.reservas import *
+from decorators.decorators import adminRequired, loginRequired
 
 reservas_bp = Blueprint("reservas", __name__)
 
