@@ -6,7 +6,6 @@ from validaciones.reservas import *
 
 reservas_bp = Blueprint("reservas", __name__)
 
- Se toman funciones de validaciones de un archivo llamado db_sqlalchemy.py
 # Se toma el nombre de templates que validan errores, listas, etc
 # Falta la validacion de errores
 # Implementar el uso de sessions
