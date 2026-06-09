@@ -34,7 +34,7 @@
     padding: 40px  ;
     width: 40%;
 }
-.fecha, .numero, .comensales, .nombre{
+.fecha, .mesa, .comensales, .nombre{
     position: relative;
     margin: 30px 0;
     outline: none;
@@ -51,7 +51,7 @@ button{
     cursor: pointer;
     margin-bottom: 50px;
 }
-input[type="text"]{
+input[type="text"], input[type="number"]{
     height: 50px;
     width: 100%;
     text-align: left;
@@ -89,7 +89,7 @@ input[type="text"]{
         padding: 20px;
         box-sizing: border-box;
     }
-    .fecha, .numero, .comensales, .nombre{
+    .fecha, .mesa, .comensales, .nombre{
         margin: 20px 0;
     }
 }

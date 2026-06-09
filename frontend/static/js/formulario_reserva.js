@@ -1,7 +1,7 @@
 const inputFecha = document.querySelector(".fecha input");
 const inputComensales = document.querySelector(".comensales input");
 const inputNombre = document.querySelector(".nombre input");
-const inputNumero = document.querySelector(".numero input");
+const inputMesa = document.querySelector(".mesa input");
 const botonReserva = document.querySelector("button"); 
 const bloqueSector = document.querySelector("section");
 const comensalesMaximas = 12;
@@ -37,10 +37,10 @@ botonReserva.addEventListener("click", function(evento) {
     } else if (!/^[a-zA-Z\s]+$/.test(inputNombre.value)){
         inputsInvalidos.push("Nombre Invalido")
     }
-    if (inputNumero.value === ""){
+    if (inputMesa.value === ""){
         inputsInvalidos.push("Telefono");
-    } else if (!/^\d+$/.test(inputNumero.value) || inputNumero.value.length !== 10){
-        inputsInvalidos.push("Telefono invalido");
+    } else if (parseInt(inputMesa.value) <= 0){
+        inputsInvalidos.push("Mesa invalida");
     }
     let mesajeGeneral = document.getElementById("error-general");
     if (inputsInvalidos.length > 0){
@@ -57,5 +57,6 @@ botonReserva.addEventListener("click", function(evento) {
         if (mesajeGeneral) {
             mesajeGeneral.remove();
         }
+        botonReserva.form.submit();
     }
 });
