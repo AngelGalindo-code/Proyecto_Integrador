@@ -1,0 +1,110 @@
+h1 {
+    font-family: 'Cinzel', serif;;    
+    text-align: center;
+    background-color: rgba(192, 192, 192, 0.1);
+    color: white;
+    border-bottom: 2px solid #F0C36A;
+    margin: 0;
+}
+
+h2 {
+    text-align: center;
+    font-family: 'Cinzel', serif;;
+    margin-top:0;
+    color:white
+    
+}
+
+
+.formulario {
+    background-color: rgba(10, 10, 12, 0.75);
+    width: 400px;
+    height: 380px;
+    border-radius: 10px;
+    border: 2px solid #F0C36A;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    margin-top: 240px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label {
+    font-family: 'Verdana', serif;
+    margin-left: 30px;
+    color: white;
+}
+
+.nombre {
+    margin-top: 15px;
+}
+
+.gmail {
+    margin-top: 15px;
+}
+
+.telefono {
+    margin-top: 15px;
+}
+
+input {
+    width: 330px;
+    height: 25px;
+    margin-left: 30px;
+    margin-top: 10px;
+    background: rgb(79, 77, 77, 0.05);
+    border-radius: 8px;
+    color: white
+}
+
+
+.boton_ingresar {
+    margin-top: 30px;
+    height: 40px;
+    width: 160px;
+    border-radius: 10px;
+    font-size: 15px;
+    border-color: black;
+    background-color: #D4A24C;
+    color:white;
+    
+}
+
+.link_ingresar {
+    margin-left: 115px;
+}
+
+.link_login_usuario {
+    margin-left: 133px;
+    margin-top: 50px;
+    color:white
+}
+
+.separador {
+    margin-top: 10px;
+    margin-left: 190px;
+    color:white;
+}
+
+body {
+    margin:0;
+    padding: 0;
+    background-image:url(/static/images/login_restaurante.png);
+    background-size: 1900px 1000px;
+}
+
+a:hover {
+    cursor: pointer;
+    color: blue;
+
+}
+button:hover {
+    cursor: pointer;
+    background-color: rgb(83, 219, 83);
+    border-color: rgb(83, 219, 83)
+}
+
