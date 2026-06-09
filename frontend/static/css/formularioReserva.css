@@ -1,0 +1,77 @@
+
+:root {
+
+    --color-fondo: #f8fafc;       
+    --color-tarjeta: #ffffff;    
+    --color-texto: #334155;       
+    --color-primario: #3b82f6;    
+    --color-primario-hover: #2563eb; 
+    --color-borde: #e2e8f0;       
+    --color-error: #ef4444;       
+
+    /* Tipografía y Espaciados */
+    --fuente-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --radio-borde: 8px;           /* Redondeado general */
+    --transicion: all 0.2s ease-in-out;
+}
+
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--fuente-principal);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.6;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 3. CONTENEDOR PRINCIPAL (Tarjeta del Formulario) */
+.form-container {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #1e293b;
+    text-align: center;
+}
+
+/* 4. GRUPOS DE CAMPOS (Estructura de Filas) */
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #475569;
+}
+
+/* Inputs de texto, números y fechas */
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: inherit}
