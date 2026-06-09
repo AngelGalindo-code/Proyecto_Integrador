@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/formulario_reserva.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/formulario_reserva.css")}}">
     <title>Document</title>
 </head>
 <body>
@@ -11,37 +11,36 @@
         <div class="carta-contenedor">
             <div class="carta-col-izq">
                 <div class="carta-izq-top">
-                    <h3>Reserva ahora!</h3>
-                    <h1 class="tit-izq">Te esperamos</h1>
+                    <h3> {{ subtitulo_reserva }} </h3>
+                    <h1 class="tit-izq"> {{ titulo_principal }} </h1>
                     <h3>Horario</h3>
-                    <h3>De Martes a Domingos, de 8:00h a 23:00h</h3>
+                    <h3>{{ horario }}</h3>
                 </div>
                 <h3>Direccion</h3>
-                <h3 class="ubicacion">Calle Pepito 123, Buenos Aires</h3>
+                <h3 class="ubicacion"> {{ direccion }} </h3>
             </div>
             <div class="form-col-der">
                 <div class="inputs-contenedor">
                     <h1 class="tit-reserva">Haz una Reserva</h1>
-                    <form method="post">
+                    <form action="{{ url_for("reservas.crearReserva") }}" method="post">
                         <div class="fecha">
-                            <input type="text" placeholder="Indica el dia y la hora">
+                            <input type="text" name="fecha_hora" placeholder="Indica el dia y la hora">
                         </div>
                         <div class="comensales">
-                            <input type="text" placeholder="N° de comensales">
+                            <input type="text" name="cantidad_personas" placeholder="N° de comensales">
                         </div>
                         <div class="nombre">
-                            <input type="text" placeholder="Escribe tu nombre">
+                            <input type="text" name="nombre" placeholder="Escribe tu nombre">
                         </div>
-                        <div class="numero">
-                            <input type="text" placeholder="Tu teléfono">
+                        <div class="mesa">
+                            <input type="number" name="mesa" placeholder="Elija una mesa">
                         </div>
                         <button type="submit">RESERVAR</button>
                     </form>
                 </div>
             </div>
-            
         </div>
     </section>
-    <script src="../static/js/formulario_reserva.js"></script>
+    <script src="{{ url_for("static", filename="js/formulario_reserva.js") }}"></script>
 </body>
 </html>
