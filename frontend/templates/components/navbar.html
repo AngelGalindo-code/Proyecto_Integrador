@@ -1,28 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for("static", filename="css/navbar.css") }}">
-    <title>Document</title>
-</head>
-<body>
-    
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <img src="{{ url_for('static', filename='logo_horneros.png') }}" alt="Logo restaurante" class="logo-img">
-            <h1>Los Horneros</h1>
-        </div>
-        <ul class="navbar-links">
-            <li><a href="#menu">Inicio</a></li>
-            <li><a href="#destacados">Carta</a></li>
-            <li><a href="#sobre nosotros">Destacado</a></li>
-            <li><a href="#contacto">Sobre Nosotros</a></li>
-            <li><a href="#login">Iniciar Sesion</a></li>
-        </ul>
-    </nav>
-
-
-    <script src="{{ url_for("static", filename="js/navbar.js")}}"></script>
-</body>
-</html>
+<nav class="navbar">
+    <div class="navbar-logo">
+        <img src="{{ url_for('static', filename='logo_horneros.png') }}" alt="Logo restaurante" class="logo-img">
+        <h1>Los Horneros</h1>
+    </div>
+    <ul class="navbar-links">
+        <li><a href="#menu">Inicio</a></li>
+        <li><a href="#destacados">Carta</a></li>
+        <li><a href="#sobre nosotros">Destacado</a></li>
+        <li><a href="#contacto">Sobre Nosotros</a></li>
+        <li><a href="#login">Iniciar Sesion</a></li>
+    </ul>
+</nav>
