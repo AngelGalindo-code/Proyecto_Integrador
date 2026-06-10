@@ -4,6 +4,16 @@ from constantes import URL_BACKEND
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
+@usuarios_bp.route('/login', methods=['GET'])
+def mostrar_login():
+  
+    return render_template('formulario_login.html')
+
+@usuarios_bp.route('/registro', methods=['GET'])
+def mostrar_registro():
+    return render_template('formulario_registro.html')
+
+
 
 @usuarios_bp.route('/usuarios', methods=['POST'])
 def crear_usuario():
@@ -27,7 +37,7 @@ def crear_usuario():
     
     try: 
         payload = {"nombre": nombre, "numero": numero, "email": email}
-        respuesta = requests.post(f"{URL_BACKEND}/api/usuarios", json=payload)
+        respuesta = requests.post(f"{URL_BACKEND}/usuarios", json=payload)
 
         if respuesta.status_code == 409:
             flash("Este email ya esta registrado.", "error")
@@ -35,7 +45,7 @@ def crear_usuario():
 
         if respuesta.status_code == 201:
             flash("Usuario creado con exito")
-            return redirect(url_for('publicas.index'))
+            return redirect(url_for('index'))
         
         flash("No se pudo crear el usuario")
         return render_template('formulario_registro.html')
@@ -54,7 +64,7 @@ def login():
 
     try: 
         payload_login = {"email": email}
-        respuesta = requests.post(f"{URL_BACKEND}/api/usuarios/login", json=payload_login)
+        respuesta = requests.post(f"{URL_BACKEND}/usuarios/login", json=payload_login)
 
         if respuesta.status_code == 404:
             flash("El usuario no fue encontrado o el email es incorrecto.", "error")
@@ -67,7 +77,7 @@ def login():
             session["rol"] = usuario.get("rol")
 
             flash(f"Bienvenido, Has ingresado como {usuario.get('rol')}.", "success")
-            return redirect(url_for('publicas.index'))
+            return redirect(url_for('index'))
             
         flash("Error de credenciales.", "error")
         return render_template('formulario_login.html')
@@ -95,7 +105,7 @@ def actualizar_completamente_usuario(id):
 
     try:
         payload = {"nombre": nombre, "numero": numero, "email": email}
-        respuesta = requests.put(f"{URL_BACKEND}/api/usuarios/{id}", json=payload)
+        respuesta = requests.put(f"{URL_BACKEND}/usuarios/{id}", json=payload)
 
         if respuesta.status_code == 404:
             flash('El usuario no fue encontrado')
