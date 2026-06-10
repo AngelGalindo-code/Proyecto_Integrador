@@ -15,19 +15,19 @@ reservas_bp = Blueprint("reservas", __name__)
 
 # Errores ---> Ver manejo de errores con BluePrint ---> Errores especificos segun la ruta /reservas
 
-@reservas_bp.app_errorhandler(500)
+@reservas_bp.errorhandler(500)
 def internal_server_error(e):
     return render_template('errors/500_serverError.html'), 500
 
-@reservas_bp.app_errorhandler(404)
+@reservas_bp.errorhandler(404)
 def page_not_found(e):
     return render_template('errors/404_notFound.html'), 404
 
-@reservas_bp.app_errorhandler(403)
+@reservas_bp.errorhandler(403)
 def acces_forbidden(e):
     return render_template('errors/403_forbidden.html'), 403
 
-@reservas_bp.app_errorhandler(400)
+@reservas_bp.errorhandler(400)
 def bad_request(e):
     return render_template('errors/400_badRequest.html'), 400
 
