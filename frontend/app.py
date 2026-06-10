@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint
+from flask import Flask, render_template, redirect, url_for
 from dotenv import load_dotenv 
 import os
 
@@ -19,7 +19,11 @@ app.register_blueprint(admin_bp)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('usuarios.mostrar_login'))
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

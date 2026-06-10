@@ -45,7 +45,7 @@ def crear_usuario():
 
         if respuesta.status_code == 201:
             flash("Usuario creado con exito")
-            return redirect(url_for('index'))
+            return redirect(url_for('home'))
         
         flash("No se pudo crear el usuario")
         return render_template('formulario_registro.html')
@@ -77,7 +77,7 @@ def login():
             session["rol"] = usuario.get("rol")
 
             flash(f"Bienvenido, Has ingresado como {usuario.get('rol')}.", "success")
-            return redirect(url_for('index'))
+            return redirect(url_for('home'))
             
         flash("Error de credenciales.", "error")
         return render_template('formulario_login.html')
