@@ -5,7 +5,7 @@ import os
 # Cargamos las variables del archivo .env al sistema operativo
 load_dotenv()
 
-app = Flask(__name__, template_folder='templates', static_folder='public', static_url_path='/public')
+app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/public')
 
 from routes.usuarios import usuarios_bp
 from routes.admin import admin_bp
