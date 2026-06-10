@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <title>Los Horneros</title>
 </head>
 <body>
     {% include 'components/navbar.html' %}
+    
     <section class="fondo">
         <div class = "contenido">
             <div class="cartel">
@@ -20,131 +21,100 @@
 
             <div class="slider-frame">
                 <ul>
-                    <li><img src="/frontend/public/restaurante5.jpeg" alt=""></li>
-                    <li><img src="/frontend/public/restaurante2.jpeg" alt=""></li>
-                    <li><img src="/frontend/public/restaurante3.jpeg" alt=""></li>
-                    <li><img src="/frontend/public/restaurante4.jpeg" alt=""></li>
+                    <li><img src="{{ url_for('static', filename='restaurante5.jpeg') }}" alt="Restaurante 5"></li>
+                    <li><img src="{{ url_for('static', filename='restaurante2.jpeg') }}" alt="Restaurante 2"></li>
+                    <li><img src="{{ url_for('static', filename='restaurante3.jpeg') }}" alt="Restaurante 3"></li>
+                    <li><img src="{{ url_for('static', filename='restaurante4.jpeg') }}" alt="Restaurante 4"></li>
                 </ul>
             </div>
         </div>
     </section>
+
     <section class="fondo2">
         <div class = "contenedor">
             <div class="columnas">
                 <h2>Platos destacados</h2>
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3> Nombre plato </h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
+                        <h3> Nombre plato </h3>
                         <p class= "descripcion">
                             descripcion del plato con ingredientes.
                         </p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
+                        <h3> Nombre plato </h3>
                         <p class= "descripcion">
                             descripcion del plato con ingredientes.
                         </p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3> Nombre plato </h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>            
             </div>
             <div class = "columnas">
                 <h2></h2>
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3> Nombre plato </h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>  
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3> Nombre plato </h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3>Nombre plato </h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
 
                 <div class="plato">
                     <div>
-                        <h3>
-                            Nombre plato
-                        </h3>
-                        <p class= "descripcion">
-                            descripcion del plato con ingredientes.
-                        </p>
+                        <h3>Nombre plato</h3>
+                        <p class="descripcion">descripcion del plato con ingredientes.</p>
                     </div>
-                    <img src="/frontend/public/plato.png" alt="" class="fotoplato">
+                    <img src="{{ url_for('static', filename='plato.png') }}" alt="Plato destacado" class="fotoplato">
                 </div>
-
-
             </div>
         </div>
     </section>
 
     <section class="seccion_sobre_nosotros">
-        <div class = "contenedor_sobre_nosotros">
-            <div class = "columnas_sobre_nosotros">
+        <div class="contenedor_sobre_nosotros">
+            <div class="columnas_sobre_nosotros">
                 <h2></h2>
                 <div class="plato">
                     <div>
-                        <h1>
-                            Somos Los Horneros
-                        </h1>
-                        <p class= "descripcion_sobre_nosotros">
+                        <h1>Somos Los Horneros</h1>
+                        <p class="descripcion_sobre_nosotros">
                             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Amet quis, quod nesciunt possimus repellendus perferendis animi recusandae pariatur voluptate enim doloremque consectetur cum maiores praesentium error quibusdam aliquam sit magni.
                         </p>
                     </div>
@@ -153,38 +123,35 @@
                 <div class="reseñas">
                     <h1>Algunas reseñas de nuestros mejores clientes</h1>
                     <div class="contenedor_reseñas">
-                            
-                            <div class="tarjeta_reseña">
-                                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                                <div class="estrellas">★★★★☆</div>
-                            </div>
+                        <div class="tarjeta_reseña">
+                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
+                            <div class="estrellas">★★★★☆</div>
+                        </div>
 
-                            <div class="tarjeta_reseña">
-                                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                                <div class="estrellas">★★★★☆</div>
-                            </div>
+                        <div class="tarjeta_reseña">
+                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
+                            <div class="estrellas">★★★★☆</div>
+                        </div>
 
-                            
-                            <div class="tarjeta_reseña">
-                                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                                <div class="estrellas">★★★★☆</div>
-                            </div>
-
-                
-                            <div class="tarjeta_reseña">
-                                
-                                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                                <div class="estrellas">★★★★★</div>
-                            </div>
+                        <div class="tarjeta_reseña">
+                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
+                            <div class="estrellas">★★★★☆</div>
+                        </div>
+            
+                        <div class="tarjeta_reseña">
+                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
+                            <div class="estrellas">★★★★★</div>
                         </div>
                     </div>
+                </div>
             </div>
-
-
         </div>
     </section>
+
     {% include 'formulario_reserva.html' %}
 
     {% include 'components/footer.html' %}
+
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
 </body>
 </html>
