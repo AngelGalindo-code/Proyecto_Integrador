@@ -1,11 +1,9 @@
-.carta-seccion{
+.carta-seccion {
     font-family: Arial, Helvetica, sans-serif;
     background-color: black;
     color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;     
+    margin: 60px auto;      
     width: 1100px;
     height: 560px;
 }
