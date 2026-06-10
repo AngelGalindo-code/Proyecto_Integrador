@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for("static", filename="css/formulario_reserva.css")}}">
-    <title>Document</title>
-</head>
-<body>
-    <section class="carta-seccion">
+
+ <section class="carta-seccion">
         <div class="carta-contenedor">
             <div class="carta-col-izq">
                 <div class="carta-izq-top">
@@ -22,7 +14,7 @@
             <div class="form-col-der">
                 <div class="inputs-contenedor">
                     <h1 class="tit-reserva">Haz una Reserva</h1>
-                    <form action="{{ url_for("reservas.crearReserva") }}" method="post">
+                    <form action="{{ url_for('reservas.crearReserva') }}" method="post">
                         <div class="fecha">
                             <input type="text" name="fecha_hora" placeholder="Indica el dia y la hora">
                         </div>
@@ -40,7 +32,4 @@
                 </div>
             </div>
         </div>
-    </section>
-    <script src="{{ url_for("static", filename="js/formulario_reserva.js") }}"></script>
-</body>
-</html>
+ </section>
