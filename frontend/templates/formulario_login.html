@@ -12,7 +12,7 @@
     </div>
     
     <div id="formulario">
-        <form action="{{ url_for('formulario_login.iniciar_sesion') }}" method="post">
+        <form action ="{{ url_for('usuarios.login') }}" method = "POST">
             <h2> INICIAR SESIÓN </h2>
             <div class="dato_ingreso">
                 <label for="nombre"> Nombre de usuario </label>
@@ -31,7 +31,7 @@
                     <span id="separador"> o </span>  
                 </div>              
             
-                <a id="link_crear_cuenta" href="{{ url_for('formulario_login.crear_cuenta') }}"> 
+                <a id="link_crear_cuenta" href="{{ url_for('usuarios.mostrar_registro') }}"> 
                     Registrarse 
                 </a> 
             </div>
