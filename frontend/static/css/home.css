@@ -7,7 +7,7 @@
 .fondo{
     width: 100%;
     height: 100vh;
-    background-image: url("/frontend/public/restaurante.jpeg");
+    background-image: url("/frontend/static/images/restaurante.jpeg");
     background-size: cover;
     background-position: center;
 }
@@ -41,7 +41,7 @@
     justify-content: center;
     align-items: center; 
 
-    background-image: url("/frontend/public/image.png");
+    background-image: url("/frontend/static/images/image.png");
     background-size: cover;
     background-position: center;    
     padding: 40px; 
@@ -141,7 +141,7 @@
 }
 
 .seccion_sobre_nosotros{
-    background-image: url("/frontend/public/imagen3.png");
+    background-image: url("/frontend/static/images/imagen3.png");
     width: 100%;
     min-height: 80vh;
     display: flex;
