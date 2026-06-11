@@ -16,7 +16,7 @@ def mostrar_registro():
     return render_template('formulario_registro.html')
 
 
-@auth_bp.route("/", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["POST"])
 
 def iniciar_sesion():
     if request.method == "POST":
