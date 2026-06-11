@@ -4,88 +4,8 @@ from constantes import URL_BACKEND
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
-@usuarios_bp.route('/login', methods=['GET'])
-def mostrar_login():
-  
-    return render_template('formulario_login.html')
-
-@usuarios_bp.route('/registro', methods=['GET'])
-def mostrar_registro():
-    return render_template('formulario_registro.html')
-
-
-
-@usuarios_bp.route('/usuarios', methods=['POST'])
-def crear_usuario():
-
-    
-    if not request.form:
-        flash("No se recibio información en el formulario.")
-        return redirect('/registro'), 400
-
-    nombre = request.form.get("nombre")
-    numero = request.form.get("numero")
-    email = request.form.get("email")
-
-    if not nombre or not numero or not email:
-        flash("Faltan datos obligatorios por completar")
-        return redirect('/registro'), 400
-    
-    if len(str(nombre).strip()) == 0 or not numero.isdigit() or '@' not in email:
-        flash("Formatos de campos invalidos")
-        return redirect('/registro'), 400
-    
-    try: 
-        payload = {"nombre": nombre, "numero": numero, "email": email}
-        respuesta = requests.post(f"{URL_BACKEND}/usuarios", json=payload)
-
-        if respuesta.status_code == 409:
-            flash("Este email ya esta registrado.", "error")
-            return render_template('formulario_registro.html')
-
-        if respuesta.status_code == 201:
-            flash("Usuario creado con exito")
-            return redirect(url_for('home'))
-        
-        flash("No se pudo crear el usuario")
-        return render_template('formulario_registro.html')
-    
-    except Exception:
-        return render_template('errorGenerico.html', message="Error del servidor al intentar crear el usuario")
-    
-@usuarios_bp.route('/login', methods=['POST'])
-
-def login():
-    email = request.form.get("email")
-
-    if email is None:
-        flash("No se ingreso ningun email.", "error")
-        return render_template('formulario_registro.html')
-
-    try: 
-        payload_login = {"email": email}
-        respuesta = requests.post(f"{URL_BACKEND}/usuarios/login", json=payload_login)
-
-        if respuesta.status_code == 404:
-            flash("El usuario no fue encontrado o el email es incorrecto.", "error")
-            return render_template('errors/404_notFound.html')
-            
-        if respuesta.status_code == 200:
-            usuario = respuesta.json() 
-            
-            session["id_usuario"] = usuario.get("id")
-            session["rol"] = usuario.get("rol")
-
-            flash(f"Bienvenido, Has ingresado como {usuario.get('rol')}.", "success")
-            return redirect(url_for('home'))
-            
-        flash("Error de credenciales.", "error")
-        return render_template('formulario_login.html')
-    
-    except Exception:
-        return render_template('errorGenerico.html', message="Error del servidor al intentar logearse")
-    
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
+
 def actualizar_completamente_usuario(id):
     if id <= 0:
         flash("ID de usuario invalido", "error")

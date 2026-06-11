@@ -12,7 +12,7 @@
     </div>
     
     <div class="formulario">
-        <form>
+        <form action="{{ url_for('auth.crear_usuario') }}" method="POST">
             <h2> CREAR CUENTA </h2>
             <div class="nombre">
                 <label > Nombre de usuario </label>
