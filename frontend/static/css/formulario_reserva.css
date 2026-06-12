@@ -1,0 +1,93 @@
+.carta-seccion {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
+    color: white;
+    position: relative;     
+    margin: 60px auto;      
+    width: 1100px;
+    height: 560px;
+}
+.carta-contenedor{
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+}
+.carta-col-izq{
+    flex: 1;
+    margin: 40px 80px;
+}
+.ubicacion{
+    color: rgb(214, 183, 5);
+    text-decoration: none;
+    list-style: none;
+}
+.carta-izq-top{
+    margin-bottom:  30px;
+    border-bottom: 2px solid rgb(33, 32, 32);
+}
+.carta-col-der{
+    flex: 1;
+}
+.form-col-der{
+    padding: 40px  ;
+    width: 40%;
+}
+.fecha, .mesa, .comensales, .nombre{
+    position: relative;
+    margin: 30px 0;
+    outline: none;
+    font-size: 30px;
+}
+button{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background-color: rgb(214, 183, 5);
+    border-radius: 40px;
+    font-size: 20px;
+    color: black;
+    cursor: pointer;
+    margin-bottom: 50px;
+}
+input[type="text"], input[type="number"]{
+    height: 50px;
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+}
+.fecha input{
+    height: 50px;
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+}
+@media(max-width:768px){
+    .carta-seccion{
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: auto;
+        padding: 20px 0;
+    }
+    .carta-contenedor{
+        flex-direction: column;
+        width: 100%;
+    }
+    .carta-col-izq{
+        margin: 20px;
+        text-align: center;
+    }
+    .carta-izq-top{
+        margin-bottom: 20px;
+    }
+    .form-col-der{
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .fecha, .mesa, .comensales, .nombre{
+        margin: 20px 0;
+    }
+}

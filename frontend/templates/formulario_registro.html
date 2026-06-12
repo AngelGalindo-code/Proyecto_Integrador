@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> crear cuenta usuario </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_crear_cuenta.css') }}">
+</head>
+<body>
+    <div>
+        <h1 class="header"> Los Horneros </h1>
+    </div>
+    
+    <div class="formulario">
+        <form>
+            <h2> CREAR CUENTA </h2>
+            <div class="nombre">
+                <label > Nombre de usuario </label>
+            
+                <input placeholder="Ingresa tu usuario">
+            </div>
+            <div class="gmail">        
+                <label > Email </label> 
+        
+                <input placeholder="Ingresa tu email">
+            </div>
+            <div class="telefono">        
+                <label > Teléfono </label> 
+        
+                <input placeholder="Ingresa tu teléfono">
+            </div>
+            <div>
+                <a class="link_ingresar" href="">
+                    <button class="boton_ingresar"> Ingresar </button> 
+                </a>
+                
+                <div>
+                    <span class="separador"> o </span> 
+                </div>              
+            
+                <a class="link_login_usuario" href=""> 
+                    Acceder a la  cuenta 
+                </a> 
+            </div>
+        </form>
+    </div>
+</body>
+</html>
