@@ -93,7 +93,7 @@ input {
 body {
     margin:0;
     padding: 0;
-    background-image:url(/static/images/login_restaurante.png);
+    background-image:url(../images/restaurante_auth.jpeg);
     background-size: 1900px 1000px;
 }
 
