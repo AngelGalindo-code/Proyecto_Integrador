@@ -6,6 +6,16 @@ admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
 
+
+@admin_bp.route('/admin/dashboard', methods=['GET'])
+def panelAdmin():
+    #ver temporalmente
+    return render_template('admin_dashboard.html', title='Panel de Administracion')
+
+
+@admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
+
+
 def eliminarUsuario(id):
 
     if session.get('rol') != 'admin':

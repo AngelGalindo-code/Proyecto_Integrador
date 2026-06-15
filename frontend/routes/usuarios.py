@@ -6,6 +6,43 @@ usuarios_bp = Blueprint("usuarios", __name__)
 
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 
+@usuarios_bp.route('/usuario/perfil')
+def perfil_usuario():
+    
+    if 'usuario' not in session or 'token' not in session:
+        return redirect(url_for('login')) 
+    
+    user_actual = session['usuario']
+    token = session['token'] 
+    
+    #Configurar las cabeceras con el token para el Backend
+    autorizacion_headers= {
+        "Authorization": f"Bearer {token}"
+    }
+    
+    datos_ranking = {}
+    lista_reservas = []
+    lista_resenas = []
+    
+    try:
+
+        respuesta_ranking = requests.get(f"{URL_BACKEND}/usuarios/{user_actual['id']}/ranking", headers=autorizacion_headers, timeout=5)
+        if respuesta_ranking.status_code == 200:
+            datos_ranking = respuesta_ranking.json()
+
+        respuesta_reservas = requests.get(f"{URL_BACKEND}/usuarios/{user_actual['id']}/reservas", headers=autorizacion_headers, timeout=5)
+        if respuesta_reservas.status_code == 200:
+            lista_reservas = respuesta_reservas.json()
+
+        repuestas_resenas = requests.get(f"{URL_BACKEND}/usuarios/{user_actual['id']}/resenas", headers=autorizacion_headers, timeout=5)
+        if repuestas_resenas.status_code == 200:
+            lista_resenas = repuestas_resenas.json()
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Error al conectar con los servicios del backend: {e}")
+        
+    return render_template('panel_usuario.html', usuario=user_actual, ranking=datos_ranking, reservas=lista_reservas, resenas=lista_resenas)
+
 def actualizar_completamente_usuario(id):
     if id <= 0:
         flash("ID de usuario invalido", "error")
