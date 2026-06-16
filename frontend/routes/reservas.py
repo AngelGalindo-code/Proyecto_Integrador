@@ -221,24 +221,18 @@ def reservaExitosa(id_reserva):
 
             if session.get('id_usuario') != miReserva.get('id_usuario'):
                 abort(403)
-
-            informacion_qr = (
-                f"""--- CONFIRMACIÓN DE RESERVA ---\n
-                ID de Reserva: {miReserva.get('id')}\n
-                Nombre: {miReserva.get('nombre')}\n
-                Fecha: {miReserva.get('fecha')}\n
-                Hora: {miReserva.get('hora')} hs\n
-                Personas: {miReserva.get('personas')} personas"""
-            )
+            url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia" # Aca tenemos que ver la ip local
             
-            qr.add_data(informacion_qr)
+
+            qr.add_data(url_asistencia)
             qr.make(fit=True)
+            
             imagen_qr = qr.make_image(fill_color="black", back_color="white")
             buffer_memoria = io.BytesIO()
             imagen_qr.save(buffer_memoria, format="PNG")
             buffer_memoria.seek(0)
             qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
-            qr.clear()
+            qr.clear() 
 
             return render_template('reserva_exito.html', reserva=miReserva, qr_code=qr_base64)
         
@@ -248,4 +242,30 @@ def reservaExitosa(id_reserva):
     except requests.exceptions.RequestException:
         abort(500)
 
-# Ver Flask-email para el envio del qr, o que solo que en la vista.
+
+@reservas_bp.route('/<int:id_reserva>/confirmar-asistencia', methods=['GET'])
+@loginRequired
+def confirmarAsistenciaQR(id_reserva):
+
+    if session.get('rol') != 'admin':
+        abort(403) # Error porque no es admin
+
+    idValido = validarId(id_reserva)
+    if not idValido:
+        abort(400)
+
+    try:
+        # Aca hay que agregar el nuevo campo a la base de datos
+        payload = {'estado': 'completada'}
+        respuesta = apiBackend.put(f"{URL_BACKEND}/reservas/{id_reserva}", json=payload, timeout=5)
+
+        if respuesta.status_code == 200:
+
+            return render_template('asistenciaExitosa.html', id_reserva=id_reserva)
+        elif respuesta.status_code == 404:
+            abort(404)
+        else:
+            abort(500)
+
+    except requests.exceptions.RequestException:
+        abort(500)
