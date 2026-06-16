@@ -45,3 +45,30 @@ def cambiar_estrellas(resenas):
 
         resena["valoracion"] = "".join(estrellas)
 
+
+logger = logging.getLogger(__name__)
+
+def obtener_resenas():
+    try:
+
+        response = requests.get(
+            f"{API_BASE_URL}/resenas",
+            timeout=10,
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("reseñas")
+
+        return {}
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+
+        return {}
+
+    except Exception as e:
+        logger.error(f"Error inesperado al obtener las resenas: {e}")
+
+        return {}
+
