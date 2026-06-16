@@ -46,22 +46,23 @@ def iniciar_sesion():
 
 @auth_bp.route('/usuarios', methods=['POST'])
 def crear_usuario():
-
-    
     if not request.form:
-        flash("No se recibio información en el formulario.")
+        flash("No se recibio informacion en el formulario.", "error")
         return redirect(url_for('auth.mostrar_registro'))
 
-    nombre = request.form.get("nombre")
-    numero = request.form.get("numero")
-    email = request.form.get("email")
+ 
+    nombre = request.form.get("unombre")
+    email = request.form.get("uemail")
+    numero = request.form.get("utelefono") 
 
+    
     if not nombre or not numero or not email:
-        flash("Faltan datos obligatorios por completar")
+        flash("Faltan datos obligatorios por completar", "error")
         return redirect(url_for('auth.mostrar_registro'))
     
+   
     if len(str(nombre).strip()) == 0 or not numero.isdigit() or '@' not in email:
-        flash("Formatos de campos invalidos")
+        flash("Formatos de campos invalidos", "error")
         return redirect(url_for('auth.mostrar_registro'))
     
     try: 
@@ -70,18 +71,17 @@ def crear_usuario():
 
         if respuesta.status_code == 409:
             flash("Este email ya esta registrado.", "error")
-            return render_template('formulario_registro.html')
+            return redirect(url_for('auth.mostrar_registro'))
 
         if respuesta.status_code == 201:
-            flash("Usuario creado con exito")
+            flash("Usuario creado con exito", "success")
             return redirect(url_for('home'))
         
-        flash("No se pudo crear el usuario")
-        return render_template('formulario_registro.html')
+        flash("No se pudo crear el usuario", "error")
+        return redirect(url_for('auth.mostrar_registro'))
     
     except Exception:
         return render_template('errorGenerico.html', message="Error del servidor al intentar crear el usuario")
-    
 
 def obtener_usuario(nombre, email):
     try:

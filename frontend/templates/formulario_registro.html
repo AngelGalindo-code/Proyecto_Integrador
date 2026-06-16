@@ -14,25 +14,26 @@
     <div class="formulario">
         <form action="{{ url_for('auth.crear_usuario') }}" method="POST">
             <h2> CREAR CUENTA </h2>
-            <div class="nombre">
+            <div class="nombre dato_ingreso">
                 <label > Nombre de usuario </label>
             
-                <input placeholder="Ingresa tu usuario">
+                <input type="text" id="usuario" name="unombre" placeholder="Ingresa tu usuario">
             </div>
-            <div class="gmail">        
+
+            <div class="gmail dato_ingreso">        
                 <label > Email </label> 
         
-                <input placeholder="Ingresa tu email">
+                <input type="text" id="email" name="uemail" placeholder="Ingresa tu email">
             </div>
-            <div class="telefono">        
-                <label > Teléfono </label> 
+
+            <div class="telefono dato_ingreso">        
+                <label > Telefono </label> 
         
-                <input placeholder="Ingresa tu teléfono">
+                <input type="text" id="telefono" name="utelefono" placeholder="Ingresa tu teléfono">
             </div>
+
             <div>
-                <a class="link_ingresar" href="">
-                    <button class="boton_ingresar"> Ingresar </button> 
-                </a>
+                <button type="submit" id="boton_ingresar" class="boton_ingresar"> Ingresar </button> 
                 
                 <div>
                     <span class="separador"> o </span> 
@@ -44,5 +45,6 @@
             </div>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/registro.js') }}"></script>
 </body>
 </html>

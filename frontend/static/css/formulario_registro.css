@@ -19,7 +19,7 @@ h2 {
 .formulario {
     background-color: rgba(10, 10, 12, 0.75);
     width: 400px;
-    height: 420px;
+    min-height: 440px;
     border-radius: 10px;
     border: 2px solid #F0C36A;
     
@@ -31,6 +31,7 @@ h2 {
     margin-top: 240px;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 20px;
 }
 
 label {
@@ -62,16 +63,16 @@ input {
 }
 
 
-.boton_ingresar {
-    margin-top: 30px;
+#boton_ingresar {
+    margin-top: 25px;
+    margin-left: 120px; 
     height: 40px;
     width: 160px;
     border-radius: 10px;
     font-size: 15px;
     border-color: black;
     background-color: #D4A24C;
-    color:white;
-    
+    color: white;
 }
 
 .link_ingresar {
@@ -108,3 +109,9 @@ button:hover {
     border-color: rgb(83, 219, 83)
 }
 
+.error {
+    display: block;
+    margin-top: 5px;
+    color:red;
+    text-align: center;
+}
