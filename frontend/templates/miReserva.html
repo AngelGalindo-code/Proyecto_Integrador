@@ -34,17 +34,26 @@
         </div>
     </div>
 
+    {% if qr_code %}
+    <div class="qr-container" style="text-align: center; margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+        <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 10px;">Presentá este código QR al llegar al restaurante:</p>
+        <img src="data:image/png;base64,{{ qr_code }}" alt="Código QR de la reserva" style="max-width: 200px; width: 100%; height: auto; border: 1px solid #ddd; padding: 5px; background: white;">
+    </div>
+    {% endif %}
+
     <div class="ticket-actions">
-        <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" 
-              method="POST" 
-              onsubmit="return confirm('¿Estás seguro de que deseas cancelar definitivamente esta reserva?');">
-            <button type="submit" class="btn-cancel-ticket">
+        <a href="{{ url_for('reservas.modificarReserva', id_reserva=reserva['id_reserva']) }}" class="btn-submit" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;">
+            Modificar Datos
+        </a>
+
+        <form id="form-cancelar" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" method="POST"> // Esto busca el js
+            <button type="submit" class="btn-cancel-ticket" style="width: 100%;">
                 Cancelar Reserva
             </button>
         </form>
         
-        <a href="{{ url_for('reservas.reservasList') }}" class="table-footer-link" style="margin-top: 15px;">
-            Volver al listado
+        <a href="{{ url_for('reservas.index') }}" class="table-footer-link" style="margin-top: 15px; display: block; text-align: center;">
+            Volver al inicio
         </a>
     </div>
 </div>

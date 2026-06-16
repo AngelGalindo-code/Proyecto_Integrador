@@ -1,29 +1,31 @@
-function abrirModal(id){
+// Funcionalidad al boton de cancelar el envio de formulario:
 
-    const modal = document.getElementById(id);
+const formCancelar = document.getElementById('form-cancelar');
 
-    if(modal){
-        modal.classList.add('modal--open');
-        modal.setAttribute('aria-hidden', 'false');
-    }
-}
+formCancelar.addEventListener('submit', async function(event) {
+    
+    event.preventDefault();
+    const confirmar = confirm('¿Estás seguro de que deseas cancelar definitivamente esta reserva?');
+    if (!confirmar) return;
 
-function cerrarModal(id){
+    const url = formCancelar.action;
 
-    const modal = document.getElementById(id);
-
-    if(modal){
-        modal.classList.remove('modal--open');
-        modal.setAttribute('aria-hidden', 'true');
-
-    }
-}
-
-window.addEventListener('keydown', function(event){
-
-    if(event.key === 'Escape'){
-        document.querySelectorAll('.modal--open').forEach(function(modalAbierto){
-            cerrarModal(modalAbierto.id)
+    try {
+        const respuesta = await fetch(url, {
+            method: 'POST' 
         });
+
+        // Status code == 200
+        if (respuesta.ok) {
+            alert('Reserva eliminada correctamente.');
+            
+            window.location.href = '/'; // Lo manda al inicio
+        } else {
+            alert('Error de servidor');
+        }
+
+    } catch (error) {
+        console.error('Error de servidor:', error);
+        alert('No se pudo conectar con el servidor. Revisá tu conexión.');
     }
 });
