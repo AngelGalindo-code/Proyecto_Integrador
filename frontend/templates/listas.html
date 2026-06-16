@@ -36,10 +36,7 @@
                         <td>{{ reserva['cantidad_personas'] }} comensales</td>
                         <td style="text-align: center;">
                             
-                            <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" <!-- No se por que lo subraya-->
-                                  method="POST" 
-                                  onsubmit="return confirm('¿Seguro que querés cancelar esta reserva?');" 
-                                  style="display:inline;">
+                          <form class="form-eliminar-admin" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva']) }}" method="POST" style="display:inline;"> // Esto busca el js
                                 <button type="submit" class="btn-action-delete">
                                     Cancelar
                                 </button>
@@ -53,7 +50,7 @@
     </div>
     
     <div style="text-align: center;">
-        <a href="{{ url_for('reservas.crearReserva') }}" class="table-footer-link"> <!-- No se por que lo subraya -->
+        <a href="{{ url_for('reservas.crearReserva') }}" class="table-footer-link"> 
             + Crear una nueva reserva
         </a>
     </div>

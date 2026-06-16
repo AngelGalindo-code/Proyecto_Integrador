@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="tilde">✓</div>
+    <h1>¡Reserva Confirmada!</h1>
+    <p>Tu reserva en <strong>Nombre restaurante</strong> está lista.</p>
+    
+    <div class="datos-lista">
+        <p><strong>ID de Reserva:</strong> <span class="id-reserva" id="reserva-id">{{ reserva.id }}</span></p>
+        <p><strong>Nombre:</strong> {{ reserva.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ reserva.fecha }}</p>
+        <p><strong>Hora:</strong> {{ reserva.hora }} hs</p>
+        <p><strong>Personas:</strong> {{ reserva.personas }} personas</p>
+    </div>
+
+    <p style="font-size: 13px; color: #7f8c8d;">Presentá este código QR al llegar al restaurante:</p>
+    
+    <div class="qr-container">
+        <img src="data:image/png;base64,{{ qr_code }}" alt="Código QR de la reserva">
+    </div>
+
+    <div style="margin-top: 20px;">
+        <button id="btn-enviar-correo" class="btn-submit" style="width: 100%; padding: 10px; cursor: pointer;">
+            Enviar comprobante al email
+        </button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/exito.js') }}"></script>

@@ -1,0 +1,62 @@
+body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .tilde{
+            color: #2ecc71;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .datos-lista {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .datos-lista p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+        .datos-lista strong {
+            color: #2c3e50;
+        }
+        .qr-container {
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff;
+            display: inline-block;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+        }
+        .qr-container img {
+            max-width: 200px;
+            width: 100%;
+            display: block;
+        }
+        .id-reserva {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e67e22;
+            letter-spacing: 1px;
+        }
