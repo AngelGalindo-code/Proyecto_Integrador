@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
-    <title>Document</title>
-</head>
 
-<body>
     <section class="seccion_cartas">
 
         <div class="contenedor_columnas">
@@ -42,7 +33,7 @@
                         <div class="plato">
                             <div class="encabezado_plato">
                                 <h2> {{ plato.nombre}} </h2>
-                                <span class="precio"> {{ precio.}} </span>
+                                <span class="precio"> {{ plato.precio }} </span>
                             </div>
                             <p class="ingredientes"> {{ plato.descripcion}}</p>
 
@@ -57,7 +48,3 @@
             </div>
         </div>
     </section>
-
-    
-</body>
-</html>

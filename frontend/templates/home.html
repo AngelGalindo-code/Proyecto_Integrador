@@ -6,6 +6,7 @@
   
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <title>Los Horneros</title>
@@ -147,6 +148,8 @@
             </div>
         </div>
     </section>
+
+    {% include 'menu.html' %}
 
     {% include 'formulario_reserva.html' %}
 
