@@ -15,7 +15,7 @@ def resenas_destacadas():
 
     resenas_filtradas = {}
 
-    # filtrar reseñas sin comentarios, comentarios muy grandes y de id repetidas
+    # filtrar reseñas sin comentarios, comentarios muy largos e id repetidas
     for resena in resenas:
         if (
             resena["comentario"] != ""
@@ -31,4 +31,17 @@ def resenas_destacadas():
             break
 
     return resenas_filtradas
+
+def cambiar_estrellas(resenas):
+
+    for resena in resenas:
+        estrellas = []
+
+        for i in range(resena["valoracion"]):
+            estrellas.append("★")
+
+        while len(estrellas) != 5:
+            estrellas.append("☆")
+
+        resena["valoracion"] = "".join(estrellas)
 
