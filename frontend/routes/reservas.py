@@ -22,6 +22,13 @@ apiBackend = requests.Session()
 
 reservas_bp = Blueprint("reservas", __name__)
 
+@reservas_bp.route('/crear', methods=['POST'])
+@loginRequired
+def crearReserva(): 
+    #momentaneo
+    pass
+
+
 @reservas_bp.errorhandler(405)
 def method_not_allowed(e):
 
