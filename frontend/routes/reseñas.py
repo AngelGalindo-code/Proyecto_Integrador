@@ -71,4 +71,3 @@ def obtener_resenas():
         logger.error(f"Error inesperado al obtener las resenas: {e}")
 
         return {}
-
