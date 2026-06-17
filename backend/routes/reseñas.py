@@ -4,6 +4,39 @@ import mysql.connector
 
 reseñas_bp = Blueprint("reseñas",__name__)
 
+# Obtiene todas las reseñas existentes
+@reseñas_bp.route("/", methods=["GET"])
+def obtener_resenas():
+    conn = None
+    cursor = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+        SELECT u.nombre,
+        r.id_comentario,
+        r.comentario,
+        r.valoracion
+FROM resenas r 
+INNER JOIN usuarios u
+ON r.id_usuario = u.id 
+ORDER BY valoracion DESC
+""")
+
+        resenas = cursor.fetchall()
+
+        return jsonify({"reseñas": resenas}), 200
+
+    except Exception as e:
+        return jsonify({"mensaje": f"Error del servidor {e}"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 
 #Muestra todas las reseñas de un usuario.
 @reseñas_bp.route ('/usuarios/reseñas/<int:id_usuario>', methods = ['GET'])
