@@ -101,27 +101,30 @@ def mostrar_reseña (id_comentario):
 #Usuario agrega una reseña
 @reseñas_bp.route ('/reseñas', methods = ['POST'])
 def crear_reseña ():
+    data = request.json
+
+    if not data:
+        return jsonify({"mensaje": "Campo vacio"}), 400
+         
+
+    id_usuario = data.get("id_usuario")
+    comentario = data.get("comentario")
+    valoracion = data.get("valoracion")
+
+    if comentario is None or valoracion is None or id_usuario is None:
+        return jsonify({ "mensaje": "Faltan datos"}), 400
+ 
+    #verificar valoración este entre los valores estimados
+    if valoracion < 1 or valoracion > 5:
+        return jsonify({"mensaje": "La valoración debe ser entre 1 y 5"}), 400
+    
     con = None
     cursor = None
 
     try:
          con = get_connection()
          cursor = con.cursor(dictionary=True)
-         data = request.json
-
-         if not data:
-            return jsonify({"mensaje": "Campo vacio"}), 400
          
-         comentario = data.get("comentario")
-         valoracion = data.get("valoracion")
-         id_usuario = data.get("id_usuario")
-
-         if comentario is None or valoracion is None or id_usuario is None:
-            return jsonify({ "mensaje": "Faltan datos"}), 400
- 
-         #verificar valoración este entre los valores estimados
-         if valoracion < 1 or valoracion > 5:
-            return jsonify({"mensaje": "La valoración debe ser entre 1 y 5"}), 400
          
          #verificar que exista el usuario
          cursor.execute(
