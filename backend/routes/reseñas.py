@@ -4,18 +4,6 @@ import mysql.connector
 
 reseñas_bp = Blueprint("reseñas",__name__)
 
-def get_db():
-
-    return mysql.connector.connect(
-
-    host="localhost",
-
-    user="root",
-
-    password="",
-
-    database="Restaurante"
-    )
 
 #Muestra todas las reseñas de un usuario.
 @reseñas_bp.route ('/usuarios/reseñas/<int:id_usuario>', methods = ['GET'])
@@ -23,7 +11,7 @@ def mostrar_todas_reseñas (id_usuario):
     con = None
     cursor = None
     try:
-        con = get_db()
+        con = get_connection()
         cursor = con.cursor(dictionary=True)
         
         cursor.execute(
@@ -53,7 +41,7 @@ def mostrar_reseña (id_comentario):
     cursor = None
 
     try:
-        con = get_db()
+        con = get_connection()
         cursor = con.cursor(dictionary=True)
         
         #verificamos que exista la reseña
@@ -84,7 +72,7 @@ def crear_reseña ():
     cursor = None
 
     try:
-         con = get_db()
+         con = get_connection()
          cursor = con.cursor(dictionary=True)
          data = request.json
 
@@ -149,7 +137,7 @@ def modificar_reseña(id_comentario):
     cursor = None
 
     try:
-        con = get_db()
+        con = get_connection()
         cursor = con.cursor(dictionary=True)
         data = request.json
 
@@ -210,7 +198,7 @@ def eliminar_reseña (id_comentario):
     cursor = None
 
     try:
-        con = get_db()
+        con = get_connection()
         cursor = con.cursor(dictionary=True)
         data = request.json
 
