@@ -1,3 +1,13 @@
+//iluminar estrellas y las validaciones
+
+const estrellas = document.getElementById("estrellas")
+const estrellitas = document.getElementsByClassName("iluminable")
+
+
+estrellas.addEventListener("click", function(event) {
+    iluminar_estrellas()
+    //faltan los posibles errores
+})
 
 function iluminar_estrellas(){
     let n = encontrar_llamado()
