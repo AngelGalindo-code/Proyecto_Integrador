@@ -71,3 +71,28 @@ def obtener_resenas():
         logger.error(f"Error inesperado al obtener las resenas: {e}")
 
         return {}
+
+
+def guardar_resena(id_usuario, comentario, valoracion):
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/resenas",
+            json={
+                "id_usuario": id_usuario,
+                "comentario": comentario,
+                "valoracion": valoracion,
+            },
+            timeout=10,
+        )
+
+        return response.status_code
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+
+        abort(500)
+
+    except Exception as e:
+        logger.error(f"Error inesperado al obtener las resenas: {e}")
+
+        abort(500)
