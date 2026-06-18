@@ -31,3 +31,12 @@ function encontrar_llamado(){
     }
     return n
 }
+
+//cerrar formulario
+
+function cerrarResena() { 
+    document.getElementById("formulario_resena").style.display = "none"
+}
+
+cancelar_posteo = document.getElementById("cerrar_ventana")
+publicar_posteo = document.getElementById("boton_publicar")
