@@ -1,0 +1,90 @@
+input[type=radio]{
+    display:none;
+}
+
+#formulario_resena {    
+    position: fixed;
+    top: 25%;
+    left: 35%;
+    
+    background-color: rgba(10, 10, 12, 0.75);
+    border: 2px solid #F0C36A;
+
+    padding: 30px;
+    border-radius: 15px;
+    width: 510px;
+    height: 460px;
+    
+    
+    /* el fondo oscuro */
+    box-shadow: 0 0 0 10000px rgba(10, 10, 12, 0.6);
+
+}
+
+#aparecer_resena {
+    height: 20px;
+}
+
+#cerrar_ventana {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 40px;
+    margin-left: 400px;
+    color:#F0C36A;
+
+}
+
+#comentario {
+    border-radius: 10px;
+    background: rgb(79, 77, 77, 0.05);
+    height: 100px;
+    color: white;
+    margin-top: 5px;
+}
+
+
+#dato_ingreso {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+
+#parrafo_resena {
+    font-family: 'Verdana', serif;
+    font-size: 20px;
+    color: white;
+    text-align: center;
+}
+
+#estrellas {
+    color: #ffcc00;         
+    font-size: 1.1rem;
+    letter-spacing: 2px;    
+    line-height: 1;          
+    margin-bottom: 5px;  
+    margin-top: 15px;    
+    text-align: center;
+    font-size: 25px;
+}
+
+
+#boton_publicar {
+  background-color:#F0C36A;
+  margin-top: 5px;
+}
+
+
+#cerrar_ventana:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+#boton_publicar:hover {
+    cursor: pointer;
+    background-color: rgb(83, 219, 83);
+    border-color: rgb(83, 219, 83)
+}
