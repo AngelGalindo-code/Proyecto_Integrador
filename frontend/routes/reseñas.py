@@ -96,3 +96,4 @@ def guardar_resena(id_usuario, comentario, valoracion):
         logger.error(f"Error inesperado al obtener las resenas: {e}")
 
         abort(500)
+

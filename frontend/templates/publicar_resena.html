@@ -15,11 +15,9 @@
        
         <div id="estrellas">
             <label> Valoración </label> <br>
-            <input type="radio" id="estrellas1" name="uestrellas" value="1"> <label for="estrellas1" class="iluminable"> ☆ </label>
-            <input type="radio" id="estrellas2" name="uestrellas" value="2"> <label for="estrellas2" class="iluminable"> ☆ </label>
-            <input type="radio" id="estrellas3" name="uestrellas" value="3"> <label for="estrellas3" class="iluminable"> ☆ </label>
-            <input type="radio" id="estrellas4" name="uestrellas" value="4"> <label for="estrellas4" class="iluminable"> ☆ </label>
-            <input type="radio" id="estrellas5" name="uestrellas" value="5"> <label for="estrellas5" class="iluminable"> ☆ </label>
+            {% for i in range(1, 6) %}
+                <input type="radio" id="estrellas{{ i }}" name="uestrellas" value="{{ i }}"> <label for="estrellas{{ i }}" class="iluminable"> ☆ </label>
+            {% endfor %}
         </div>
     
         <div>
