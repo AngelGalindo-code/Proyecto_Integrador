@@ -40,3 +40,12 @@ function cerrarResena() {
 
 cancelar_posteo = document.getElementById("cerrar_ventana")
 publicar_posteo = document.getElementById("boton_publicar")
+
+cancelar_posteo.addEventListener("click", function(event) {
+    cerrarResena()
+})
+
+
+publicar_posteo.addEventListener("click", function(event) {
+    cerrarResena()
+})
