@@ -6,11 +6,11 @@
         <h2> TU EXPERIENCIA NOS IMPORTA </h2>
         <p> Esperamos que te haya gustado, si le gustaria podria dejar una reseña </p>
     </div>
-    <form action="" method="POST">
+    <form action="{{ url_for('home.publicar_resena') }}" method="POST">
         <div id="dato_ingreso">
             <label for="comentario"> Comentario </label>
         
-            <input placeholder="Escribe aqui">
+            <input type="text" id="comentario" name="ucomentario" placeholder="Escribe aqui">
         </div>
        
         <div id="estrellas">
@@ -27,4 +27,4 @@
         </div>
     </form>
 </div>
-
+<script src="{{ url_for('static', filename='js/publicar_resena.js') }}" ></script>
