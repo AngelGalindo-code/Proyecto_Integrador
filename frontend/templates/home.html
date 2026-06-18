@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publicar_resena.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
 
     <title>Los Horneros</title>
@@ -141,6 +142,10 @@
 
     
     {% include 'footer.html' %}
+
+    {% if activar_resena %}
+        {% include 'publicar_resena.html' %}
+    {% endif %}
 
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/formulario_reserva.js') }}"></script>
