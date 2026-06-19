@@ -1,7 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Blueprint
 import mysql.connector
 
-app = Flask(__name__)
+ranking_usuarios_bp = Blueprint("ranking_usuarios", __name__)
 
 def conectar():
     return mysql.connector.connect(
@@ -25,7 +25,7 @@ def ejecutar(sql, datos=(), fetch=False):
     return resultado
 
 
-@app.route("/admin/usuarios/ranking", methods=["GET"])
+@ranking_usuarios_bp.route("/admin/usuarios/ranking", methods=["GET"])
 def ver_ranking():
     ranking = ejecutar("""
         SELECT u.id, u.nombre, u.email, r.cant_cancelaciones
@@ -37,7 +37,7 @@ def ver_ranking():
     return jsonify(ranking)
 
 
-@app.route("/admin/usuarios/<int:id_usuario>/ranking", methods=["GET"])
+@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking", methods=["GET"])
 def ver_ranking_usuario(id_usuario):
     usuario = ejecutar("""
         SELECT u.id, u.nombre, u.email, r.cant_cancelaciones
@@ -52,7 +52,7 @@ def ver_ranking_usuario(id_usuario):
     return jsonify(usuario[0])
 
 
-@app.route("/usuarios/<int:id_usuario>/ranking/cancelacion", methods=["PUT"])
+@ranking_usuarios_bp.route("/usuarios/<int:id_usuario>/ranking/cancelacion", methods=["PUT"])
 def sumar_cancelacion(id_usuario):
     ejecutar("""
         INSERT INTO ranking_usuarios (id_usuario, cant_cancelaciones)
@@ -64,7 +64,7 @@ def sumar_cancelacion(id_usuario):
     return jsonify({"mensaje": "Cancelación registrada"})
 
 
-@app.route("/admin/usuarios/<int:id_usuario>/ranking/reiniciar", methods=["PUT"])
+@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking/reiniciar", methods=["PUT"])
 def reiniciar_ranking(id_usuario):
     ejecutar("""
         INSERT INTO ranking_usuarios (id_usuario, cant_cancelaciones)
@@ -76,7 +76,7 @@ def reiniciar_ranking(id_usuario):
     return jsonify({"mensaje": "Ranking reiniciado"})
 
 
-@app.route("/admin/usuarios/<int:id_usuario>/ranking", methods=["DELETE"])
+@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking", methods=["DELETE"])
 def eliminar_ranking(id_usuario):
     ejecutar("""
         DELETE FROM ranking_usuarios
@@ -86,7 +86,7 @@ def eliminar_ranking(id_usuario):
     return jsonify({"mensaje": "Usuario eliminado del ranking"})
 
 
-@app.route("/reservas/<int:id_reserva>", methods=["DELETE"])
+@ranking_usuarios_bp.route("/reservas/<int:id_reserva>", methods=["DELETE"])
 def cancelar_reserva(id_reserva):
     reserva = ejecutar("""
         SELECT id_usuario
@@ -112,7 +112,3 @@ def cancelar_reserva(id_reserva):
     """, (id_usuario,))
 
     return jsonify({"mensaje": "Reserva cancelada y ranking actualizado"})
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

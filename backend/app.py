@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from routes.categorias import categorias_bp
 from routes.platos import platos_bp
-from routes.ranking_usuarios import ranking_bp
+from routes.ranking_usuarios import ranking_usuarios_bp as ranking_bp
 from routes.reseñas import reseñas_bp
 from routes.reservas import reservas_bp
 from routes.usuarios import usuarios_bp

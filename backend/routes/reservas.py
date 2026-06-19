@@ -2,12 +2,11 @@ from flask import Blueprint, request, jsonify, session, json, abort
 from werkzeug.exceptions import HTTPException
 from database.conexion import get_connection 
 from datetime import datetime
-from queries import *
 
-reservas_api_bp = Blueprint("reservas_api", __name__)
+reservas_bp = Blueprint("reservas", __name__)
 FORMATO_FECHA = "%d-%m"
 
-@reservas_api_bp.errorhandler(HTTPException)
+@reservas_bp.errorhandler(HTTPException)
 def handle_exception(e):
     response = e.get_response()
     response.data = json.dumps({
@@ -22,7 +21,7 @@ def handle_exception(e):
 
 
 
-@reservas_api_bp.route('/reservas', methods=['GET'])
+@reservas_bp.route('/reservas', methods=['GET'])
 def getReservas():
     conexion = get_connection()
     try:
@@ -44,7 +43,7 @@ def getReservas():
 
 
 
-@reservas_api_bp.route('/reservas/<int:id_reserva>', methods=['GET'])
+@reservas_bp.route('/reservas/<int:id_reserva>', methods=['GET'])
 def obtenerReservaPorId(id_reserva):
 
     if id_reserva <= 0:
@@ -68,7 +67,7 @@ def obtenerReservaPorId(id_reserva):
 
 
 
-@reservas_api_bp.route('/reservas/<int:id_reserva>', methods=['PUT'])
+@reservas_bp.route('/reservas/<int:id_reserva>', methods=['PUT'])
 def actualizarReserva(id_reserva):
     if id_reserva <= 0:
         abort(400, description='ID de reserva inválido')
@@ -124,7 +123,7 @@ def actualizarReserva(id_reserva):
 
 
 
-@reservas_api_bp.route('/reservas/<int:id_reserva>', methods=['DELETE'])
+@reservas_bp.route('/reservas/<int:id_reserva>', methods=['DELETE'])
 def eliminarReserva(id_reserva):
     if id_reserva <= 0:
         return jsonify({"error": "Bad Request", "message": "ID de reserva inválido"}), 400
