@@ -42,7 +42,11 @@ def iniciar_sesion():
 
     return render_template("formulario_login.html")
 
-
+@auth_bp.route('/logout')
+def logout():
+    session.clear() 
+    flash("Sesion cerrada correctamente")
+    return redirect(url_for('home'))
 
 @auth_bp.route('/usuarios', methods=['POST'])
 def crear_usuario():

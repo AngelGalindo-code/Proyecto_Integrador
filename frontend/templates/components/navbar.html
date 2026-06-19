@@ -8,6 +8,11 @@
         <li><a href="#menu">Carta</a></li>
         <li><a href="#destacados">Destacado</a></li>
         <li><a href="#nosotros">Sobre Nosotros</a></li>
-        <li><a href="/login" class="btn-login">Iniciar Sesion</a></li> 
+
+        {% if session.get('usuario') %}
+            <li><a href="/perfil" class="btn-perfil">Mi Perfil</a></li>
+            {% else %}
+            <li><a href="{{ url_for('auth.mostrar_login') }}" class="btn-login">Iniciar Sesion</a></li>
+        {% endif %}
     </ul>
 </nav>
