@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify, session, json, abort
+from flask import Blueprint, request, jsonify, json, abort
 from werkzeug.exceptions import HTTPException
 from database.conexion import get_connection 
 from datetime import datetime
+from database.queries import *
 
 reservas_bp = Blueprint("reservas", __name__)
 FORMATO_FECHA = "%d-%m"
