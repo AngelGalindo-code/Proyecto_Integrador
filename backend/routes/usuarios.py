@@ -1,13 +1,9 @@
 from flask import Blueprint, request, jsonify, session
 from database.conexion import get_connection
+from database.queries_entidades.db_usuarios import *
+import datetime
+import os
 
-from database.queries_entidades.db_usuarios import (
-    obtener_usuario_por_email,
-    obtener_usuario_por_id,
-    insertar_usuario,
-    actualizar_usuario_completo,
-    actualizar_usuario_parcial
-)
 usuarios_bp = Blueprint("usuarios", __name__)
 @usuarios_bp.route('/usuarios', methods=['POST'])
 
@@ -217,83 +213,68 @@ def actualizar_parcialmente_ususario(id):
         if conn:
             conn.close()
    
-   
 @usuarios_bp.route('/usuarios/<id>/eliminar', methods=['POST'])
-
 def eliminarUsuario(id):
-
-    if id <= 0:
-        return jsonify({"message": "El ID es invalido."}), 400
-    
     try:
         
-        eliminado = eliminarUsuarioPorId(id) 
+        id_entero = int(id)
+        if id_entero <= 0:
+            return jsonify({"message": "El ID es invalido."}), 400
+        
+    
+        eliminado = eliminarUsuarioPorId(id_entero) 
         if not eliminado:
             return jsonify({"message": "No existe un usuario con ese ID."}), 404
 
         return jsonify({"message": "Usuario eliminado correctamente."}), 200
-    except Exception:
-        return jsonify({"message": "Error al eliminar usuario."}), 50
+
+    except ValueError:
         
+        return jsonify({"message": "El ID debe ser un numero entero."}), 400
+
+    except Exception:
+       
+        return jsonify({"message": "Error al eliminar usuario."}), 500
          
 @usuarios_bp.route('/admin/usuarios', methods=['GET'])
-
 def adminUsuarios():
-
     try:
-
+    
         if session.get('rol') != 'admin':
-
-            flash('Acceso denegado')
-
-            return redirect('/')
+            return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
 
         usuarios = getUsuarios()
 
         if not usuarios:
+            return jsonify({"message": "No hay usuarios registrados.", "usuarios": []}), 200
 
-            flash('No hay usuarios registrados')
-
-            return render_template('errors/sinusuarios.html')
-
-        return render_template('adminUsuarios.html', title='Usuarios',usuarios=usuarios)
+    
+        return jsonify({"message": "Usuarios obtenidos correctamente.", "usuarios": usuarios}), 200
 
     except Exception:
-        return render_template('errorGenerico.html',message='Error al obtener usuarios')       
+        return jsonify({"message": "Error al obtener usuarios."}), 500       
         
         
-        
-            
 @usuarios_bp.route('/admin/usuarios/<id>', methods=['GET'])
-
 def adminUsuarioPorId(id):
-
     try:
-
-        id = int(id)
-
+        id_entero = int(id)
+        if id_entero <= 0:
+            return jsonify({"message": "El ID es invalido."}), 400
+            
         if session.get('rol') != 'admin':
+            return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
 
-            flash('Acceso denegado')
-
-            return redirect('/')
-
-        usuario = getUsuarioPorId(id)
+        usuario = getUsuarioPorId(id_entero)
 
         if not usuario:
+            return jsonify({"message": "El usuario no fue encontrado."}), 404
 
-            flash('El usuario no fue encontrado')
-
-            return render_template('errors/404_notFound.html')
-
-        return render_template('adminUsuario.html',title='Usuario', usuario=usuario)
+       
+        return jsonify({"message": "Usuario encontrado.", "usuario": usuario}), 200
 
     except ValueError:
-
-        flash('El ID es invalido')
-
-        return render_template('errors/404_notFound.html')
+        return jsonify({"message": "El ID es invalido. Debe ser un numero entero."}), 400
 
     except Exception:
-        return render_template('errorGenerico.html', message='Error al obtener el usuario')
-    
+        return jsonify({"message": "Error al obtener el usuario."}), 500

@@ -34,5 +34,24 @@ MESA_RESERVADA_SQL = """
     FROM reservas 
     WHERE fecha = %s AND mesa = %s AND hora = %s.
 """
+#usuarios
 
+OBTENER_USUARIO_POR_EMAIL = "SELECT id, rol FROM usuarios WHERE email = %s"
+
+OBTENER_USUARIO_POR_ID = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE id = %s"
+
+LISTAR_TODOS_LOS_USUARIOS = "SELECT id, nombre, email, rol FROM usuarios"
+
+INSERTAR_USUARIO = """
+    INSERT INTO usuarios (nombre, numero, email, rol) 
+    VALUES (%s, %s, %s, %s)
+"""
+
+ELIMINAR_USUARIO_POR_ID = "DELETE FROM usuarios WHERE id = %s"
+
+ACTUALIZAR_USUARIO_COMPLETO = """
+    UPDATE usuarios 
+    SET nombre = %s, numero = %s, email = %s 
+    WHERE id = %s
+"""
 # Falta hora en la BBDD
