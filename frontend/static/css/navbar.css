@@ -29,9 +29,15 @@
     margin: 0;
     padding: 0;
 }
-.navbar-links, a{
-    padding: 10px;
+.navbar-links a {
+    display: inline-block;  
+    white-space: nowrap;
+    padding: 10px 30px;     
     text-decoration: none;
+    background-color: black;
+    border-radius: 40px;
+    font-size: 20px;
+    color: white;
 }
 a{
     background-color: black;
@@ -43,6 +49,7 @@ a{
 }
 h1 {
     font-size: 40px;
+    margin: 0;
 }
 @media(max-width:768px) {
     .navbar{

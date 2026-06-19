@@ -75,7 +75,7 @@ def crear_usuario():
 
         if respuesta.status_code == 201:
             flash("Usuario creado con exito", "success")
-            return redirect(url_for('home'))
+            return redirect(url_for('auth.mostrar_login'))
         
         flash("No se pudo crear el usuario", "error")
         return redirect(url_for('auth.mostrar_registro'))
