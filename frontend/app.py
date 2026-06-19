@@ -21,7 +21,7 @@ app.register_blueprint(reservas_bp)
 
 @app.route('/')
 def index():
-    return redirect(url_for('auth.mostrar_login'))
+    return redirect(url_for('home'))
 
 @app.route('/home')
 def home():
