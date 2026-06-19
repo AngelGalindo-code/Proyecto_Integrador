@@ -5,7 +5,7 @@ import datetime
 import os
 
 usuarios_bp = Blueprint("usuarios", __name__)
-@usuarios_bp.route('/usuarios', methods=['POST'])
+@usuarios_bp.route('/', methods=['POST'])
 
 def crear_usuario():
 

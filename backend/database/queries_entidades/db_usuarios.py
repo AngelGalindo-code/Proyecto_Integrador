@@ -1,6 +1,5 @@
 from database.queries import *
 from database.conexion import get_connection
-from pymysql import Error
 
 def obtener_usuario_por_email(cursor, email):
     cursor.execute(OBTENER_USUARIO_POR_EMAIL, (email,))
@@ -37,11 +36,11 @@ def getUsuarios():
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True) 
     try:
-        cursor.execute("SELECT id, nombre, email, rol FROM usuarios")
+        cursor.execute(LISTAR_TODOS_LOS_USUARIOS)
         usuarios = cursor.fetchall()
         return usuarios
-    except Error as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error en getUsuarios: {e}")
         return None
     finally:
         cursor.close()
@@ -51,11 +50,11 @@ def getUsuarioPorId(id_usuario):
     conexion = get_connection()
     cursor = conexion.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id, nombre, email, rol FROM usuarios WHERE id = %s", (id_usuario,))
+        cursor.execute(OBTENER_USUARIO_POR_ID, (id_usuario,))
         usuario = cursor.fetchone() 
         return usuario
-    except Error as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error en getUsuarioPorId: {e}")
         return None
     finally:
         cursor.close()
@@ -65,12 +64,11 @@ def eliminarUsuarioPorId(id_usuario):
     conexion = get_connection()
     cursor = conexion.cursor()
     try:
-        cursor.execute("DELETE FROM usuarios WHERE id = %s", (id_usuario,))
+        cursor.execute(ELIMINAR_USUARIO_POR_ID, (id_usuario,))
         conexion.commit()
-       
         return cursor.rowcount > 0 
-    except Error as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error en eliminarUsuarioPorId: {e}")
         return False
     finally:
         cursor.close()
