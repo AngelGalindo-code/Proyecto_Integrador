@@ -4,9 +4,7 @@ from constantes import URL_BACKEND
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
-@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-
-@usuarios_bp.route('/usuario/perfil')
+@usuarios_bp.route('/usuario/perfil', methods=['GET'])
 def perfil_usuario():
     
     if 'usuario' not in session or 'token' not in session:
@@ -73,7 +71,7 @@ def actualizar_completamente_usuario(id):
             return redirect(url_for('usuarios.panel_usuario'))
         
         flash("No se pudo actualizar el usuario")
-        return render_template('panel-usuario.html')
+        return render_template('panel_usuario.html')
     
     except Exception:
         return render_template('errorGenerico.html', message='Error al actualizar usuario')
@@ -109,7 +107,7 @@ def actualizar_parcialmente_ususario(id):
 
         
         flash("No se pudo actualizar el usuario")
-        return render_template('panel-usuario.html')
+        return render_template('panel_usuario.html')
     
     except Exception:
         return render_template('errorGenerico.html', message='Error al actualizar usuario')

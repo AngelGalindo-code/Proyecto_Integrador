@@ -48,7 +48,7 @@ def logout():
     flash("Sesion cerrada correctamente")
     return redirect(url_for('home'))
 
-@auth_bp.route('/usuarios', methods=['POST'])
+@auth_bp.route('/registro', methods=['POST'])
 def crear_usuario():
     if not request.form:
         flash("No se recibio informacion en el formulario.", "error")
