@@ -7,6 +7,35 @@ import requests
 resenas_bp = Blueprint("resenas", __name__)
 
 
+@resenas_bp.route("/", methods=["POST"])
+@requiere_login()
+def publicar_resena():
+
+    id_usuario = session["usuario"]["id"]
+    comentario = request.form.get("ucomentario", "").strip()
+    valoracion = int(request.form.get("uestrellas", 0))
+
+    resultado = guardar_resena(id_usuario, comentario, valoracion)
+
+    if resultado == 400:
+        flash(
+            "No se han ingresado todos los datos o la valoracion no es valida",
+            "error",
+        )
+
+
+    if resultado == 404:
+        flash("No se encontró el usuario", "error")
+
+
+    if resultado == 201:
+        flash("Reseña cargada", "success")
+
+
+    confirmar_reseña(id_usuario)
+    return redirect(url_for("home.pagina_principal"))
+
+
 def resenas_destacadas():
 
     resenas = obtener_resenas()
