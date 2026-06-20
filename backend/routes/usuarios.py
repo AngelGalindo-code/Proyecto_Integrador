@@ -5,7 +5,7 @@ import datetime
 import os
 
 usuarios_bp = Blueprint("usuarios", __name__)
-@usuarios_bp.route('/', methods=['POST'])
+@usuarios_bp.route('/usuarios', methods=['POST'])
 
 def crear_usuario():
 
@@ -121,9 +121,7 @@ def login():
             conn.close()
 
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-
 def actualizar_completamente_usuario(id):
-
     if id <= 0:
         return jsonify({"message": "ID de usuario invalido."}), 400
     
@@ -138,34 +136,20 @@ def actualizar_completamente_usuario(id):
     if not nombre or not numero or not email:
         return jsonify({"message": "Faltan datos obligatorios para la actualizacion completa."}), 400
     
-    conn = None
-    cursor = None
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        usuario = obtener_usuario_por_id(cursor, id)
+        usuario = getUsuarioPorId(id)
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
-
-        actualizar_usuario_completo(cursor, id, nombre, numero, email)
-        conn.commit()
+        
+        actualizar_usuario_completo(id, nombre, numero, email)
         
         return jsonify({"message": "Tus datos se actualizaron correctamente."}), 200
     except Exception:
         return jsonify({"message": "Error al actualizar usuario."}), 500
-    
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
    
             
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-
 def actualizar_parcialmente_ususario(id):
-    
     if id <= 0:
         return jsonify({"message": "ID de usuario invalido."}), 400
     
@@ -173,47 +157,29 @@ def actualizar_parcialmente_ususario(id):
     if not data:
         return jsonify({"message": "No se recibio informacion para editar."}), 400
      
-    conn = None
-    cursor = None
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        usuario = obtener_usuario_por_id(cursor, id)
+        usuario = getUsuarioPorId(id)
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
         
         campos_a_editar = {}
-
         if "nombre" in data:
             campos_a_editar["nombre"] = data["nombre"]
-
-        if "numero" in data:
+        if "numero" in data: 
             campos_a_editar["numero"] = data["numero"]
-
-        if "email" in data:
+        if "email" in data:  
             campos_a_editar["email"] = data["email"]
-
-        actualizar_usuario_parcial(cursor, id, campos_a_editar)
-        conn.commit()
 
         if not campos_a_editar:
             return jsonify({"message": "No se enviaron campos validos para modificar."}), 400
 
-        actualizar_usuario_parcial(cursor, id, campos_a_editar)
-        conn.commit()
+        actualizar_usuario_parcial(id, campos_a_editar)
 
         return jsonify({"message": "Campos modificados con exito."}), 200
     except Exception:
         return jsonify({"message": "Error al actualizar usuario parcialmente."}), 500
-        
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
    
-@usuarios_bp.route('/usuarios/<id>/eliminar', methods=['POST'])
+@usuarios_bp.route('/usuarios/<int:id>/eliminar', methods=['POST'])
 def eliminarUsuario(id):
     try:
         
@@ -239,9 +205,10 @@ def eliminarUsuario(id):
 @usuarios_bp.route('/admin/usuarios', methods=['GET'])
 def adminUsuarios():
     try:
-    
-        if session.get('rol') != 'admin':
-            return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
+        # Comentado temporalmente para pruebas en Postman
+        # if session.get('rol') != 'admin':
+        #if session.get('rol') != 'admin':
+        #    return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
 
         usuarios = getUsuarios()
 
@@ -255,26 +222,24 @@ def adminUsuarios():
         return jsonify({"message": "Error al obtener usuarios."}), 500       
         
         
-@usuarios_bp.route('/admin/usuarios/<id>', methods=['GET'])
+@usuarios_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
 def adminUsuarioPorId(id):
     try:
         id_entero = int(id)
         if id_entero <= 0:
             return jsonify({"message": "El ID es invalido."}), 400
             
-        if session.get('rol') != 'admin':
-            return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
+        # Comentado temporalmente para pruebas en Postman
+        # if session.get('rol') != 'admin':
+        #     return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
 
         usuario = getUsuarioPorId(id_entero)
 
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
+    
+        return jsonify({"message": "Usuario encontrado.", "usuario": usuario }), 200
 
-       
-        return jsonify({"message": "Usuario encontrado.", "usuario": usuario}), 200
-
-    except ValueError:
-        return jsonify({"message": "El ID es invalido. Debe ser un numero entero."}), 400
-
-    except Exception:
+    except Exception as e:
+        print(f"Error en ruta adminUsuarioPorId: {e}")
         return jsonify({"message": "Error al obtener el usuario."}), 500

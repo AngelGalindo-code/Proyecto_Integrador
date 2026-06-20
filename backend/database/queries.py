@@ -36,7 +36,7 @@ MESA_RESERVADA_SQL = """
 """
 #usuarios
 
-OBTENER_USUARIO_POR_EMAIL = "SELECT id, rol FROM usuarios WHERE email = %s"
+OBTENER_USUARIO_POR_EMAIL = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE email = %"
 
 OBTENER_USUARIO_POR_ID = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE id = %s"
 

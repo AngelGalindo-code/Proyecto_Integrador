@@ -16,7 +16,7 @@ app.register_blueprint(platos_bp, url_prefix='/platos')
 app.register_blueprint(ranking_bp, url_prefix='/ranking')
 app.register_blueprint(reseñas_bp, url_prefix='/reseñas')
 app.register_blueprint(reservas_bp, url_prefix='/reservas')
-app.register_blueprint(usuarios_bp, url_prefix='/usuarios')
+app.register_blueprint(usuarios_bp)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

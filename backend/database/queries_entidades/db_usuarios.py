@@ -5,10 +5,6 @@ def obtener_usuario_por_email(cursor, email):
     cursor.execute(OBTENER_USUARIO_POR_EMAIL, (email,))
     return cursor.fetchone()  
 
-def obtener_usuario_por_id(cursor, id_usuario):
-    cursor.execute(OBTENER_USUARIO_POR_ID, (id_usuario,))
-    return cursor.fetchone()
-
 def insertar_usuario(cursor, nombre, numero, email, rol="usuario"):
     cursor.execute(INSERTAR_USUARIO, (nombre, numero, email, rol))
 
@@ -34,7 +30,7 @@ def actualizar_usuario_parcial(cursor, id_usuario, campos_actualizar):
 
 def getUsuarios():
     conexion = get_connection()
-    cursor = conexion.cursor(dictionary=True) 
+    cursor = conexion.cursor() 
     try:
         cursor.execute(LISTAR_TODOS_LOS_USUARIOS)
         usuarios = cursor.fetchall()
@@ -48,7 +44,7 @@ def getUsuarios():
 
 def getUsuarioPorId(id_usuario):
     conexion = get_connection()
-    cursor = conexion.cursor(dictionary=True)
+    cursor = conexion.cursor()
     try:
         cursor.execute(OBTENER_USUARIO_POR_ID, (id_usuario,))
         usuario = cursor.fetchone() 
