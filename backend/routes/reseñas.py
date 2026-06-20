@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
-
-import mysql.connector
+from database.conexion import get_connection
 
 reseñas_bp = Blueprint("reseñas", __name__)
 
