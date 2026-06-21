@@ -121,34 +121,6 @@ def login():
             cursor.close()
         if conn:
             conn.close()
-
-@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-def actualizar_completamente_usuario(id):
-    if id <= 0:
-        return jsonify({"message": "ID de usuario invalido."}), 400
-    
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No se recibieron datos para actualizar."}), 400
-    
-    nombre = data.get("nombre")
-    numero = data.get("numero")
-    email = data.get("email")
-
-    if not nombre or not numero or not email:
-        return jsonify({"message": "Faltan datos obligatorios para la actualizacion completa."}), 400
-    
-    try:
-        usuario = getUsuarioPorId(id)
-        if not usuario:
-            return jsonify({"message": "El usuario no fue encontrado."}), 404
-        
-        actualizar_usuario_completo(id, nombre, numero, email)
-        
-        return jsonify({"message": "Tus datos se actualizaron correctamente."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario."}), 500
-   
             
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 def actualizar_parcialmente_ususario(id):
@@ -158,7 +130,6 @@ def actualizar_parcialmente_ususario(id):
     data = request.get_json()
     if not data:
         return jsonify({"message": "No se recibio informacion para editar."}), 400
-     
     try:
         usuario = getUsuarioPorId(id)
         if not usuario:
@@ -178,9 +149,10 @@ def actualizar_parcialmente_ususario(id):
         actualizar_usuario_parcial(id, campos_a_editar)
 
         return jsonify({"message": "Campos modificados con exito."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario parcialmente."}), 500
-   
+    except Exception as e:
+        print("error:", str(e)) 
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500 
+    
 @usuarios_bp.route('/usuarios/<int:id>/eliminar', methods=['POST'])
 def eliminarUsuario(id):
     try:
