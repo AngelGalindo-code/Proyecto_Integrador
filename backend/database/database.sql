@@ -14,6 +14,7 @@ CREATE TABLE reservas(
     hora DATETIME NOT NULL,
     mesa INT NOT NULL,
     cantidad_personas INT NOT NULL,
+    estado_reserva VARCHAR(50) NOT NULL,
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
@@ -29,6 +30,7 @@ CREATE TABLE resenas(
     id_usuario INT NOT NULL,
     comentario TEXT,
     valoracion INT NOT NULL,
+    fecha_publicacion DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );
