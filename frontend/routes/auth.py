@@ -90,7 +90,7 @@ def crear_usuario():
 def obtener_usuario(nombre, email):
     try:
         response = requests.post(
-            f"{URL_BACKEND}/usuarios/login",
+            f"{URL_BACKEND}/login",
             json={"usuario": nombre, "email": email},
             timeout=10,
         )

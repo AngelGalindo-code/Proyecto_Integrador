@@ -41,7 +41,8 @@ def crear_usuario():
 
         return jsonify({"message": "Usuario creado con exito!"}), 201
     
-    except Exception:
+    except Exception as e:
+        print("error:", str(e)) 
         return jsonify({"message": "Error del servidor al intentar crear el usuario."}), 500
     finally:
         if cursor:
@@ -73,7 +74,7 @@ def login():
     cursor = None
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         usuario = obtener_usuario_por_email(cursor, email)
 
