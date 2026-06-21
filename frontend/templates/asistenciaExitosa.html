@@ -2,14 +2,18 @@
 
 {% block content %}
 <div class="asistencia-container">
+    
     <div class="asistencia-icono">✓</div>
-    <h1 class="asistencia-titulo">¡Asistencia Confirmada!</h1>
     
-    <p class="asistencia-texto">
-        La reserva <strong>#{{ id_reserva }}</strong> ha sido marcada como 
-        <span class="badge-completada">COMPLETADA</span> con éxito.
-    </p>
+    <h1 class="asistencia-titulo">¡Asistencia confirmada!</h1>
+    <p class="asistencia-texto">La reserva <strong>#{{ id_reserva }}</strong> cambió su estado a <span class="badge-completada">Completada</span>.</p>
     
-    <p class="asistencia-ayuda">El cliente ya puede ingresar al salón y ocupar su mesa.</p>
+    <p class="asistencia-ayuda">Los comensales ya pueden ocupar su mesa</p>
+
+    <div style="margin-top: 25px;">
+        <a href="{{ url_for('reservas.reservasList') }}" class="btn-submit" style="display: block; text-decoration: none; padding: 12px; background-color: #3498db; color: white; border-radius: 8px; font-weight: bold;">
+            Volver al Panel de Control
+        </a>
+    </div>
 </div>
 {% endblock %}

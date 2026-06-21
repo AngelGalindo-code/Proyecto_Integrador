@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="asistencia-container">
+    
+    <div class="asistencia-icono" style="color: #3498db; animation: none;">⏳</div>
+    <h1 class="asistencia-titulo" style="color: #2c3e50;">Validar Asistencia</h1>
+    <p class="asistencia-texto">Estás por registrar el ingreso del cliente.</p>
+    
+    <div style="background-color: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; text-align: left; margin: 20px 0; font-size: 15px; color: #2c3e50;">
+        <p style="margin: 6px 0;"><strong>Cliente:</strong> {{ reserva.nombre or reserva.usuario }}</p>
+        <p style="margin: 6px 0;"><strong>Comensales:</strong> {{ reserva.cantidad_personas or reserva.personas }} personas</p>
+        <p style="margin: 6px 0;"><strong>Mesa:</strong> Mesa N° {{ reserva.mesa or "A asignar" }}</p>
+        <p style="margin: 6px 0;"><strong>Hora del turno:</strong> {{ reserva.hora }} hs</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('reservas.confirmarAsistenciaQR', id_reserva=reserva.id_reserva or reserva.id) }}">
+        <button type="submit" class="btn-submit" style="width: 100%; padding: 14px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
+            Confirmar Asistencia
+        </button>
+    </form>
+    
+    <div style="margin-top: 15px;">
+        <a href="{{ url_for('reservas.reservasList') }}" style="color: #7f8c8d; text-decoration: none; font-size: 14px;">
+            Cancelar y volver
+        </a>
+    </div>
+</div>
+{% endblock %}

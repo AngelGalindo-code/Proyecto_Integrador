@@ -2,37 +2,47 @@
 
 {% block content %}
 <div class="form-container">
-    <h1>Modificar Reserva #{{ reserva['id_reserva'] }}</h1>
+    <h1>Modificar Reserva #{{ reserva['id_reserva'] or reserva['id'] }}</h1>
 
-    <form id="form-modificar" method="POST" action="{{ url_for('reservas.modificarReserva', id_reserva=reserva['id_reserva']) }}"> // Esto busca el js
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                     {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form id="form-modificar" method="POST" action="{{ url_for('reservas.modificarRerserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}">
         
-        <div class="form-group" style="margin-bottom: 15px;">
+        <div class="form-group dato_ingreso" style="margin-bottom: 15px;">
             <label for="nombre" style="display: block; margin-bottom: 5px; font-weight: bold;">Nombre del cliente:</label>
             <input type="text" id="nombre" name="nombre" value="{{ reserva['nombre'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group" style="margin-bottom: 15px;">
+        <div class="form-group dato_ingreso" style="margin-bottom: 15px;">
             <label for="fecha" style="display: block; margin-bottom: 5px; font-weight: bold;">Fecha del Turno:</label>
             <input type="date" id="fecha" name="fecha" value="{{ reserva['fecha'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group" style="margin-bottom: 15px;">
+        <div class="form-group dato_ingreso" style="margin-bottom: 15px;">
             <label for="hora" style="display: block; margin-bottom: 5px; font-weight: bold;">Hora:</label>
             <input type="time" id="hora" name="hora" value="{{ reserva['hora'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group" style="margin-bottom: 15px;">
+        <div class="form-group dato_ingreso" style="margin-bottom: 15px;">
             <label for="mesa" style="display: block; margin-bottom: 5px; font-weight: bold;">Número de Mesa:</label>
             <input type="number" id="mesa" name="mesa" value="{{ reserva['mesa'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group" style="margin-bottom: 20px;">
+        <div class="form-group dato_ingreso" style="margin-bottom: 20px;">
             <label for="cantidad_personas" style="display: block; margin-bottom: 5px; font-weight: bold;">Cantidad de personas:</label>
             <input type="number" id="cantidad_personas" name="cantidad_personas" value="{{ reserva['cantidad_personas'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
         <div class="form-actions" style="display: flex; gap: 10px; align-items: center;">
-            <button type="submit" class="btn-submit" style="padding: 10px 20px; cursor: pointer;">Guardar Cambios</button>
+            <button type="submit" id="btn-guardar-cambios" class="btn-submit" style="padding: 10px 20px; cursor: pointer;">Guardar Cambios</button>
             <a href="{{ url_for('reservas.reservasList') }}" class="btn-cancel" style="text-decoration: none; padding: 10px 20px; background-color: #e74c3c; color: white; border-radius: 4px;">Cancelar</a>
         </div>
 
