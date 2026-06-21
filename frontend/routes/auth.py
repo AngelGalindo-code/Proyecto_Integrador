@@ -42,8 +42,8 @@ def iniciar_sesion():
 
     return render_template("formulario_login.html")
 
-@auth_bp.route('/logout')
-def logout():
+@auth_bp.route('/logout', methods=['GET'])
+def cerrar_sesion():
     session.clear() 
     flash("Sesion cerrada correctamente")
     return redirect(url_for('home'))

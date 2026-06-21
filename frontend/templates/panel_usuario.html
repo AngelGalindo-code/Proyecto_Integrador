@@ -114,6 +114,10 @@
             {% else %}
                 <p>No tenés reseñas registradas.</p>
             {% endif %}
+
+            <div class="contenedor-logout">
+                <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn-logout">Cerrar Sesion</a>
+            </div>
         </section>
 
     </main>
