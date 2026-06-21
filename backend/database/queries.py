@@ -55,3 +55,44 @@ ACTUALIZAR_USUARIO_COMPLETO = """
     WHERE id = %s
 """
 # Falta hora en la BBDD
+
+# QUERIES RANKING DE USUARIOS
+
+RANKING_OBTENER_TODOS = """
+    SELECT u.id, u.nombre, u.email, r.cant_cancelaciones
+    FROM ranking_usuarios r
+    JOIN usuarios u ON r.id_usuario = u.id
+    ORDER BY r.cant_cancelaciones DESC
+"""
+
+RANKING_OBTENER_POR_USUARIO = """
+    SELECT u.id, u.nombre, u.email, r.cant_cancelaciones
+    FROM ranking_usuarios r
+    JOIN usuarios u ON r.id_usuario = u.id
+    WHERE u.id = %s
+"""
+
+RANKING_SUMAR_CANCELACION = """
+    INSERT INTO ranking_usuarios (id_usuario, cant_cancelaciones)
+    VALUES (%s, 1)
+    ON DUPLICATE KEY UPDATE
+    cant_cancelaciones = cant_cancelaciones + 1
+"""
+
+RANKING_REINICIAR = """
+    INSERT INTO ranking_usuarios (id_usuario, cant_cancelaciones)
+    VALUES (%s, 0)
+    ON DUPLICATE KEY UPDATE
+    cant_cancelaciones = 0
+"""
+
+RANKING_ELIMINAR_USUARIO = """
+    DELETE FROM ranking_usuarios
+    WHERE id_usuario = %s
+"""
+
+RANKING_OBTENER_USUARIO_RESERVA = """
+    SELECT id_usuario
+    FROM reservas
+    WHERE id_reserva = %s
+"""
