@@ -1,0 +1,208 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.fondo{
+    width: 100%;
+    min-height: 100vh;
+    background-image: url("../images/restaurante.jpeg");
+    background-size: cover;
+    background-position: center;
+}
+
+.contenido{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 200px;
+}
+
+.cartel{
+    width: 500px;
+    height: 350px;
+    background: rgba(255,255,255,0.5);
+    padding: 40px 20px;
+}
+
+.cartel h1{
+    margin: 0;
+    text-align: right;
+    font-size: 60px;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.1;
+}
+
+.fondo2 {
+    width: 100%;
+    min-height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+
+    background-image: url("../images/image.png");
+    background-size: cover;
+    background-position: center;    
+    padding: 40px; 
+}
+
+.contenedor{
+    width:100%;
+    max-width:1050px;
+    gap: 40px;
+    display:flex;
+    justify-content:center;
+}
+
+.columnas{
+    width: 50%;
+    margin:25px 25px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 35px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 15px 12px rgba(0, 0, 0, 0.5);
+}
+
+.columnas h2 {
+    font-size: 2rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    margin-bottom: 40px;
+    color: aliceblue;
+}
+
+.columnas h3{
+    color:aliceblue;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.plato{
+    display:flex;
+    margin-bottom:50px;
+    gap: 20px;
+    width: 100%;
+}
+
+.plato h3{
+    display:flex;
+}
+
+.descripcion {
+    color: #b3b3b3;        
+    font-size: 0.95rem;     
+    line-height: 1.5;       
+    font-weight: 300;        
+    margin-top: 5px;       
+    font-style: italic;
+    
+}
+
+.fotoplato{
+    width: 160px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.slider-frame {
+	width: 700px;
+    height: 700px;
+
+	overflow: hidden;
+}
+
+.slider-frame ul {
+	display: flex;
+	padding: 0;
+	width: 400%;
+	
+	animation: slide 12s infinite alternate ease-in-out;
+}
+
+.slider-frame li {
+	width: 25%;
+	list-style: none;
+}
+
+.slider-frame img {
+	width: 100%;
+}
+
+@keyframes slide {
+	0% {margin-left: 0;}
+	20% {margin-left: 0;}
+	
+	25% {margin-left: -100%;}
+	45% {margin-left: -100%;}
+	
+	50% {margin-left: -200%;}
+	70% {margin-left: -200%;}
+	
+	75% {margin-left: -300%;}
+	100% {margin-left: -300%;}
+}
+
+.seccion_sobre_nosotros{
+    background-image: url("../images/imagen3.png");
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-size: cover;
+    background-position: center;    
+    padding: 40px; 
+}
+
+.contenedor_sobre_nosotros{
+    width:100%;
+    max-width:1050px;
+    gap: 40px;
+    display:flex;
+    justify-content:right;
+}
+
+.columnas_sobre_nosotros{
+    width: 50%;
+    margin:25px 25px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 35px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 15px 12px rgba(0, 0, 0, 0.5);
+    min-height: 60vh;
+    color: white;
+}
+
+.descripcion_sobre_nosotros{
+    line-height: 30px;
+    font-style: italic;
+    margin-top: 30px;
+    color: white;
+}
+
+.estrellas {
+    color: #ffcc00;         
+    font-size: 1.1rem;       
+    letter-spacing: 2px;    
+    line-height: 1;          
+    margin-bottom: 5px;      
+}
+
+.reseñas{
+    margin-bottom: 40px;
+}
+
+.reseñas p{
+    padding-top: 20px;
+}
+
+.contenedor_reseñas{
+    display: flex;
+    gap: 30px;
+    
+}
+
+.estrellas{
+    margin-top: 15px;
+}
+
+.tarjeta_reseña p{
+    font-style: italic;
+}

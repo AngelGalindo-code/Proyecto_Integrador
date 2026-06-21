@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Login </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_login.css') }}">
+</head>
+<body>
+    <div>
+        <h1> Los Horneros </h1>
+    </div>
+    
+    <div id="formulario">
+        <form action ="{{ url_for('auth.iniciar_sesion') }}" method = "POST">
+            <h2> INICIAR SESIÓN </h2>
+            <div class="dato_ingreso">
+                <label for="nombre"> Nombre de usuario </label>
+            
+                <input type="text" id="nombre" name="unombre" placeholder="Ingresa tu usuario">
+            </div>
+            <div class="dato_ingreso">        
+                <label for="email"> Email </label> 
+        
+                <input type="text" id="email" name="uemail" placeholder="Ingresa tu email">
+            </div>
+            <div>
+                <button type="submit" id="boton_ingresar"> Ingresar </button> 
+                
+                <div>
+                    <span id="separador"> o </span>  
+                </div>              
+            
+                <a id="link_crear_cuenta" href="{{ url_for('auth.mostrar_registro') }}"> 
+                    Registrarse 
+                </a> 
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/login.js') }}" ></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - ReservaResto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+<body>
+
+    <main class="dashboard-container">
+        
+        <header class="dashboard-header">
+            <h1>Panel de Control de Administrador</h1>
+            <p>Interfaz gráfica exclusiva para la gestión de usuarios, comensales y reincidencia de cancelaciones.</p>
+        </header>
+
+        <section class="tarjetas-container">
+            <div class="tarjeta">
+                <h3>Reservas de Hoy</h3>
+                <p class="numero-destacado">{{ total_reservas_hoy }}</p>
+                <span class="subtexto">Sesiones activas en la jornada</span>
+            </div>
+
+            <div class="tarjeta">
+                <h3>Comensales del Día</h3>
+                <p class="numero-destacado">{{ total_comensales_hoy }}</p>
+                <span class="subtexto">Personas previstas para el servicio</span>
+            </div>
+
+            <div class="tarjeta alerta">
+                <h3>Cancelaciones Hoy</h3>
+                <p class="numero-destacado">{{ total_cancelaciones_hoy }}</p>
+                <span class="subtexto">Reservas dadas de baja hoy</span>
+            </div>
+        </section>
+
+<!-- Sección de Tablas y Datos Relevantes -->
+        <section class="tablas-contenedor-vertical">
+            
+            <div class="seccion-tabla">
+                <h2>Reservas Activas de Hoy</h2>
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Responsable</th>
+                                <th class="texto-centro">Comensales</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reserva in lista_reservas_hoy %}
+                            <tr>
+                                <td>{{ reserva.hora }}</td>
+                                <td>{{ reserva.nombre_usuario }}</td>
+                                <td class="texto-centro font-bold">{{ reserva.comensales }}</td>
+                                <td><span class="etiqueta ok">{{ reserva.estado }}</span></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="tabla-vacia">No hay reservas activas para el día de hoy.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="seccion-tabla">
+                <h2>Listado General de Usuarios</h2>
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre / Alias</th>
+                                <th>Correo Electrónico</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usuario in lista_usuarios %}
+                            <tr>
+                                <td>#{{ usuario.id }}</td>
+                                <td>{{ usuario.nombre }}</td>
+                                <td>{{ usuario.gmail }}</td>
+                                <td>
+                                    <a href="/admin/usuarios/{{ usuario.id }}" class="btn-enlace">Ver Detalle</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="tabla-vacia">No se encontraron usuarios registrados.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="seccion-tabla">
+                <h2>Ranking de Usuarios (Mayor reincidencia de cancelaciones)</h2>
+                <div class="tabla-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo Electrónico</th>
+                                <th class="texto-centro">Cancelaciones Totales</th>
+                                <th>Acción Sincrónica</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rank in ranking_usuarios %}
+                            <tr class="{% if rank.cant_cancelado > 3 %}fila-peligro{% endif %}">
+                                <td>{{ rank.nombre }}</td>
+                                <td>{{ rank.gmail }}</td>
+                                <td class="texto-centro font-bold">{{ rank.cant_cancelado }}</td>
+                                <td>
+                                    <form action="/admin/usuarios/{{ rank.id_usuario }}/ranking/reiniciar" method="POST" class="form-sincronico">
+                                        <button type="submit" class="btn-tabla-accion">Reiniciar Contador</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="tabla-vacia">No existen registros de penalizaciones activos.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
