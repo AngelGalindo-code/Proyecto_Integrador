@@ -6,6 +6,7 @@
   
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/publicar_resena.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
@@ -13,9 +14,9 @@
     <title>Los Horneros</title>
 </head>
 <body>
-    {% include 'navbar.html' %}
+    {% include 'components/navbar.html' %}
     
-    <section class="fondo">
+    <section class="fondo" id="inicio">
         <div class = "contenido">
             <div class="cartel">
                 <h1>CARTA DE<br>PRESENTACIÓN</h1>
@@ -32,7 +33,7 @@
         </div>
     </section>
 
-    <section class="fondo2">
+    <section class="fondo2" id="destacados">
         <div class = "contenedor">
             <div class="columnas">
                 <h2>Platos destacados</h2>
@@ -109,7 +110,7 @@
         </div>
     </section>
 
-    <section class="seccion_sobre_nosotros">
+    <section class="seccion_sobre_nosotros" id="nosotros">
         <div class="contenedor_sobre_nosotros">
             <div class="columnas_sobre_nosotros">
                 <h2></h2>
@@ -141,7 +142,11 @@
     </section>
 
     
-    {% include 'footer.html' %}
+    {% include 'menu.html' %}
+
+    {% include 'formulario_reserva.html' %}
+
+    {% include 'components/footer.html' %}
 
     {% if activar_resena %}
         {% include 'publicar_resena.html' %}

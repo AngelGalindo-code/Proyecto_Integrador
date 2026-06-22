@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/panel_usuario.css') }}">
+</head>
+<body>
+
+    <main id="panel-usuario">
+
+        <section class="seccion" id="perfil">
+            <h1>Panel del Usuario</h1>
+
+            <p><strong>ID de usuario:</strong> {{ usuario.id }}</p>
+ 
+            <form method="POST" action="/usuario/panel/editar">
+                <p>
+                    <strong>Nombre:</strong>
+                    <input type="text" name="nombre" value="{{ usuario.nombre }}">
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    <input type="email" name="email" value="{{ usuario.email }}">
+                </p>
+
+                <p>
+                    <strong>Teléfono:</strong>
+                    <input type="text" name="numero" value="{{ usuario.numero }}">
+                </p>
+
+                <button type="submit">Guardar cambios</button>
+            </form>
+        </section>
+
+        <section class="seccion" id="ranking">
+            <h2>Cancelaciones</h2>
+            <p><strong>Cancelaciones Totales:</strong> {{ ranking.cancelaciones }}</p>
+        </section>
+
+        <section class="seccion" id="reservas">
+            <h2>Mis reservas</h2>
+
+            {% if reservas %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N° Reserva</th>
+                            <th>Fecha</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                            <tr>
+                                <td>{{ reserva.id_reserva }}</td>
+                                <td>{{ reserva.fecha }}</td>
+                                <td>
+                                    <form method="POST" action="/reservas/{{ reserva.id_reserva }}/eliminar">
+                                        <button type="submit">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No tenés reservas registradas.</p>
+            {% endif %}
+        </section>
+
+        <section class="seccion" id="resenas">
+            <h2>Mis reseñas</h2>
+
+            {% if resenas %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valoración</th>
+                            <th>Comentario</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resena in resenas %}
+                            <tr>
+                                <form method="POST" action="/resenas/{{ resena.id_comentario }}/editar">
+                                    <td>
+                                        <input type="number" name="valoracion" value="{{ resena.valoracion }}" min="1" max="5">
+                                    </td>
+
+                                    <td>
+                                        <input type="text" name="comentario" value="{{ resena.comentario }}">
+                                    </td>
+
+                                    <td>Sin fecha registrada</td>
+
+                                    <td>
+                                        <button type="submit">Guardar</button>
+                                    </td>
+                                </form>
+
+                                <td>
+                                    <form method="POST" action="/resenas/{{ resena.id_comentario }}/eliminar">
+                                        <button type="submit">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No tenés reseñas registradas.</p>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
+</body>
+</html>
