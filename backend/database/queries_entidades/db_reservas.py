@@ -1,6 +1,6 @@
 from flask import flash
-from .queries import *
-from .conexion import get_connection
+from queries import *
+from database import get_connection
 
 # Las validaciones las hago aca mismo
 def getReservas():
@@ -11,6 +11,9 @@ def getReservas():
     with conexion.cursor() as cursor:
         cursor.execute(SQL_BASE_RESERVAS)
         reservas = cursor.fetchall()
+
+        if not reservas:
+            flash("NO se encontraro reservas", "error")
 
     conexion.close()
 

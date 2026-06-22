@@ -12,7 +12,7 @@
     </div>
     
     <div id="formulario">
-        <form action ="{{ url_for('usuarios.login') }}" method = "POST">
+        <form action ="{{ url_for('auth.iniciar_sesion') }}" method = "POST">
             <h2> INICIAR SESIÓN </h2>
             <div class="dato_ingreso">
                 <label for="nombre"> Nombre de usuario </label>
@@ -31,12 +31,12 @@
                     <span id="separador"> o </span>  
                 </div>              
             
-                <a id="link_crear_cuenta" href="{{ url_for('usuarios.mostrar_registro') }}"> 
+                <a id="link_crear_cuenta" href="{{ url_for('auth.mostrar_registro') }}"> 
                     Registrarse 
                 </a> 
             </div>
         </form>
     </div>
-    <script src="{{ url_for('static', filename='js/formulario_login.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}" ></script>
 </body>
 </html>

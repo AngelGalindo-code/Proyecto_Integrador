@@ -15,6 +15,11 @@
     padding: 10px 70px;
     font-family: Arial, Helvetica, sans-serif;
     color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
 }
 .navbar-links{
     display: flex;
@@ -24,9 +29,15 @@
     margin: 0;
     padding: 0;
 }
-.navbar-links, a{
-    padding: 10px;
+.navbar-links a {
+    display: inline-block;  
+    white-space: nowrap;
+    padding: 10px 30px;     
     text-decoration: none;
+    background-color: black;
+    border-radius: 40px;
+    font-size: 20px;
+    color: white;
 }
 a{
     background-color: black;
@@ -38,4 +49,26 @@ a{
 }
 h1 {
     font-size: 40px;
+    margin: 0;
+}
+@media(max-width:768px) {
+    .navbar{
+        justify-content: flex-start;
+        padding: 0;
+    }
+    .navbar-logo h1{
+        display: none;
+    }
+    .logo-img{
+        height: 80px;
+    }
+    .navbar-links{
+        gap: 2px;
+    }
+    .navbar-links a{
+        font-size: 12px;
+        padding: 6px 12px;
+        white-space: nowrap;
+        margin: 0;
+    }
 }
