@@ -1,7 +1,7 @@
-const formModificar = document.getElementById('form-modificar');
+const formCrear = document.getElementById('form-crear-reserva');
 const datosContenedores = document.getElementsByClassName('dato_ingreso');
 
-formModificar.addEventListener('submit', function(event) {
+formCrear.addEventListener('submit', function(event) {
     event.preventDefault();
 
     const erroresViejos = document.querySelectorAll('.error-mensaje');
@@ -9,10 +9,10 @@ formModificar.addEventListener('submit', function(event) {
 
     const nombre = document.getElementById('nombre').value.trim();
     const fechaInput = document.getElementById('fecha').value;
+    const hora = document.getElementById('hora').value;
     const personas = parseInt(document.getElementById('cantidad_personas').value);
 
     let tieneErrores = false;
-
     if (nombre.length < 3) {
         crearError("El nombre debe tener al menos 3 letras.", datosContenedores[0]);
         tieneErrores = true;
@@ -29,18 +29,17 @@ formModificar.addEventListener('submit', function(event) {
     }
 
     if (personas <= 0 || personas > 30) {
-        crearError("La cantidad de personas debe ser entre 1 y 30.", datosContenedores[4]);
+        crearError("La cantidad de personas debe ser entre 1 y 30.", datosContenedores[3]);
         tieneErrores = true;
     }
     if (!tieneErrores) {
-        const boton = document.getElementById('btn-guardar-cambios');
-        if (boton) {
-            boton.disabled = true;
-            boton.innerText = "Guardando...";
-        }
-        formModificar.submit(); 
+        const boton = document.getElementById('btn-confirmar-reserva');
+        boton.disabled = true;
+        boton.innerText = "Procesando...";
+        formCrear.submit(); 
     }
 });
+
 function crearError(mensaje, contenedor) {
     const errorSpan = document.createElement("span");
     errorSpan.textContent = mensaje;

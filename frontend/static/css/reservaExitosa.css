@@ -1,0 +1,70 @@
+.asistencia-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.asistencia-icono {
+    font-size: 70px;
+    color: #2ecc71;
+    line-height: 1;
+    margin-bottom: 20px;
+    animation: popIn 0.5s ease-out; 
+}
+.asistencia-titulo {
+    color: #2ecc71;
+    font-size: 28px;
+    margin: 0 0 15px 0;
+    font-weight: 700px;
+}
+
+.asistencia-texto {
+    font-size: 18px;
+    color: #2c3e50;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.badge-completada {
+    background-color: #2ecc71;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.asistencia-ayuda {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-top: 25px;
+    border-top: 1px solid #f1f2f6;
+    padding-top: 15px;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+    .asistencia-container {
+        margin: 20px 15px;
+        padding: 30px 15px;
+    }
+    .asistencia-titulo {
+        font-size: 24px;
+    }
+    .asistencia-texto {
+        font-size: 16px;
+    }
+}

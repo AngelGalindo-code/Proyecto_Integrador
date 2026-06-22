@@ -1,35 +1,12 @@
+// 1. Capturamos todos los formularios de eliminación de la tabla
 const formulariosEliminar = document.querySelectorAll('.form-eliminar-admin');
 
 formulariosEliminar.forEach(function(formulario) {
-    
-    formulario.addEventListener('submit', async function(event) {
-        
-        event.preventDefault();
-        const confirmar = confirm('¿Seguro que queres cancelar esta reserva?');
-
-        if (!confirmar) return; 
-        const url = formulario.action;
-
-        try {
-            const respuesta = await fetch(url, {
-                method: 'POST'
-            });
-
-            if (respuesta.ok) {
-                alert('Reserva cancelada con exito.');
-                const filaTabla = formulario.closest('tr');
-                
-                filaTabla.remove(); 
-
-            } else {
-                alert('Error en el servidor al intentar eliminar la reserva.');
-            }
-
-        } catch (error) {
-            console.error('Error de red:', error);
-            alert('Error de conexion con el servidor.');
+    formulario.addEventListener('submit', function(event) {
+        const confirmar = confirm('¿Estás seguro de que querés cancelar esta reserva? ');
+        if (!confirmar) {
+            event.preventDefault(); 
         }
+        
     });
 });
-
-// Arreglar las tildes
