@@ -8,7 +8,6 @@ reservas_bp = Blueprint("reservas", __name__)
 FORMATO_FECHA = "%d-%m"
 
 
-# Muchos endpoints usan otros creados previamente
 @reservas_bp.errorhandler(HTTPException)
 def handle_exception(e):
     response = e.get_response()
@@ -19,6 +18,54 @@ def handle_exception(e):
     })
     response.content_type = 'application/json'
     return response
+
+
+@reservas_bp.route('/reservas', methods=['POST'])
+def crearReserva():
+    body = request.get_json(silent=True)
+    if not body:
+        abort(400, description='No se recibieron datos')
+
+    id_usuario = body.get("id_usuario")
+    nombre = body.get("nombre")
+    fecha = body.get("fecha")
+    hora = body.get("hora")
+    cantidad_personas = body.get("cantidad_personas")
+    estado = body.get("estado", "pendiente")  # Ver el nombre que tiene en la Base de datos
+
+    if not all([id_usuario, nombre, fecha, hora, cantidad_personas]):
+        abort(400, description='Faltan campos obligatorios para registrar la reserva (id_usuario, nombre, fecha, hora, cantidad_personas)')
+
+    conexion = get_connection()
+    try:
+        with conexion.cursor() as cursor:
+            
+            query_insert = """
+                INSERT INTO reservas (id_usuario, nombre, fecha, hora, cantidad_personas, estado) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query_insert, (id_usuario, nombre, fecha, hora, cantidad_personas, estado))
+            id_nueva_reserva = cursor.lastrowid
+            
+            conexion.commit()
+
+            return jsonify({
+                "id": id_nueva_reserva,
+                "id_usuario": id_usuario,
+                "nombre": nombre,
+                "fecha": fecha,
+                "hora": hora,
+                "cantidad_personas": cantidad_personas,
+                "estado": estado,
+                "message": "Reserva creada con éxito"
+            }), 201
+
+    except Exception as e:
+        
+        conexion.rollback()
+        abort(500, description=f'Error interno de servidor: {str(e)}')
+    finally:
+        conexion.close()
 
 @reservas_bp.route('/reservas', methods=['GET'])
 def getReservas():
