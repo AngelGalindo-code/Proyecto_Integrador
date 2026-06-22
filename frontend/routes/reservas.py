@@ -22,12 +22,56 @@ apiBackend = requests.Session()
 
 reservas_bp = Blueprint("reservas", __name__)
 
-@reservas_bp.route('/crear', methods=['POST'])
-@loginRequired
-def crearReserva(): 
-    #momentaneo
-    pass
 
+@reservas_bp.route('/reservar', methods=['GET', 'POST'])
+@loginRequired
+def crearReserva():
+    if request.method == 'GET':
+        return render_template('reservas/formularioCrearReserva.html')
+
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        fecha = request.form.get('fecha', '').strip()
+        hora = request.form.get('hora', '').strip()
+        personas = request.form.get('cantidad_personas', '').strip()
+
+        if not all([nombre, fecha, hora, personas]):
+            abort(400)
+
+        if not validarFecha(fecha):
+
+            datosViejos = {
+                'nombre': nombre,
+                'fecha': fecha,
+                'hora': hora,
+                'cantidad_personas': personas
+            }
+
+            return render_template('reservas/formularioCrearReserva.html', valores=datosViejos)
+
+        try:
+            payload = {
+                'id_usuario': session.get('id_usuario'),
+                'nombre': nombre,
+                'fecha': fecha,
+                'hora': hora,
+                'cantidad_personas': int(personas),
+                'estado': 'pendiente'
+            }
+
+            respuesta = apiBackend.post(f"{URL_BACKEND}/reservas", json=payload, timeout=5)
+
+            if respuesta.status_code in [200, 201]:
+                reserva_creada = respuesta.json()
+                id_nueva_reserva = reserva_creada.get('id')
+
+                flash("¡Reserva creada con éxito!", "success")
+                return redirect(url_for('reservas.reservaExitosa', id_reserva=id_nueva_reserva))
+            else:
+                abort(500)
+
+        except requests.exceptions.RequestException:
+            abort(500)
 
 @reservas_bp.errorhandler(405)
 def method_not_allowed(e):
