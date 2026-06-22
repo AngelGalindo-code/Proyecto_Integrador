@@ -34,8 +34,8 @@ def iniciar_sesion():
             flash("Usuario o email incorrecto", "error")
             return redirect(url_for("auth.iniciar_sesion"))
         
-        session['id_usuario'] = resultado['usuario'].get('id') 
-        session['rol'] = resultado['usuario'].get('rol')
+        session['token'] = resultado['token']
+        session['usuario'] = resultado['usuario']
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")
         return redirect(url_for('home'))

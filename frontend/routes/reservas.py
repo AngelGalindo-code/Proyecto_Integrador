@@ -22,32 +22,28 @@ apiBackend = requests.Session()
 
 reservas_bp = Blueprint("reservas", __name__)
 
-
 @reservas_bp.route('/reservar', methods=['GET', 'POST'])
-@loginRequired
 def crearReserva():
     if request.method == 'GET':
-        return render_template('reservas/formularioCrearReserva.html')
+        return render_template('home.html', menu={'comidas': []})
 
     if request.method == 'POST':
         nombre = request.form.get('nombre', '').strip()
-        fecha = request.form.get('fecha', '').strip()
-        hora = request.form.get('hora', '').strip()
+        fecha_hora = request.form.get('fecha_hora', '').strip()  
+        mesa = request.form.get('mesa', '').strip()            
         personas = request.form.get('cantidad_personas', '').strip()
 
-        if not all([nombre, fecha, hora, personas]):
-            abort(400)
+        if not all([nombre, fecha_hora, mesa, personas]):
+            return render_template('home.html', menu={'comidas': []}, error="Todos los campos son obligatorios")
+
+        try:
+            fecha, hora = fecha_hora.split('T')
+        except ValueError:
+            return render_template('home.html', menu={'comidas': []}, error="Formato de fecha inválido")
 
         if not validarFecha(fecha):
-
-            datosViejos = {
-                'nombre': nombre,
-                'fecha': fecha,
-                'hora': hora,
-                'cantidad_personas': personas
-            }
-
-            return render_template('reservas/formularioCrearReserva.html', valores=datosViejos)
+            datosViejos = {'nombre': nombre, 'fecha_hora': fecha_hora, 'mesa': mesa, 'cantidad_personas': personas}
+            return render_template('home.html', valores=datosViejos, menu={'comidas': []}, error="Fecha inválida")
 
         try:
             payload = {
@@ -55,6 +51,7 @@ def crearReserva():
                 'nombre': nombre,
                 'fecha': fecha,
                 'hora': hora,
+                'mesa': mesa,
                 'cantidad_personas': int(personas),
                 'estado': 'pendiente'
             }
@@ -62,17 +59,19 @@ def crearReserva():
             respuesta = apiBackend.post(f"{URL_BACKEND}/reservas", json=payload, timeout=5)
 
             if respuesta.status_code in [200, 201]:
-                reserva_creada = respuesta.json()
-                id_nueva_reserva = reserva_creada.get('id')
+                id_nueva_reserva = respuesta.json().get('id')
 
-                flash("¡Reserva creada con éxito!", "success")
-                return redirect(url_for('reservas.reservaExitosa', id_reserva=id_nueva_reserva))
-            else:
-                abort(500)
-
+                if id_nueva_reserva is not None:
+                    flash("¡Reserva creada con éxito!", "success")
+                    return redirect(url_for('reservas.reservaExitosa', id_reserva=int(id_nueva_reserva)))
+                
+                return render_template('home.html', menu={'comidas': []}, error="Error al procesar el identificador de la reserva.")
+            
+            return render_template('home.html', menu={'comidas': []}, error="El sistema de reservas rechazó la petición.")
+                
         except requests.exceptions.RequestException:
-            abort(500)
-
+            return render_template('home.html', menu={'comidas': []}, error="Error de comunicación con el servicio de reservas")
+        
 @reservas_bp.errorhandler(405)
 def method_not_allowed(e):
 
@@ -254,7 +253,6 @@ def cancelarReserva(id_reserva):
 
 
 @reservas_bp.route('/<int:id_reserva>/exito', methods=['GET'])
-@loginRequired
 def reservaExitosa(id_reserva):
 
     idValido = validarId(id_reserva)

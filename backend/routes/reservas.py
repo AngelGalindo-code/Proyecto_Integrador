@@ -40,14 +40,19 @@ def crearReserva():
     conexion = get_connection()
     try:
         with conexion.cursor() as cursor:
-            
+            # Combinamos la fecha y la hora en el formato correcto: '2026-06-22 14:03:00'
+            fecha_hora_combinada = f"{fecha} {hora}:00"
+
             query_insert = """
                 INSERT INTO reservas (id_usuario, nombre, fecha, hora, mesa, cantidad_personas, estado) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             
-            cursor.execute(query_insert, (id_usuario, nombre, fecha, hora, mesa, cantidad_personas, estado))
+            # Pasamos 'fecha_hora_combinada' en el lugar correspondiente a la columna 'hora'
+            cursor.execute(query_insert, (id_usuario, nombre, fecha, fecha_hora_combinada, mesa, cantidad_personas, estado))
             id_nueva_reserva = cursor.lastrowid
+            
+            conexion.commit()
             
             conexion.commit()
 
@@ -64,11 +69,9 @@ def crearReserva():
             }), 201
 
     except Exception as e:
-        
         conexion.rollback()
+        print(f"error: {str(e)}") 
         abort(500, description=f'Error interno de servidor: {str(e)}')
-    finally:
-        conexion.close()
 
 
 @reservas_bp.route('/reservas', methods=['GET'])
@@ -107,8 +110,17 @@ def obtenerReservaPorId(id_reserva):
 
             if not mi_reserva:
                 abort(404, description='No se encontró ninguna reserva con ese ID')
-            
-            return jsonify(mi_reserva), 200
+                
+            reserva_mapeada = {
+                "id": mi_reserva[0],
+                "id_usuario": mi_reserva[1], 
+                "nombre": mi_reserva[2],
+                "mesa": mi_reserva[3],
+                "cantidad_personas": mi_reserva[4],
+                "fecha": str(mi_reserva[5]),
+                "hora": str(mi_reserva[6])
+            }
+            return jsonify(reserva_mapeada), 200
             
     except Exception as e:
         abort(500, description='Error en el servidor al buscar la reserva')

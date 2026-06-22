@@ -11,7 +11,7 @@ SQL_BASE_RESERVAS = """
 """
 
 SQL_GET_POR_ID = """
-    SELECT id_reserva, nombre, mesa, cantidad_personas, fecha, hora
+    SELECT id_reserva, id_usuario, nombre, mesa, cantidad_personas, fecha, hora
     FROM reservas
     WHERE id_reserva = %s;
 """

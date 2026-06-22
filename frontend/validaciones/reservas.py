@@ -24,21 +24,23 @@ def validarId(id_reserva):
     
 
 def validarFecha(fecha):
-        
     try:
-        fechaActual = datetime.now()
-        fechaReserva = datetime.strptime(fecha, formatoFecha)
+        formatoHTML = "%Y-%m-%d"
+        
+        
+        fechaActual = datetime.now().date()
+        fechaReserva = datetime.strptime(fecha, formatoHTML).date()
 
         if fechaReserva < fechaActual:
-            flash(f"La fecha de la reserva no puede ser anterior o igual a la fecha actual: {fechaActual}")
+            flash("La fecha de la reserva no puede ser anterior a la fecha actual.", "error")
             return False
             
-        return fechaReserva
+        # Si todo está bien, devolvemos True (o el objeto fechaReserva si lo usas en otro lado)
+        return True
         
-    except ValueError or TypeError:
-        flash("El formato de fecha es incorrecto. Por favor respetar el siguiente formato: dia-mes-anio")
+    except (ValueError, TypeError):
+        flash("El formato de fecha recibido es incorrecto.", "error")
         return False
-        
 
 
 def validarMesaDisponible(fecha, mesa, hora):
