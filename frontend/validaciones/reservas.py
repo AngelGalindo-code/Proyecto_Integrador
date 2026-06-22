@@ -1,7 +1,5 @@
 from flask import flash
 from datetime import datetime
-from database.db_reservas import verDisponibilidadMesa
-
 
 # En la query falta la hora!
 formatoFecha = "%d-%m" # No creo que sea necesario el anio, ya que se entiende que corre el anio actual

@@ -13,17 +13,16 @@ def get_connection():
     try:
         connection = pymysql.connect(
             host=os.getenv("DB_HOST"),
-            port=int(os.getenv("DB_PORT", 10559)),
+            port=int(os.getenv("DB_PORT", 10599)),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
             database=os.getenv("DB_NAME"),
-            ssl={'ssl': {}},      # activa el modo SSL obligatorio que pide Aiven
+            ssl={"ssl_ca": "certificates/ca.pem"},    # activa el modo SSL obligatorio que pide Aiven
             cursorclass = DictCursor
         )
 
         return connection
         
     except pymysql.MySQLError as e:
-        #print(f" Error al conectar a MySQL en Aiven: {e}")
-        #return e
-        return None
+        print(f" Error al conectar a MySQL en Aiven: {e}")
+        return e
