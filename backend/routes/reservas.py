@@ -112,13 +112,13 @@ def obtenerReservaPorId(id_reserva):
                 abort(404, description='No se encontró ninguna reserva con ese ID')
                 
             reserva_mapeada = {
-                "id": mi_reserva[0],
-                "id_usuario": mi_reserva[1], 
-                "nombre": mi_reserva[2],
-                "mesa": mi_reserva[3],
-                "cantidad_personas": mi_reserva[4],
-                "fecha": str(mi_reserva[5]),
-                "hora": str(mi_reserva[6])
+                "id": mi_reserva.get('id_reserva') or mi_reserva.get('id'),
+                "id_usuario": mi_reserva.get('id_usuario'), 
+                "nombre": mi_reserva.get('nombre'),
+                "mesa": mi_reserva.get('mesa'),
+                "cantidad_personas": mi_reserva.get('cantidad_personas'),
+                "fecha": str(mi_reserva.get('fecha')),
+                "hora": str(mi_reserva.get('hora'))
             }
             return jsonify(reserva_mapeada), 200
             

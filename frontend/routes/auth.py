@@ -36,6 +36,7 @@ def iniciar_sesion():
         
         session['token'] = resultado['token']
         session['usuario'] = resultado['usuario']
+        session['id_usuario'] = resultado['usuario'].get('id') or resultado['usuario'].get('id_usuario')
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")
         return redirect(url_for('home'))

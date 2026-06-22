@@ -24,6 +24,15 @@ reservas_bp = Blueprint("reservas", __name__)
 
 @reservas_bp.route('/reservar', methods=['GET', 'POST'])
 def crearReserva():
+    
+    id_usuario = session.get('id_usuario')
+    if not id_usuario and session.get('usuario'):
+        id_usuario = session.get('usuario').get('id') or session.get('usuario').get('id_usuario')
+
+    # Si no hay ningún usuario logueado en ningún lado, no mandamos la petición
+    if not id_usuario:
+        return render_template('home.html', menu={'comidas': []}, error="Debes iniciar sesión para realizar una reserva.")
+
     if request.method == 'GET':
         return render_template('home.html', menu={'comidas': []})
 
@@ -47,7 +56,7 @@ def crearReserva():
 
         try:
             payload = {
-                'id_usuario': session.get('id_usuario'),
+                'id_usuario': id_usuario, 
                 'nombre': nombre,
                 'fecha': fecha,
                 'hora': hora,
@@ -71,7 +80,6 @@ def crearReserva():
                 
         except requests.exceptions.RequestException:
             return render_template('home.html', menu={'comidas': []}, error="Error de comunicación con el servicio de reservas")
-        
 @reservas_bp.errorhandler(405)
 def method_not_allowed(e):
 
