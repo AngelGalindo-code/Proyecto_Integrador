@@ -275,17 +275,21 @@ def reservaExitosa(id_reserva):
         
         if sesion.status_code == 200:
             miReserva = sesion.json()
+           
+            id_sesion = session.get('id_usuario')
+            id_reserva_user = miReserva.get('id_usuario')
 
-            if session.get('id_usuario') != miReserva.get('id_usuario'):
+            if id_sesion is None or id_reserva_user is None or int(id_sesion) != int(id_reserva_user):
                 abort(403)
 
             informacion_qr = (
-                f"""--- CONFIRMACIÓN DE RESERVA ---\n
-                ID de Reserva: {miReserva.get('id')}\n
-                Nombre: {miReserva.get('nombre')}\n
-                Fecha: {miReserva.get('fecha')}\n
-                Hora: {miReserva.get('hora')} hs\n
-                Personas: {miReserva.get('personas')} personas"""
+                f"--- CONFIRMACIÓN DE RESERVA ---\n"
+                f"ID de Reserva: {miReserva.get('id')}\n"
+                f"Nombre: {miReserva.get('nombre')}\n"
+                f"Fecha: {miReserva.get('fecha')}\n"
+                f"Hora: {miReserva.get('hora')} hs\n"
+                f"Mesa: {miReserva.get('mesa')}\n"
+                f"Personas: {miReserva.get('cantidad_personas')} personas"
             )
             
             qr.add_data(informacion_qr)
