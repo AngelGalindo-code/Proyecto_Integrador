@@ -217,3 +217,31 @@ def adminUsuarioPorId(id):
     except Exception as e:
         print(f"Error en ruta adminUsuarioPorId: {e}")
         return jsonify({"message": "Error al obtener el usuario."}), 500
+
+@usuarios_bp.route('/usuarios/<int:id_usuario>/reservas', methods=['GET'])
+def obtenerReservasPorUsuario(id_usuario):
+    if id_usuario <= 0:
+        return jsonify({"message": "El ID es invalido."}), 400
+
+    conexion = get_connection()
+    cursor = None  
+    try:
+        cursor = conexion.cursor()
+        
+      
+        sql = "SELECT * FROM reservas WHERE id_usuario = %s"
+        cursor.execute(sql, (id_usuario,))
+        mis_reservas = cursor.fetchall()
+
+   
+        return jsonify(mis_reservas), 200
+            
+    except Exception as e:
+        print(f"Error en el servidor: {str(e)}")
+        return jsonify({"message": "Error al obtener las reservas del usuario."}), 500
+        
+    finally:
+    
+        if cursor:
+            cursor.close()
+        conexion.close()

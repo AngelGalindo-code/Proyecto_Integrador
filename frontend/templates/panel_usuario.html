@@ -55,7 +55,7 @@
                         {% for reserva in reservas %}
                             <tr>
                                 <td>{{ reserva.id_reserva }}</td>
-                                <td>{{ reserva.fecha }}</td>
+                                <td>{{ reserva.hora }}</td>
                                 <td>
                                     <form method="POST" action="/reservas/{{ reserva.id_reserva }}/eliminar">
                                         <button type="submit">Eliminar</button>
