@@ -405,6 +405,7 @@ def reservaExitosa(id_reserva):
         abort(400)
     
     try:
+        # 1. Le pedimos los datos de la reserva al Backend
         sesion = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
 
         if sesion.status_code == 404:
@@ -414,10 +415,16 @@ def reservaExitosa(id_reserva):
             
         miReserva = sesion.json()
 
+
         if session.get('id_usuario') != miReserva.get('id_usuario'):
             abort(403)
 
-        url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia" # Cambiar Ips
+        url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia" # Cambiar IP según tu red
+        
+  
+        qr.clear() 
+        
+        # Ahora sí, agregamos la URL limpia
         qr.add_data(url_asistencia)
         qr.make(fit=True)
         imagen_qr = qr.make_image(fill_color="black", back_color="white")
@@ -426,11 +433,9 @@ def reservaExitosa(id_reserva):
         imagen_qr.save(buffer_memoria, format="PNG")
         buffer_memoria.seek(0)
         qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
-        qr.clear()
 
-        # A partir de aca, cuando ya apreto el boton de enviar mail
+
         if request.method == 'POST':
-
             correoUsuario = session.get('email') or miReserva.get('email_usuario') or "loshorneros@gmail.com"
             
             datos_reserva = {
@@ -442,6 +447,7 @@ def reservaExitosa(id_reserva):
                 'personas': miReserva.get('cantidad_personas')
             }
 
+
             enviado = enviarQrPorMail(correoUsuario, datos_reserva, qr_base64)
             
             if enviado:
@@ -449,8 +455,10 @@ def reservaExitosa(id_reserva):
             else:
                 flash("Tu reserva está segura, pero hubo un problema técnico al enviar el correo.", "error")
             
+            # Redirigimos al mismo GET para limpiar el formulario del botón y mostrar el flash
             return redirect(url_for('reservas.reservaExitosa', id_reserva=id_reserva))
 
+    
         return render_template('reserva_exito.html', reserva=miReserva, qr_code=qr_base64)
 
     except requests.exceptions.RequestException:
