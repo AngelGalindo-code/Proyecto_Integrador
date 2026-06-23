@@ -32,7 +32,19 @@ def publicar_resena():
         flash("Reseña cargada", "success")
 
 
-    confirmar_reseña(id_usuario)
+    respuesta_resena = confirmar_reseña(id_usuario)
+
+    if respuesta_resena == 404:
+        flash("La reseña no existe", "error")
+
+    elif respuesta_resena == 400:
+        flash("Id no valida o no se recibio nada en el body", "error")
+
+    elif respuesta_resena == 204:
+        flash("Reseña guardada con exito", "success")
+
+    else:
+        flash("Hubo un error con el servidor", "error")
     return redirect(url_for("home.pagina_principal"))
 
 
@@ -119,12 +131,12 @@ def guardar_resena(id_usuario, comentario, valoracion):
     except requests.exceptions.ConnectionError:
         logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
 
-        abort(500)
+        return 500
 
     except Exception as e:
         logger.error(f"Error inesperado al obtener las resenas: {e}")
 
-        abort(500)
+        return 500
 
 
 def obtener_resena_id(id_usuario):
