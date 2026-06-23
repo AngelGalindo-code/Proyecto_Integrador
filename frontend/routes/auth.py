@@ -37,7 +37,7 @@ def iniciar_sesion():
         session['token'] = resultado['token']
         session['usuario'] = resultado['usuario']
         session['id_usuario'] = resultado['usuario'].get('id') or resultado['usuario'].get('id_usuario')
-
+        session["rol"] = resultado["usuario"].get("rol")
         session.modified = True
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")

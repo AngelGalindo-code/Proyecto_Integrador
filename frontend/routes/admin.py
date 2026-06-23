@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session
 import requests
 from constantes import URL_BACKEND
+from decorators.decorators import adminRequired, loginRequired
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -8,9 +9,16 @@ admin_bp = Blueprint("admin", __name__)
 
 
 @admin_bp.route('/admin/dashboard', methods=['GET'])
+@loginRequired
+@adminRequired
 def panelAdmin():
-    #ver temporalmente
-    return render_template('admin_dashboard.html', title='Panel de Administracion')
+    try:
+        response = requests.get(f"{URL_BACKEND}/categorias/nombres")
+        categorias = response.json().get("categoria", [])
+    except:
+        categorias = []
+
+    return render_template('admin_dashboard.html', title='Panel de Administracion', categorias=categorias)
 
 
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
