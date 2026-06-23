@@ -1,0 +1,44 @@
+.formulario_eliminar_resena {    
+    display: none;
+    position: fixed;
+    top: 35%;
+    left: 40%;
+    
+    background-color: rgba(10, 10, 12, 0.75);
+    border: 2px solid #F0C36A;
+
+    padding: 30px;
+    border-radius: 15px;
+    width: 280px;
+    height: 200px;
+    
+    
+    
+    /* el fondo oscuro */
+    box-shadow: 0 0 0 10000px rgba(10, 10, 12, 0.6);
+
+    pointer-events: auto;
+}
+
+
+.boton_cancelar_eliminar {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+.boton {
+    margin-left: 20px;
+    width: 80px;
+}
+
+#comprobacion {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.boton_cancelar_eliminar:hover, .boton:hover {
+    cursor: pointer;
+    background-color: rgb(83, 219, 83);
+    border-color: rgb(83, 219, 83)
+
+}
