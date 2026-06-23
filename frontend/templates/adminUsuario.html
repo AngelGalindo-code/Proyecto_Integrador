@@ -23,7 +23,7 @@
 
         <footer class="acciones-detalle">
             <a href="{{ url_for('admin.panelAdmin') }}" class="btn-volver">Volver al Panel</a>
-            <form action="{{ url_for('admin.eliminarUsuario', id=usuario.id) }}" methods="POST" class="form-eliminar">
+            <form action="{{ url_for('admin.eliminarUsuario', id=usuario.id) }}" method="POST" class="form-eliminar">
                 <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar permanentemente a este usuario y todas sus reservas?');">
                     Eliminar Usuario
                 </button>

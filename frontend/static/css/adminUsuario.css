@@ -45,3 +45,19 @@ strong {
 .btn-volver:hover {
     background-color: #ffd54f;
 }
+
+.btn-eliminar {
+    margin-top: 15px;
+    background: red;
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-eliminar:hover {
+    background: darkred;
+}

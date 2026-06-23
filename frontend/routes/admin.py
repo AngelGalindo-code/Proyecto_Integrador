@@ -53,18 +53,15 @@ def panelAdmin():
         total_comensales_hoy=total_comensales,     # Tarjeta 2
         total_cancelaciones_hoy=total_cancelaciones # Tarjeta 3
     )
-@admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
+@admin_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
 def eliminarUsuario(id):
-
-    if session.get('rol') != 'admin':
-
+   
+    if session.get('usuario', {}).get('rol') != 'admin':
         flash('No tiene permisos para eliminar usuarios')
-
         return redirect('/') 
         
     try:
-       
-        respuesta = requests.delete(f"{URL_BACKEND}/admin/usuarios/{id}", timeout=5)
+        respuesta = requests.post(f"{URL_BACKEND}/admin/usuarios/{id}", timeout=5)
 
         if respuesta.status_code == 404:
             flash('El usuario que intenta eliminar no existe')
@@ -72,12 +69,15 @@ def eliminarUsuario(id):
             
         if respuesta.status_code == 200:
             flash('Usuario eliminado correctamente')
-            return redirect(url_for('admin.adminUsuarios'))
+            return redirect(url_for('admin.panelAdmin'))
             
-        return render_template('errorGenerico.html', message='Error al intentar eliminar el usuario en el servidor')
+        flash('Error al intentar eliminar el usuario en el servidor.', 'danger')
+        return redirect(url_for('admin.panelAdmin'))
 
-    except Exception:
-        return render_template('errorGenerico.html', message='Error inesperado al eliminar usuario')
+    except Exception as e:
+        print(f"Error inesperado al eliminar: {str(e)}")
+        flash('Ocurrió un error inesperado al intentar procesar la baja.', 'danger')
+        return redirect(url_for('admin.panelAdmin'))
     
 
 @admin_bp.route('/admin/usuarios/<int:id>', methods=['GET'])

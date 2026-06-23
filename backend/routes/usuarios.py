@@ -153,29 +153,47 @@ def actualizar_parcialmente_ususario(id):
         print("error:", str(e)) 
         return jsonify({"message": f"Error del servidor: {str(e)}"}), 500 
     
-@usuarios_bp.route('/usuarios/<int:id>/eliminar', methods=['POST'])
+@usuarios_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
 def eliminarUsuario(id):
+    if id <= 0:
+        return jsonify({"message": "El ID es inválido."}), 400
+
+    conexion = None
+    cursor = None
     try:
-        
-        id_entero = int(id)
-        if id_entero <= 0:
-            return jsonify({"message": "El ID es invalido."}), 400
-        
-    
-        eliminado = eliminarUsuarioPorId(id_entero) 
-        if not eliminado:
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        # 1. Verificar si el usuario existe antes de mover un dedo
+        cursor.execute(OBTENER_USUARIO_POR_ID, (id,))
+        usuario = cursor.fetchone()
+        if not usuario:
             return jsonify({"message": "No existe un usuario con ese ID."}), 404
 
-        return jsonify({"message": "Usuario eliminado correctamente."}), 200
+        # Borrar primero las reservas (Hijo de usuarios)
+        sql_eliminar_reservas = "DELETE FROM reservas WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_reservas, (id,))
 
-    except ValueError:
+        #  Borrar del ranking si existe (Hijo de usuarios)
+        sql_eliminar_ranking = "DELETE FROM ranking_usuarios WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_ranking, (id,))
+
+
+        cursor.execute(ELIMINAR_USUARIO_POR_ID, (id,))
+    
+        conexion.commit()
+
+        return jsonify({"message": "Usuario y sus datos asociados eliminados en cascada con éxito."}), 200
+
+    except Exception as e:
+        if conexion: 
+            conexion.rollback() # Si algo falla, deshace todo para no romper la consistencia
+        print("Error en eliminarUsuario:", str(e))
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500
         
-        return jsonify({"message": "El ID debe ser un numero entero."}), 400
-
-    except Exception:
-       
-        return jsonify({"message": "Error al eliminar usuario."}), 500
-         
+    finally:
+        if cursor: cursor.close()
+        if conexion: conexion.close()
 @usuarios_bp.route('/admin/usuarios', methods=['GET'])
 def obtener_todos_los_usuarios():
     usuarios_db = getUsuarios() 
