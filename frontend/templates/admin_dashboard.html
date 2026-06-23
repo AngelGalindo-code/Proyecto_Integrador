@@ -9,7 +9,19 @@
 <body>
 
     <main class="dashboard-container">
-        
+        <div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mensajes-flash">
+                        {% for category, message in messages %}
+                            <div class="alerta-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
         <header class="dashboard-header">
             <h1>Panel de Control de Administrador</h1>
             <p>Interfaz gráfica exclusiva para la gestión de usuarios, comensales y reincidencia de cancelaciones.</p>
@@ -137,19 +149,6 @@
             <!-- Sección de categorias -->
             <div class="seccion-tabla">
                 <h2>Gestión de Categorías</h2>
-                    <div>
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                <div class="mensajes-flash">
-                                    {% for category, message in messages %}
-                                        <div class="alerta-{{ category }}">
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
                 <div class="tablas-contenedor-vertical">
                     <div class="tarjeta">
                         <h3>Crear Categoría</h3>
@@ -274,24 +273,10 @@
                 <!-- Sección de platos -->
                 <div class="seccion-tabla">
                     <h2>Gestión de Platos</h2>
-                        <div>
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    <div class="mensajes-flash">
-                                        {% for category, message in messages %}
-                                            <div class="alerta-{{ category }}">
-                                                {{ message }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        </div>
-
                 <div class="tablas-contenedor-vertical">
                     <div class="tarjeta">
                         <h3>Crear Plato</h3>
-                        <form action="/platos" method="POST" class="form-sincronico">
+                        <form action="/admin/platos/crear" method="POST" class="form-sincronico">
                             <table class="tabla-admin">
                                 <thead>
                                     <tr>

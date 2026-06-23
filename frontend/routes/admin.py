@@ -17,8 +17,13 @@ def panelAdmin():
         categorias = response.json().get("categoria", [])
     except:
         categorias = []
+    try:
+        platos_response = requests.get(f"{URL_BACKEND}/platos/platos")
+        platos = platos_response.json().get("platos", [])
+    except:
+        platos = []
 
-    return render_template('admin_dashboard.html', title='Panel de Administracion', categorias=categorias)
+    return render_template('admin_dashboard.html', title='Panel de Administracion', categorias=categorias, platos=platos)
 
 
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
