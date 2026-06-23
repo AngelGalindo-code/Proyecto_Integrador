@@ -12,6 +12,7 @@ from routes.usuarios import usuarios_bp
 from routes.admin import admin_bp
 from routes.reservas import reservas_bp
 from routes.reseñas import resenas_bp
+from routes.categoria import categoria_bp
 
 app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
 
@@ -20,6 +21,7 @@ app.register_blueprint(usuarios_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(reservas_bp)
 app.register_blueprint(resenas_bp)
+app.register_blueprint(categoria_bp)
 
 @app.route('/')
 def index():

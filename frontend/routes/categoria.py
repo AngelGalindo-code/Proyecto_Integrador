@@ -1,6 +1,7 @@
 from flask import Blueprint, request, flash, render_template
 from decorators.decorators import adminRequired, loginRequired
 from constantes import URL_BACKEND
+import requests
 
 categoria_bp = Blueprint("categoria", __name__)
 
@@ -17,7 +18,7 @@ def crearCategoria():
         return render_template("admin_dashboard.html")
     
     try:
-        response = request.post(f"{URL_BACKEND}/admin", json = {"nombre_categoria": nombre_categoria.strip()})
+        response = requests.post(f"{URL_BACKEND}/admin", json = {"nombre_categoria": nombre_categoria.strip()})
         if response.status_code == 201:
             flash("La categoria se creo", "success")
 
@@ -51,7 +52,7 @@ def editarCategoria():
     payload = {"id_categoria": int(id_cat), "nombre_categoria": nuevo_nombre.strip()}
 
     try:
-        response = request.put(f"{URL_BACKEND}/admin/editar", json = payload)
+        response = requests.put(f"{URL_BACKEND}/admin/editar", json = payload)
 
         if response.status_code == 204:
             flash("Categoria modificada", "success")
@@ -81,7 +82,7 @@ def eliminarCategoria():
     payload = {"id_categoria": int(id_cat)}
 
     try:
-        response = request.delete(f"{URL_BACKEND}/admin/eliminar", json = payload)
+        response = requests.delete(f"{URL_BACKEND}/admin/eliminar", json = payload)
 
         if response.status_code == 204:
             flash("La categoria se elimino", "success")

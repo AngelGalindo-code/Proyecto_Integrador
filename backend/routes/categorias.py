@@ -89,7 +89,7 @@ def obtener_nombres_categorias():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_obtener_categorias =  """
         SELECT * FROM categorias ORDER BY nombre_categoria
@@ -162,7 +162,7 @@ def agregar_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_validar_existencia_id = """
         SELECT * FROM categorias 
