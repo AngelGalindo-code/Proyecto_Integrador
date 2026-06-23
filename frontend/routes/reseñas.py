@@ -148,19 +148,30 @@ def obtener_resena_id(id_usuario):
         return {}
 
 
+@resenas_bp.route("/modificar/<int:id_comentario>", methods=["POST"])
+def modificar_resena(id_comentario):
+    id_usuario = session["usuario"]["id"]
+    comentario = request.form.get("ucomentario", "").strip()
+    valoracion = int(request.form.get("uestrellas", 0))
+
+    resultado = modificar_resena_id(id_comentario, comentario, valoracion, id_usuario)
+
+    if resultado == 400:
+        flash(
+            "No se enviaron los todos los datos o hubo una valoracion invalida", "error"
+        )
+
+    elif resultado == 404:
+        flash("Se intento modificar una reseña que no es suya", "error")
+
+    elif resultado == 204:
+        flash("Resena modificada, success")
+
+    else:
+        flash("Error en el servidor", "error")
 
 
-
-
-
-
-
-
-
-
-
-
-
+    return redirect(url_for("panel_usuario.obtener_info_usuario"))
 
 
 def modificar_resena_id(id_comentario, comentario, valoracion, id_usuario):
