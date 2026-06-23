@@ -11,7 +11,7 @@ SQL_BASE_RESERVAS = """
 """
 
 SQL_GET_POR_ID = """
-    SELECT id_reserva, nombre, mesa, cantidad_personas, fecha, hora
+    SELECT id_reserva, id_usuario, nombre, mesa, cantidad_personas, fecha, hora
     FROM reservas
     WHERE id_reserva = %s;
 """
@@ -32,11 +32,11 @@ DELETE_SQL = """
 MESA_RESERVADA_SQL = """
     SELECT id_reserva 
     FROM reservas 
-    WHERE fecha = %s AND mesa = %s AND hora = %s.
+    WHERE fecha = %s AND mesa = %s AND hora = %s
 """
 #usuarios
 
-OBTENER_USUARIO_POR_EMAIL = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE email = %"
+OBTENER_USUARIO_POR_EMAIL = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE email = %s"
 
 OBTENER_USUARIO_POR_ID = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE id = %s"
 

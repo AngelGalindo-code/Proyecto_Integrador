@@ -20,10 +20,12 @@ boton_ingresar.addEventListener("click", function(event) {
     }
 
     
+    const regexGmail = /^[a-zA-Z0-9._-]+@gmail\.com$/i
+
     if (email_usuario == "") {
         crearError("Este campo debe estar completo", datos[1])
-    } else if (!email_usuario.includes("@")) {
-        crearError("El email debe tener un formato valido", datos[1])
+    } else if (!regexGmail.test(email_usuario)) {
+        crearError("El email debe ser una cuenta de Gmail válida (ejemplo@gmail.com)", datos[1])
     }
 
 

@@ -20,6 +20,58 @@ def handle_exception(e):
 
     return response
 
+@reservas_bp.route('/reservas', methods=['POST'])
+def crearReserva():
+    body = request.get_json(silent=True)
+    if not body:
+        abort(400, description='No se recibieron datos')
+
+    id_usuario = body.get("id_usuario")
+    nombre = body.get("nombre")
+    fecha = body.get("fecha")
+    hora = body.get("hora")
+    mesa = body.get("mesa")
+    cantidad_personas = body.get("cantidad_personas")
+    estado = body.get("estado", "pendiente")  # Ver el nombre que tiene en la Base de datos
+
+    if not all([id_usuario, nombre, fecha, hora, mesa, cantidad_personas]):
+        abort(400, description='Faltan campos obligatorios para registrar la reserva (id_usuario, nombre, fecha, hora, mesa, cantidad_personas)')
+
+    conexion = get_connection()
+    try:
+        with conexion.cursor() as cursor:
+            # Combinamos la fecha y la hora en el formato correcto: '2026-06-22 14:03:00'
+            fecha_hora_combinada = f"{fecha} {hora}:00"
+
+            query_insert = """
+                INSERT INTO reservas (id_usuario, nombre, fecha, hora, mesa, cantidad_personas, estado) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            
+            # Pasamos 'fecha_hora_combinada' en el lugar correspondiente a la columna 'hora'
+            cursor.execute(query_insert, (id_usuario, nombre, fecha, fecha_hora_combinada, mesa, cantidad_personas, estado))
+            id_nueva_reserva = cursor.lastrowid
+            
+            conexion.commit()
+            
+            conexion.commit()
+
+            return jsonify({
+                "id": id_nueva_reserva,
+                "id_usuario": id_usuario,
+                "nombre": nombre,
+                "fecha": fecha,
+                "hora": hora,
+                "mesa": mesa,
+                "cantidad_personas": cantidad_personas,
+                "estado": estado,
+                "message": "Reserva creada con éxito"
+            }), 201
+
+    except Exception as e:
+        conexion.rollback()
+        print(f"error: {str(e)}") 
+        abort(500, description=f'Error interno de servidor: {str(e)}')
 
 
 @reservas_bp.route('/reservas', methods=['GET'])
@@ -58,8 +110,17 @@ def obtenerReservaPorId(id_reserva):
 
             if not mi_reserva:
                 abort(404, description='No se encontró ninguna reserva con ese ID')
-            
-            return jsonify(mi_reserva), 200
+                
+            reserva_mapeada = {
+                "id": mi_reserva.get('id_reserva') or mi_reserva.get('id'),
+                "id_usuario": mi_reserva.get('id_usuario'), 
+                "nombre": mi_reserva.get('nombre'),
+                "mesa": mi_reserva.get('mesa'),
+                "cantidad_personas": mi_reserva.get('cantidad_personas'),
+                "fecha": str(mi_reserva.get('fecha')),
+                "hora": str(mi_reserva.get('hora'))
+            }
+            return jsonify(reserva_mapeada), 200
             
     except Exception as e:
         abort(500, description='Error en el servidor al buscar la reserva')

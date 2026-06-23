@@ -41,7 +41,8 @@ def crear_usuario():
 
         return jsonify({"message": "Usuario creado con exito!"}), 201
     
-    except Exception:
+    except Exception as e:
+        print("error:", str(e)) 
         return jsonify({"message": "Error del servidor al intentar crear el usuario."}), 500
     finally:
         if cursor:
@@ -73,7 +74,7 @@ def login():
     cursor = None
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         usuario = obtener_usuario_por_email(cursor, email)
 
@@ -120,34 +121,6 @@ def login():
             cursor.close()
         if conn:
             conn.close()
-
-@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-def actualizar_completamente_usuario(id):
-    if id <= 0:
-        return jsonify({"message": "ID de usuario invalido."}), 400
-    
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No se recibieron datos para actualizar."}), 400
-    
-    nombre = data.get("nombre")
-    numero = data.get("numero")
-    email = data.get("email")
-
-    if not nombre or not numero or not email:
-        return jsonify({"message": "Faltan datos obligatorios para la actualizacion completa."}), 400
-    
-    try:
-        usuario = getUsuarioPorId(id)
-        if not usuario:
-            return jsonify({"message": "El usuario no fue encontrado."}), 404
-        
-        actualizar_usuario_completo(id, nombre, numero, email)
-        
-        return jsonify({"message": "Tus datos se actualizaron correctamente."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario."}), 500
-   
             
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
 def actualizar_parcialmente_ususario(id):
@@ -157,7 +130,6 @@ def actualizar_parcialmente_ususario(id):
     data = request.get_json()
     if not data:
         return jsonify({"message": "No se recibio informacion para editar."}), 400
-     
     try:
         usuario = getUsuarioPorId(id)
         if not usuario:
@@ -177,9 +149,10 @@ def actualizar_parcialmente_ususario(id):
         actualizar_usuario_parcial(id, campos_a_editar)
 
         return jsonify({"message": "Campos modificados con exito."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario parcialmente."}), 500
-   
+    except Exception as e:
+        print("error:", str(e)) 
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500 
+    
 @usuarios_bp.route('/usuarios/<int:id>/eliminar', methods=['POST'])
 def eliminarUsuario(id):
     try:
@@ -244,3 +217,38 @@ def adminUsuarioPorId(id):
     except Exception as e:
         print(f"Error en ruta adminUsuarioPorId: {e}")
         return jsonify({"message": "Error al obtener el usuario."}), 500
+
+@usuarios_bp.route('/usuarios/<int:id_usuario>/reservas', methods=['GET'])
+def obtenerReservasPorUsuario(id_usuario):
+    if id_usuario <= 0:
+        return jsonify({"message": "El ID es invalido."}), 400
+
+    conexion = get_connection()
+    cursor = None  
+    try:
+        cursor = conexion.cursor()
+        
+      
+        sql = """
+        SELECT id_reserva AS id, id_usuario, nombre, 
+               CAST(fecha AS CHAR) AS fecha, 
+               CAST(hora AS CHAR) AS hora, 
+               mesa, cantidad_personas, estado 
+        FROM reservas 
+        WHERE id_usuario = %s
+    """
+        cursor.execute(sql, (id_usuario,))
+        mis_reservas = cursor.fetchall()
+
+   
+        return jsonify(mis_reservas), 200
+            
+    except Exception as e:
+        print(f"Error en el servidor: {str(e)}")
+        return jsonify({"message": "Error al obtener las reservas del usuario."}), 500
+        
+    finally:
+    
+        if cursor:
+            cursor.close()
+        conexion.close()

@@ -22,13 +22,64 @@ apiBackend = requests.Session()
 
 reservas_bp = Blueprint("reservas", __name__)
 
-@reservas_bp.route('/crear', methods=['POST'])
-@loginRequired
-def crearReserva(): 
-    #momentaneo
-    pass
+@reservas_bp.route('/reservar', methods=['GET', 'POST'])
+def crearReserva():
+    
+    id_usuario = session.get('id_usuario')
+    if not id_usuario and session.get('usuario'):
+        id_usuario = session.get('usuario').get('id') or session.get('usuario').get('id_usuario')
 
+    # Si no hay ningún usuario logueado en ningún lado, no mandamos la petición
+    if not id_usuario:
+        return render_template('home.html', menu={'comidas': []}, error="Debes iniciar sesión para realizar una reserva.")
 
+    if request.method == 'GET':
+        return render_template('home.html', menu={'comidas': []})
+
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        fecha_hora = request.form.get('fecha_hora', '').strip()  
+        mesa = request.form.get('mesa', '').strip()            
+        personas = request.form.get('cantidad_personas', '').strip()
+
+        if not all([nombre, fecha_hora, mesa, personas]):
+            return render_template('home.html', menu={'comidas': []}, error="Todos los campos son obligatorios")
+
+        try:
+            fecha, hora = fecha_hora.split('T')
+        except ValueError:
+            return render_template('home.html', menu={'comidas': []}, error="Formato de fecha inválido")
+
+        if not validarFecha(fecha):
+            datosViejos = {'nombre': nombre, 'fecha_hora': fecha_hora, 'mesa': mesa, 'cantidad_personas': personas}
+            return render_template('home.html', valores=datosViejos, menu={'comidas': []}, error="Fecha inválida")
+
+        try:
+            payload = {
+                'id_usuario': id_usuario, 
+                'nombre': nombre,
+                'fecha': fecha,
+                'hora': hora,
+                'mesa': mesa,
+                'cantidad_personas': int(personas),
+                'estado': 'pendiente'
+            }
+
+            respuesta = apiBackend.post(f"{URL_BACKEND}/reservas", json=payload, timeout=5)
+
+            if respuesta.status_code in [200, 201]:
+                id_nueva_reserva = respuesta.json().get('id')
+
+                if id_nueva_reserva is not None:
+                    flash("¡Reserva creada con éxito!", "success")
+                    return redirect(url_for('reservas.reservaExitosa', id_reserva=int(id_nueva_reserva)))
+                
+                return render_template('home.html', menu={'comidas': []}, error="Error al procesar el identificador de la reserva.")
+            
+            return render_template('home.html', menu={'comidas': []}, error="El sistema de reservas rechazó la petición.")
+                
+        except requests.exceptions.RequestException:
+            return render_template('home.html', menu={'comidas': []}, error="Error de comunicación con el servicio de reservas")
 @reservas_bp.errorhandler(405)
 def method_not_allowed(e):
 
@@ -210,7 +261,6 @@ def cancelarReserva(id_reserva):
 
 
 @reservas_bp.route('/<int:id_reserva>/exito', methods=['GET'])
-@loginRequired
 def reservaExitosa(id_reserva):
 
     idValido = validarId(id_reserva)
@@ -225,17 +275,21 @@ def reservaExitosa(id_reserva):
         
         if sesion.status_code == 200:
             miReserva = sesion.json()
+           
+            id_sesion = session.get('id_usuario')
+            id_reserva_user = miReserva.get('id_usuario')
 
-            if session.get('id_usuario') != miReserva.get('id_usuario'):
+            if id_sesion is None or id_reserva_user is None or int(id_sesion) != int(id_reserva_user):
                 abort(403)
 
             informacion_qr = (
-                f"""--- CONFIRMACIÓN DE RESERVA ---\n
-                ID de Reserva: {miReserva.get('id')}\n
-                Nombre: {miReserva.get('nombre')}\n
-                Fecha: {miReserva.get('fecha')}\n
-                Hora: {miReserva.get('hora')} hs\n
-                Personas: {miReserva.get('personas')} personas"""
+                f"--- CONFIRMACIÓN DE RESERVA ---\n"
+                f"ID de Reserva: {miReserva.get('id')}\n"
+                f"Nombre: {miReserva.get('nombre')}\n"
+                f"Fecha: {miReserva.get('fecha')}\n"
+                f"Hora: {miReserva.get('hora')} hs\n"
+                f"Mesa: {miReserva.get('mesa')}\n"
+                f"Personas: {miReserva.get('cantidad_personas')} personas"
             )
             
             qr.add_data(informacion_qr)

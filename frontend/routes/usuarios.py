@@ -4,12 +4,12 @@ from constantes import URL_BACKEND
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
-@usuarios_bp.route('/usuario/perfil', methods=['GET'])
+@usuarios_bp.route('/perfil', methods=['GET'])
 def perfil_usuario():
     
     if 'usuario' not in session or 'token' not in session:
-        return redirect(url_for('login')) 
-    
+        return redirect(url_for('auth.mostrar_login'))
+
     user_actual = session['usuario']
     token = session['token'] 
     
@@ -32,6 +32,11 @@ def perfil_usuario():
         if respuesta_reservas.status_code == 200:
             lista_reservas = respuesta_reservas.json()
 
+            for reserva in lista_reservas:
+                # el HTML busca "id_reserva", pero la base de datos devuelve "id" o "id_reserva"
+                if 'id_reserva' not in reserva and 'id' in reserva:
+                    reserva['id_reserva'] = reserva['id']
+
         repuestas_resenas = requests.get(f"{URL_BACKEND}/usuarios/{user_actual['id']}/resenas", headers=autorizacion_headers, timeout=5)
         if repuestas_resenas.status_code == 200:
             lista_resenas = repuestas_resenas.json()
@@ -41,74 +46,59 @@ def perfil_usuario():
         
     return render_template('panel_usuario.html', usuario=user_actual, ranking=datos_ranking, reservas=lista_reservas, resenas=lista_resenas)
 
-def actualizar_completamente_usuario(id):
-    if id <= 0:
-        flash("ID de usuario invalido", "error")
-        return render_template('panel_usuario.html'), 400
-    
-    if not request.form:
-        flash("No se recibio informacion en el formulario.")
-        return redirect('/panel-usuario'), 400
-    
-    nombre = request.form.get("nombre")
-    numero = request.form.get("numero")
-    email = request.form.get("email")
+@usuarios_bp.route('/perfil/editar', methods=['GET'])
 
-    if not nombre or not numero or not email:
-        flash("Faltan datos obligatorios")
-        return redirect('/panel-usuario'), 400
-
-    try:
-        payload = {"nombre": nombre, "numero": numero, "email": email}
-        respuesta = requests.put(f"{URL_BACKEND}/usuarios/{id}", json=payload)
-
-        if respuesta.status_code == 404:
-            flash('El usuario no fue encontrado')
-            return render_template('errors/404_notFound.html')
+def mostrar_formulario_editar():
+    if 'usuario' not in session:
+        return redirect(url_for('auth.mostrar_login'))
         
-        if respuesta.status_code == 200:
-            flash("Tus datos se actualizaron correctamente", "success")
-            return redirect(url_for('usuarios.panel_usuario'))
-        
-        flash("No se pudo actualizar el usuario")
-        return render_template('panel_usuario.html')
-    
-    except Exception:
-        return render_template('errorGenerico.html', message='Error al actualizar usuario')
-    
-@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
+    return render_template('panel_usuario.html', usuario=session['usuario'], editar=True)
 
-def actualizar_parcialmente_ususario(id):
+@usuarios_bp.route('/perfil/editar', methods=['POST'])
+
+def actualizar_parcialmente_usuario():
+    if 'usuario' not in session:
+        return redirect(url_for('auth.mostrar_login'))
+        
+    id = session['usuario']['id']
     
     if id <= 0:
         flash("ID de usuario invalido", "error")
         return render_template('panel_usuario.html'), 400
     
     if not request.form:
-        flash("No se recibio informacion en el formulario.")
-        return redirect('/panel-usuario'), 400
+        flash("No se recibio informacion en el formulario.", "error")
+        return redirect(url_for('usuarios.perfil_usuario')), 400
     
+    # Armamos el payload solo con los campos que el usuario relleno
     campos_a_editar = {}
+    if request.form.get("nombre"): 
+        campos_a_editar["nombre"] = request.form.get("nombre")
+    if request.form.get("numero"): 
+        campos_a_editar["numero"] = request.form.get("numero")
+    if request.form.get("email"): 
+        campos_a_editar["email"] = request.form.get("email")
 
-    if request.form.get("nombre"): campos_a_editar["nombre"] = request.form.get("nombre")
-    if request.form.get("numero"): campos_a_editar["numero"] = request.form.get("numero")
-    if request.form.get("email"): campos_a_editar["email"] = request.form.get("email")
+    if not campos_a_editar:
+        flash("No se ingresaron modificaciones.", "error")
+        return redirect(url_for('usuarios.perfil_usuario'))
 
     try:
-        respuesta = requests.patch(f"{URL_BACKEND}/api/usuarios/{id}", json=campos_a_editar)
+        respuesta = requests.post(f"{URL_BACKEND}/usuarios/{id}", json=campos_a_editar)
 
         if respuesta.status_code == 404:
-            flash('El usuario no fue encontrado')
+            flash('El usuario no fue encontrado', "error")
             return render_template('errors/404_notFound.html')
         
         if respuesta.status_code == 200:
+            session['usuario'].update(campos_a_editar)
+            session.modified = True
+            
             flash("Campos modificados con exito.", "success")
-            return redirect(url_for('usuarios.panel_usuario'))
+            return redirect(url_for('usuarios.perfil_usuario'))
 
-        
-        flash("No se pudo actualizar el usuario")
-        return render_template('panel_usuario.html')
+        flash("No se pudo actualizar el usuario", "error")
+        return redirect(url_for('usuarios.perfil_usuario'))
     
     except Exception:
-        return render_template('errorGenerico.html', message='Error al actualizar usuario')
-   
+        return render_template('errorGenerico.html', message='Error al actualizar usuario parcialmente')

@@ -14,7 +14,7 @@
 
             <p><strong>ID de usuario:</strong> {{ usuario.id }}</p>
  
-            <form method="POST" action="/usuario/panel/editar">
+            <form method="POST" action="/perfil/editar">
                 <p>
                     <strong>Nombre:</strong>
                     <input type="text" name="nombre" value="{{ usuario.nombre }}">
@@ -55,7 +55,7 @@
                         {% for reserva in reservas %}
                             <tr>
                                 <td>{{ reserva.id_reserva }}</td>
-                                <td>{{ reserva.fecha }}</td>
+                                <td>{{ reserva.fecha }} a las {{ reserva.hora[:5] }} hs</td>
                                 <td>
                                     <form method="POST" action="/reservas/{{ reserva.id_reserva }}/eliminar">
                                         <button type="submit">Eliminar</button>
@@ -114,6 +114,10 @@
             {% else %}
                 <p>No tenés reseñas registradas.</p>
             {% endif %}
+
+            <div class="contenedor-logout">
+                <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn-logout">Cerrar Sesion</a>
+            </div>
         </section>
 
     </main>

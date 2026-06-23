@@ -36,14 +36,17 @@ def iniciar_sesion():
         
         session['token'] = resultado['token']
         session['usuario'] = resultado['usuario']
+        session['id_usuario'] = resultado['usuario'].get('id') or resultado['usuario'].get('id_usuario')
+
+        session.modified = True
 
         flash(f"¡Bienvenido de nuevo, {resultado['usuario']['nombre']}!", "success")
         return redirect(url_for('home'))
 
     return render_template("formulario_login.html")
 
-@auth_bp.route('/logout')
-def logout():
+@auth_bp.route('/logout', methods=['GET'])
+def cerrar_sesion():
     session.clear() 
     flash("Sesion cerrada correctamente")
     return redirect(url_for('home'))
@@ -90,7 +93,7 @@ def crear_usuario():
 def obtener_usuario(nombre, email):
     try:
         response = requests.post(
-            f"{URL_BACKEND}/usuarios/login",
+            f"{URL_BACKEND}/login",
             json={"usuario": nombre, "email": email},
             timeout=10,
         )
