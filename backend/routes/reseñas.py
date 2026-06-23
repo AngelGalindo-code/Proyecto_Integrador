@@ -152,7 +152,7 @@ def crear_reseña():
 
         con.commit()
 
-        return jsonify({"mensaje": "Reseña guardada con exito."}), 201
+        return "", 201
 
     except Exception:
         return jsonify({"mensaje": "Error del servidor"}), 500
@@ -214,7 +214,7 @@ def modificar_reseña(id_comentario):
 
         con.commit()
 
-        return jsonify({"mensaje": "Cambios guardados con éxito."}), 200
+        return "", 204
 
     except Exception:
         return jsonify({"mensaje": "Error del servidor"}), 500
@@ -265,7 +265,7 @@ def eliminar_reseña(id_comentario):
         cursor.execute("DELETE FROM resenas WHERE id_comentario = %s", (id_comentario,))
         con.commit()
 
-        return jsonify({"mensaje": "Reseña eliminada con exito."}), 200
+        return "", 204
 
     except Exception:
 
