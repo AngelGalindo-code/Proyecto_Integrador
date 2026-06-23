@@ -1,7 +1,7 @@
-from flask import Blueprint, request, flash, render_template
+from flask import Blueprint, request, flash, redirect
 from decorators.decorators import adminRequired, loginRequired
 from constantes import URL_BACKEND
-
+import requests
 categoria_bp = Blueprint("categoria", __name__)
 
 
@@ -14,10 +14,10 @@ def crearCategoria():
 
     if not nombre_categoria or not nombre_categoria.strip():
         flash("Indique el nombre de la categoria")
-        return render_template("admin_dashboard.html")
+        return redirect("http://127.0.0.1:8080/admin/dashboard")
     
     try:
-        response = request.post(f"{URL_BACKEND}/admin", json = {"nombre_categoria": nombre_categoria.strip()})
+        response = requests.post(f"{URL_BACKEND}/categorias/admin", json = {"nombre_categoria": nombre_categoria.strip()})
         if response.status_code == 201:
             flash("La categoria se creo", "success")
 
@@ -32,7 +32,7 @@ def crearCategoria():
     except request.exception.RequestException:
         flash("No se pudo conectar con el servidor", "error")
 
-    return render_template("admin_dashboard.html")
+    return redirect("/admin/dashboard")
 
 
 
@@ -44,14 +44,14 @@ def editarCategoria():
     id_cat = request.form.get("id_categoria")
     nuevo_nombre = request.form.get("nombre_categoria")
 
-    if not nuevo_nombre or not nuevo_nombre.strip():
-        flash("Indique el nuevo nombre", "error")
-        return render_template("admin_dashboard.html")
+    if not id_cat or not nuevo_nombre or not nuevo_nombre.strip():
+        flash("Indique el nuevo nombre y elija la categoria", "error")
+        return redirect("/admin/dashboard")
     
     payload = {"id_categoria": int(id_cat), "nombre_categoria": nuevo_nombre.strip()}
 
     try:
-        response = request.put(f"{URL_BACKEND}/admin/editar", json = payload)
+        response = requests.put(f"{URL_BACKEND}/categorias/admin/editar", json = payload)
 
         if response.status_code == 204:
             flash("Categoria modificada", "success")
@@ -67,7 +67,7 @@ def editarCategoria():
     except request.exception.RequestException:
         flash("No se pudo conectar con el servidor", "error")
 
-    return render_template("admin_dashboard.html")
+    return redirect("/admin/dashboard")
 
 
 
@@ -77,11 +77,14 @@ def editarCategoria():
 def eliminarCategoria():
 
     id_cat = request.form.get("id_categoria")
-
+    if not id_cat:
+        flash("Seleccione la categoria a eliminar", "error")
+        return redirect("/admin/categoria")
+    
     payload = {"id_categoria": int(id_cat)}
 
     try:
-        response = request.delete(f"{URL_BACKEND}/admin/eliminar", json = payload)
+        response = requests.delete(f"{URL_BACKEND}/categorias/admin/eliminar", json = payload)
 
         if response.status_code == 204:
             flash("La categoria se elimino", "success")
@@ -97,4 +100,4 @@ def eliminarCategoria():
     except request.exception.RequestException:
         flash("No se pudo conectar con el servidor", "error")   
 
-    return render_template("admin_dashboard.html")
+    return redirect("/admin/dashboard")
