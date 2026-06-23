@@ -14,7 +14,7 @@ def crearCategoria():
 
     if not nombre_categoria or not nombre_categoria.strip():
         flash("Indique el nombre de la categoria")
-        return redirect("http://127.0.0.1:8080/admin/dashboard")
+        return redirect("/admin/dashboard")
     
     try:
         response = requests.post(f"{URL_BACKEND}/categorias/admin", json = {"nombre_categoria": nombre_categoria.strip()})

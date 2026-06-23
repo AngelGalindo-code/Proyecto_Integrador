@@ -154,13 +154,22 @@ def actualizar_plato(id):
     try:
         datos = request.get_json()
         if not datos:
-            return jsonify(bad_request), 400
+            error_400 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_400), 400
         campos_permitidos = [
             "nombre",
             "descripcion",
             "precio",
             "disponible",
-            "imagen",
             "id_categoria",
         ]
 
@@ -172,10 +181,30 @@ def actualizar_plato(id):
                 clausulas.append(f"{llave} = %s")
                 valores.append(valor)
             else:
-                return jsonify(bad_request), 400  # campo no permitido
+                error_400 = {
+                    "errors": [
+                {
+                        "code": "400",
+                        "message": "Bad Request",
+                        "level": "error",
+                        "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+                return jsonify(error_400), 400 
 
         if not clausulas:
-            return jsonify(bad_request), 400  # no se enviaron campos para actualizar
+            error_400 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_400), 400
 
         query = f"UPDATE platos SET {', '.join(clausulas)} WHERE id_plato = %s"
         valores.append(id)
@@ -206,7 +235,18 @@ def actualizar_plato(id):
         return jsonify({"mensaje": "Plato actualizado exitosamente"}), 200
 
     except Exception as e:
-        return jsonify(server_error), 500
+        print("ERROR:", repr(e))
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
 
 
 @platos_bp.route("/platos/<int:id>", methods=["DELETE"])
