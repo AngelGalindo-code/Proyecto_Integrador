@@ -185,7 +185,7 @@ def actualizarReserva(id_reserva):
 
 
 
-@reservas_bp.route('/reservas/<int:id_reserva>', methods=['DELETE'])
+@reservas_bp.route('/reservas/<int:id_reserva>/eliminar', methods=['POST'])
 def eliminarReserva(id_reserva):
     if id_reserva <= 0:
         return jsonify({"error": "Bad Request", "message": "ID de reserva inválido"}), 400

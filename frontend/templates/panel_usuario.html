@@ -14,7 +14,7 @@
 
             <p><strong>ID de usuario:</strong> {{ usuario.id }}</p>
  
-            <form method="POST" action="/perfil/editar">
+            <form method="POST" action="{{ url_for('usuarios.actualizar_parcialmente_usuario') }}">
                 <p>
                     <strong>Nombre:</strong>
                     <input type="text" name="nombre" value="{{ usuario.nombre }}">
@@ -57,7 +57,7 @@
                                 <td>{{ reserva.id_reserva }}</td>
                                 <td>{{ reserva.fecha }} a las {{ reserva.hora[:5] }} hs</td>
                                 <td>
-                                    <form method="POST" action="/reservas/{{ reserva.id_reserva }}/eliminar">
+                                    <form method="POST" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva.id_reserva) }}">
                                         <button type="submit">Eliminar</button>
                                     </form>
                                 </td>
@@ -114,13 +114,17 @@
             {% else %}
                 <p>No tenés reseñas registradas.</p>
             {% endif %}
-
-            <div class="contenedor-logout">
-                <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn-logout">Cerrar Sesion</a>
-            </div>
         </section>
 
     </main>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+                alert("{{ messages[0] }}");
+            </script>
+        {% endif %}
+    {% endwith %}
 
     <script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
 </body>
