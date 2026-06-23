@@ -1,0 +1,81 @@
+input[type=radio]{
+    display:none;
+}
+
+.formulario_modificar_resena {    
+    display: none;
+    position: fixed;
+    top: 30%;
+    left: 38%;
+    
+    background-color: rgba(10, 10, 12, 0.75);
+    border: 2px solid #F0C36A;
+
+    padding: 30px;
+    border-radius: 15px;
+    width: 300px;
+    height: 270px;
+    
+    /* el fondo oscuro */
+    box-shadow: 0 0 0 10000px rgba(10, 10, 12, 0.6);
+
+}
+
+#aparecer_resena {
+    height: 15px;
+}
+
+#nuevo_comentario {
+    border-radius: 10px;
+    background: rgb(79, 77, 77, 0.05);
+    height: 50px;
+    width: 280px;
+    color: white;
+    margin-top: 5px;
+}
+
+
+#dato_ingreso {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.contenedor_estrellas {
+    color: #ffcc00;         
+    font-size: 1.1rem;       
+    letter-spacing: 2px;    
+    line-height: 1;          
+    margin-bottom: 5px;  
+    margin-top: 15px;    
+    text-align: center;
+    font-size: 25px;
+}
+
+#boton_publicar {
+  background-color:#F0C36A;
+  margin-top: 5px;
+  margin-left: 105px;
+  height: 30px;
+  width: 90px;
+}
+
+.boton_cancelar_modificar {
+    margin-left: 260px;
+    width: 40px;
+    height: 35px;
+    
+}
+
+.boton_cancelar_modificar:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+#boton_publicar:hover {
+    cursor: pointer;
+    background-color: rgb(83, 219, 83);
+    border-color: rgb(83, 219, 83)
+
+}
