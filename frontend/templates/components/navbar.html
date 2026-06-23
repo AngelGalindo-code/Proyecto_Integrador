@@ -10,8 +10,13 @@
         <li><a href="#nosotros">Sobre Nosotros</a></li>
 
         {% if session.get('usuario') %}
-            <li><a href="/perfil" class="btn-perfil">Mi Perfil</a></li>
+            {% if session['usuario']['rol'] == 'admin' %}
+                <li><a href="/admin" class="btn-perfil">Panel Admin</a></li>
             {% else %}
+                {# 👤 Si es un usuario común (user), ve su perfil normal #}
+                <li><a href="/perfil" class="btn-perfil">Mi Perfil</a></li>
+            {% endif %}
+        {% else %}
             <li><a href="{{ url_for('auth.mostrar_login') }}" class="btn-login">Iniciar Sesion</a></li>
         {% endif %}
     </ul>

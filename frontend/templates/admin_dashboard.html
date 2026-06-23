@@ -76,7 +76,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre / Alias</th>
-                                <th>Correo Electrónico</th>
+                                <th>Teléfono</th> <th>Correo Electrónico</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -85,14 +85,15 @@
                             <tr>
                                 <td>#{{ usuario.id }}</td>
                                 <td>{{ usuario.nombre }}</td>
-                                <td>{{ usuario.gmail }}</td>
+                                <td>{{ usuario.numero }}</td> 
+                                <td>{{ usuario.email }}</td> 
                                 <td>
                                     <a href="/admin/usuarios/{{ usuario.id }}" class="btn-enlace">Ver Detalle</a>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4" class="tabla-vacia">No se encontraron usuarios registrados.</td>
+                                <td colspan="5" class="tabla-vacia">No se encontraron usuarios registrados.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -429,6 +430,12 @@
         
         </section>
     </main>
-
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+                alert("{{ messages[0] | safe }}");
+            </script>
+        {% endif %}
+    {% endwith %}
 </body>
 </html>

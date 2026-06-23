@@ -101,40 +101,24 @@ def acces_forbidden(e):
 def bad_request(e):
     return render_template('errors/400_badRequest.html'), 400
 
-
-
-@reservas_bp.route('/admin', methods=['GET'])
-@adminRequired
-def reservasList():
-
+def obtener_reservas_backend():
     try:
-        respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/admin", timeout=5)
-
-        if respuesta.status_code == 404:
-            abort(404)
-        
-        if respuesta.status_code == 403:
-            abort(403)
-
-        if respuesta.status_code == 400:
-            abort(400)
+        # Hacemos el pedido al backend
+        respuesta = requests.get(f"{URL_BACKEND}/reservas", timeout=5)
 
         if respuesta.status_code == 200:
             reservas = respuesta.json()
-            
-            if not reservas:
-                flash("No se encontraron reservas")
-                return render_template("listaVacia.html")
-            
-            flash("Aca se encuentra el listado de todas las reservas")
-            return render_template("listas.html", reservas=reservas)
+
+            if reservas:
+                return reservas
+            else:
+                return []
+                
+        return []
         
-        else:
-            abort(500)
-        
-    except requests.exceptions.RequestException:
-        abort(500)
-        
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión con el backend de reservas: {e}")
+        return []
 
 @reservas_bp.route('/<int:id_reserva>/mireserva', methods=['GET'])
 @loginRequired
@@ -239,26 +223,29 @@ def cancelarReserva(id_reserva):
         abort(400)
     
     try:
+        # 1. Buscamos la reserva en el Backend para verificar que exista y sea del usuario logueado
         verificacion = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
         if verificacion.status_code == 404:
             abort(404)
             
         miReserva = verificacion.json()
-        if session.get('id_usuario') != miReserva.get('id_usuario'):
+        
+        # Seguridad: Validamos que el usuario en sesión coincida con el dueño de la reserva
+        if int(session.get('id_usuario')) != int(miReserva.get('id_usuario')):
             abort(403) 
 
-        respuesta = apiBackend.delete(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
+        # Le pegamos al endpoint del Backend encargado de borrar e impactar el Ranking en Aiven
+        respuesta = apiBackend.post(f"{URL_BACKEND}/reservas/{id_reserva}/eliminar", timeout=5)
         
         if respuesta.status_code == 200:
             flash('Reserva eliminada correctamente', 'success')
-            return redirect(url_for('home')) 
+            return redirect(url_for('usuarios.perfil_usuario')) 
         else:
             abort(500)
             
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
+        print(f"Error de comunicación con el backend al eliminar: {e}")
         abort(500)
-
-
 
 @reservas_bp.route('/<int:id_reserva>/exito', methods=['GET'])
 def reservaExitosa(id_reserva):
