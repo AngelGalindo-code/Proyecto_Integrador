@@ -126,3 +126,24 @@ def guardar_resena(id_usuario, comentario, valoracion):
 
         abort(500)
 
+
+def obtener_resena_id(id_usuario):
+    try:
+        response = requests.get(f"{API_BASE_URL}/resenas/usuario/{id_usuario}", timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            cambiar_estrellas(data)
+            return data
+
+        return {}
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+
+        return {}
+
+    except Exception as e:
+        logger.error(f"Error inesperado al obtener las resenas: {e}")
+        return {}
+
