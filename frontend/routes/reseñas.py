@@ -23,10 +23,8 @@ def publicar_resena():
             "error",
         )
 
-
     if resultado == 404:
         flash("No se encontró el usuario", "error")
-
 
     if resultado == 201:
         flash("Reseña cargada", "success")
@@ -136,6 +134,24 @@ def guardar_resena(id_usuario, comentario, valoracion):
     except Exception as e:
         logger.error(f"Error inesperado al obtener las resenas: {e}")
 
+        return 500
+    
+
+def confirmar_reseña(id_usuario):
+    try:
+        payload = {"estado_reserva": "RESEÑADO"}
+        respuesta = requests.patch(
+            f"{API_BASE_URL}/reservas/usuario/{id_usuario}", json=payload, timeout=5
+        )
+
+        return respuesta.status_code
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        return 500
+
+    except Exception as e:
+        logger.error(f"Error inesperado al intentar confirmar la reseña: {e}")
         return 500
 
 
