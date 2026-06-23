@@ -164,7 +164,7 @@
                 
                     <div class="tarjeta">
                         <h3>Editar Categoría</h3>
-                        <form action="/admin/editar" method="POST" class="form-sincronico">
+                        <form action="/admin/categoria/editar" method="POST" class="form-sincronico">
                             <table class="tabla-admin">
                                 <thead>
                                     <tr>
@@ -179,7 +179,7 @@
                                             <select name="id_categoria" required>
                                                 <option value="" disabled selected>Selecciona categoría</option>
                                                 {% for cat in categorias %}
-                                                    <option value="{{ cat.id_categoria }}">ID: {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
+                                                    <option value="{{ cat.id_categoria }}"> {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>

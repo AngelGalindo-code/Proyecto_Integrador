@@ -89,17 +89,18 @@ def obtener_nombres_categorias():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_obtener_categorias =  """
-        SELECT * FROM categorias ORDER BY nombre_categoria
+        SELECT id_categoria, nombre_categoria FROM categorias ORDER BY id_categoria
         """
 
         cur.execute(
            query_obtener_categorias
         )
 
-        categorias = cur.fetchall()
+        filas = cur.fetchall()
+        categorias = list(filas)
 
         if not categorias:
             error_404 = {
@@ -247,7 +248,7 @@ def modificar_nombre():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         nombre_categoria = data.get("nombre_categoria")
         cur.execute("SELECT * FROM categorias WHERE nombre_categoria = %s", (nombre_categoria,))
 
