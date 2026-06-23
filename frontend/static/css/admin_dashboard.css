@@ -273,7 +273,7 @@ tr:hover {
 }
 .alerta-success {
     background-color: #d4edda;
-    color: #2ecc71;
+    color: green;
     padding: 10px;
     border-radius: 5px;
     margin-top: 10px;

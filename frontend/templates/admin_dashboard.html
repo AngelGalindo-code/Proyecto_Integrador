@@ -140,7 +140,7 @@
                 <div class="tablas-contenedor-vertical">
                     <div class="tarjeta">
                         <h3>Crear Categoría</h3>
-                        <form action="/admin" method="POST" class="form-sincronico">
+                        <form action="{{ url_for("categoria.crearCategoria") }}" method="POST" class="form-sincronico">
                             <table class="tabla-admin">
                                 <thead>
                                     <tr>

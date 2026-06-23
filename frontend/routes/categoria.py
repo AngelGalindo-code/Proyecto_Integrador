@@ -1,7 +1,7 @@
-from flask import Blueprint, request, flash, render_template
+from flask import Blueprint, request, flash, redirect
 from decorators.decorators import adminRequired, loginRequired
 from constantes import URL_BACKEND
-
+import requests
 categoria_bp = Blueprint("categoria", __name__)
 
 
@@ -14,10 +14,10 @@ def crearCategoria():
 
     if not nombre_categoria or not nombre_categoria.strip():
         flash("Indique el nombre de la categoria")
-        return render_template("admin_dashboard.html")
+        return redirect("http://127.0.0.1:8080/admin/dashboard")
     
     try:
-        response = request.post(f"{URL_BACKEND}/admin", json = {"nombre_categoria": nombre_categoria.strip()})
+        response = requests.post(f"{URL_BACKEND}/categorias/admin", json = {"nombre_categoria": nombre_categoria.strip()})
         if response.status_code == 201:
             flash("La categoria se creo", "success")
 
@@ -32,7 +32,7 @@ def crearCategoria():
     except request.exception.RequestException:
         flash("No se pudo conectar con el servidor", "error")
 
-    return render_template("admin_dashboard.html")
+    return redirect("/admin/dashboard")
 
 
 
@@ -46,7 +46,7 @@ def editarCategoria():
 
     if not nuevo_nombre or not nuevo_nombre.strip():
         flash("Indique el nuevo nombre", "error")
-        return render_template("admin_dashboard.html")
+        return redirect("/admin/dashboard")
     
     payload = {"id_categoria": int(id_cat), "nombre_categoria": nuevo_nombre.strip()}
 
@@ -67,7 +67,7 @@ def editarCategoria():
     except request.exception.RequestException:
         flash("No se pudo conectar con el servidor", "error")
 
-    return render_template("admin_dashboard.html")
+    return redirect("/admin/dashboard")
 
 
 

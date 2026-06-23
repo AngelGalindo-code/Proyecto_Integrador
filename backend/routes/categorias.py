@@ -138,7 +138,8 @@ def obtener_nombres_categorias():
 
 @categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
-    data = request.json
+    
+    data = request.get_json()
     nombre_categoria = data.get("nombre_categoria")
 
     if (
@@ -162,7 +163,7 @@ def agregar_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_validar_existencia_id = """
         SELECT * FROM categorias 
