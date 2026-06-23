@@ -1,5 +1,5 @@
-from flask import Blueprint, session, request, flash
-from constantes import API_BASE_URL
+from flask import Blueprint, session, request, flash, abort, redirect, url_for
+from constantes import URL_BACKEND
 import logging
 import requests
 
@@ -80,7 +80,7 @@ def obtener_resenas():
     try:
 
         response = requests.get(
-            f"{API_BASE_URL}/resenas",
+            f"{URL_BACKEND}/resenas",
             timeout=10,
         )
 
@@ -91,7 +91,7 @@ def obtener_resenas():
         return {}
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
 
         return {}
 
@@ -104,7 +104,7 @@ def obtener_resenas():
 def guardar_resena(id_usuario, comentario, valoracion):
     try:
         response = requests.post(
-            f"{API_BASE_URL}/resenas",
+            f"{URL_BACKEND}/resenas",
             json={
                 "id_usuario": id_usuario,
                 "comentario": comentario,
@@ -116,7 +116,7 @@ def guardar_resena(id_usuario, comentario, valoracion):
         return response.status_code
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
 
         abort(500)
 

@@ -3,8 +3,6 @@ from routes.decorators import adminRequired, loginRequired
 from validaciones.reservas import *
 import requests 
 from constantes import URL_BACKEND
-from flask_mail import Message
-# from app import mail ---> Se importa en la duncion de mail 
 
 # Para el QR
 import qrcode
@@ -105,56 +103,6 @@ def bad_request(e):
 
 
 
-@reservas_bp.route('/reservar', methods=['GET', 'POST'])
-@loginRequired
-def crearReserva():
-    if request.method == 'GET':
-        return render_template('reservas/formularioCrearReserva.html')
-
-    if request.method == 'POST':
-        nombre = request.form.get('nombre', '').strip()
-        fecha = request.form.get('fecha', '').strip()
-        hora = request.form.get('hora', '').strip()
-        personas = request.form.get('cantidad_personas', '').strip()
-
-        if not all([nombre, fecha, hora, personas]):
-            abort(400)
-
-        if not validarFecha(fecha):
-
-            datosViejos = {
-                'nombre': nombre,
-                'fecha': fecha,
-                'hora': hora,
-                'cantidad_personas': personas
-            }
-
-            return render_template('reservas/formularioCrearReserva.html', valores=datosViejos)
-
-        try:
-            payload = {
-                'id_usuario': session.get('id_usuario'),
-                'nombre': nombre,
-                'fecha': fecha,
-                'hora': hora,
-                'cantidad_personas': int(personas),
-                'estado': 'pendiente'
-            }
-
-            respuesta = apiBackend.post(f"{URL_BACKEND}/reservas", json=payload, timeout=5)
-
-            if respuesta.status_code in [200, 201]:
-                reserva_creada = respuesta.json()
-                id_nueva_reserva = reserva_creada.get('id')
-                
-                flash("¡Reserva creada con éxito!", "success")
-                return redirect(url_for('reservas.reservaExitosa', id_reserva=id_nueva_reserva))
-            else:
-                abort(500)
-
-        except requests.exceptions.RequestException:
-            abort(500)
-
 @reservas_bp.route('/admin', methods=['GET'])
 @adminRequired
 def reservasList():
@@ -174,6 +122,11 @@ def reservasList():
         if respuesta.status_code == 200:
             reservas = respuesta.json()
             
+            if not reservas:
+                flash("No se encontraron reservas")
+                return render_template("listaVacia.html")
+            
+            flash("Aca se encuentra el listado de todas las reservas")
             return render_template("listas.html", reservas=reservas)
         
         else:
@@ -188,6 +141,7 @@ def reservasList():
 def getReservaPorId(id_reserva):
 
     id_valido = validarId(id_reserva)
+
     if not id_valido:
         abort(404)
 
@@ -196,90 +150,69 @@ def getReservaPorId(id_reserva):
 
         if respuesta.status_code == 400:
             abort(400)
+
         if respuesta.status_code == 404:
             abort(404)
 
         if respuesta.status_code == 200:
+
             miReserva = respuesta.json()
-            
-            esUsuario = session.get('id_usuario') == miReserva.get('id_usuario')
-            esAdmin = session.get('rol') == 'admin' # Ajustalo según cómo manejes los roles
-            
-            if not (esUsuario or esAdmin):
+            if session.get('id_usuario') != miReserva.get('id_usuario'):
                 abort(403)
             
-            url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia"
-            qr.add_data(url_asistencia)
-            qr.make(fit=True)
-            imagen_qr = qr.make_image(fill_color="black", back_color="white")
-            
-            buffer_memoria = io.BytesIO()
-            imagen_qr.save(buffer_memoria, format="PNG")
-            buffer_memoria.seek(0)
-            qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
-            qr.clear() # Limpiamos el objeto QR
-
-            # Tambien le agrega el qr a la vista del cliente
-            return render_template("miReserva.html", title="Mi reserva", reserva=miReserva, qr_code=qr_base64)
+            flash("Estos son los detalles de su reserva", "success")
+            return render_template("miReserva.html", title="Mi reserva", reserva=miReserva)
+        
         else:
             abort(500)
     
     except requests.exceptions.RequestException:
         abort(500)
             
-# El CSS utiliza el de crear Reserva de manera global, por lo que no necesita un Css aparte
+            
+
+
+
+
 @reservas_bp.route('/<id_reserva>/modificar', methods=['GET', 'POST']) 
 @loginRequired
 def modificarRerserva(id_reserva):
 
     id_valido = validarId(id_reserva)
+
     if not id_valido:
         abort(400)
 
     try:
         if request.method == "POST":
-            nombre = request.form.get('nombre', '').strip()
-            fecha = request.form.get('fecha', '').strip()
-            mesa = request.form.get('mesa', '').strip()
-            personas = request.form.get('cantidad_personas', '').strip()
-
-            if not validarFecha(fecha):
-                reserva_falsa = {
-                    'id': id_reserva,
-                    'nombre': nombre,
-                    'fecha': fecha,
-                    'mesa': mesa,
-                    'cantidad_personas': personas
-                }
-                return render_template("modificarReserva.html", reserva=reserva_falsa)
-
-            verificada = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
-            if verificada.status_code == 404:
-                abort(404)
+                verificada = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
+                
+                if verificada.status_code == 404:
+                    abort(404)
    
-            reserva_api = verificada.json()
-            esAdmin = session.get('rol') == 'admin'
-            esUsuario = session.get('id_usuario') == reserva_api.get('id_usuario')
+                reserva = verificada.json()
 
-            if not (esUsuario or esAdmin):
-                abort(403) 
-            
-            payload = {
-                'nombre': nombre,
-                'fecha': fecha,
-                'mesa': mesa,
-                'cantidad_personas': int(personas) 
-            }  
-    
-            reservaActualizada = apiBackend.put(f"{URL_BACKEND}/reservas/{id_reserva}/modificar", json=payload, timeout=5)
+                if session.get('id_usuario') != reserva.get('id_usuario'):
+                    abort(403)
+                
+                payload = {
+                    'nombre' : request.form.get('nombre', '').strip(),
+                    'fecha' : request.form.get('fecha', '').strip(),
+                    'mesa' : request.form.get('mesa').strip(),
+                    'cantidad_personas' : request.form.get('cantidad_personas', '').strip()
+                }  
+        
+                reservaActualizada = apiBackend.put(f"{URL_BACKEND}/reservas/{id_reserva}/modificar", json=payload, timeout=5)
 
-            if reservaActualizada.status_code == 200:
-                flash("¡Reserva actualizada con éxito!", "success")
-                return redirect(url_for("reservas.getReservaPorId", id_reserva=id_reserva))
-            else:
-                abort(500)
+                if reservaActualizada.status_code == 200:
+                    flash("Reserva actualizada con exito", "success")
+                    return redirect(url_for(".getReservaPorId", id_reserva=id_reserva))
+        
+                else:
+                    abort(500)
 
-        respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
+        
+        respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}/modificar", timeout=5)
 
         if respuesta.status_code == 404:
             abort(404)
@@ -291,6 +224,7 @@ def modificarRerserva(id_reserva):
                 abort(403)
 
             return render_template("modificarReserva.html", reserva=miReserva)
+        
         else:
             abort(500)
 
@@ -310,23 +244,13 @@ def cancelarReserva(id_reserva):
             abort(404)
             
         miReserva = verificacion.json()
-        
-        # Como en modificar para que el admin tambien pueda cancelar reservas
-        esUsuario = session.get('id_usuario') == miReserva.get('id_usuario')
-        esAdmin = session.get('rol') == 'admin'
-        
-        if not (esUsuario or esAdmin):
+        if session.get('id_usuario') != miReserva.get('id_usuario'):
             abort(403) 
 
-        # Si pasa la seguridad, le pegamos al DELETE del backend
         respuesta = apiBackend.delete(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
         
         if respuesta.status_code == 200:
             flash('Reserva eliminada correctamente', 'success')
-            
-            if esAdmin:
-                return redirect(url_for('reservas.reservasList'))
-            
             return redirect(url_for('home')) 
         else:
             abort(500)
@@ -334,44 +258,57 @@ def cancelarReserva(id_reserva):
     except requests.exceptions.RequestException:
         abort(500)
 
-@reservas_bp.route('/<int:id_reserva>/confirmar-asistencia', methods=['GET', 'POST'])
-@loginRequired
-def confirmarAsistenciaQR(id_reserva):
 
-    if session.get('rol') != 'admin':
-        abort(403) 
+
+@reservas_bp.route('/<int:id_reserva>/exito', methods=['GET'])
+def reservaExitosa(id_reserva):
 
     idValido = validarId(id_reserva)
-    if not idValido:
+    if idValido == False:
         abort(400)
-
+    
     try:
-        if request.method == 'POST':
-            payload = {'estado': 'completada'}
-            respuesta = apiBackend.put(f"{URL_BACKEND}/reservas/{id_reserva}", json=payload, timeout=5)
+        sesion = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
 
-            if respuesta.status_code == 200:
-                flash("Asistencia registrada correctamente", "success")
-                return render_template('asistenciaExitosa.html', id_reserva=id_reserva)
-            elif respuesta.status_code == 404:
-                abort(404)
-            else:
-                abort(500)
-
-        respuesta_get = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
-        if respuesta_get.status_code == 404:
+        if sesion.status_code == 404:
             abort(404)
-            
-        datos_reserva = respuesta_get.json()
         
-        return render_template('confirmarAsistencia.html', reserva=datos_reserva)
+        if sesion.status_code == 200:
+            miReserva = sesion.json()
+           
+            id_sesion = session.get('id_usuario')
+            id_reserva_user = miReserva.get('id_usuario')
+
+            if id_sesion is None or id_reserva_user is None or int(id_sesion) != int(id_reserva_user):
+                abort(403)
+
+            informacion_qr = (
+                f"--- CONFIRMACIÓN DE RESERVA ---\n"
+                f"ID de Reserva: {miReserva.get('id')}\n"
+                f"Nombre: {miReserva.get('nombre')}\n"
+                f"Fecha: {miReserva.get('fecha')}\n"
+                f"Hora: {miReserva.get('hora')} hs\n"
+                f"Mesa: {miReserva.get('mesa')}\n"
+                f"Personas: {miReserva.get('cantidad_personas')} personas"
+            )
+            
+            qr.add_data(informacion_qr)
+            qr.make(fit=True)
+            imagen_qr = qr.make_image(fill_color="black", back_color="white")
+            buffer_memoria = io.BytesIO()
+            imagen_qr.save(buffer_memoria, format="PNG")
+            buffer_memoria.seek(0)
+            qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
+            qr.clear()
+
+            return render_template('reserva_exito.html', reserva=miReserva, qr_code=qr_base64)
+        
+        else:
+            abort(500)
 
     except requests.exceptions.RequestException:
         abort(500)
 
-
-# Enviar el qr por mail
-# Funcion auxiliar --> Modularizarla o dejarla en este archivo
 def enviarQrPorMail(destinatario, datos, qr_base64):
     from app import mail  # Para evitar importaciones circulares
     try:
@@ -386,11 +323,11 @@ def enviarQrPorMail(destinatario, datos, qr_base64):
 
         if "," in qr_base64:
             qr_base64 = qr_base64.split(",")[1]
-        
+
         datosBinarios = base64.b64decode(qr_base64)
-        
+
         mensaje.attach(
-            filename=f"qr_reserva_{datos.get('id_reserva') or datos.get('id')}.png",
+            filename=f"qrreserva{datos.get('id_reserva') or datos.get('id')}.png",
             content_type="image/png",
             data=datosBinarios,
             headers=[['Content-ID', '<codigo_qr>']]
@@ -401,63 +338,3 @@ def enviarQrPorMail(destinatario, datos, qr_base64):
     except Exception:
 
         return False
-
-
-@reservas_bp.route('/<int:id_reserva>/exito', methods=['GET', 'POST'])
-@loginRequired
-def reservaExitosa(id_reserva):
-    idValido = validarId(id_reserva)
-    if not idValido:
-        abort(400)
-    
-    try:
-        sesion = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
-
-        if sesion.status_code == 404:
-            abort(404)
-        if sesion.status_code != 200:
-            abort(500)
-            
-        miReserva = sesion.json()
-
-        if session.get('id_usuario') != miReserva.get('id_usuario'):
-            abort(403)
-
-        url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia" # Cambiar Ips
-        qr.add_data(url_asistencia)
-        qr.make(fit=True)
-        imagen_qr = qr.make_image(fill_color="black", back_color="white")
-        
-        buffer_memoria = io.BytesIO()
-        imagen_qr.save(buffer_memoria, format="PNG")
-        buffer_memoria.seek(0)
-        qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
-        qr.clear()
-
-        # A partir de aca, cuando ya apreto el boton de enviar mail
-        if request.method == 'POST':
-
-            correoUsuario = session.get('email') or miReserva.get('email_usuario') or "loshorneros@gmail.com"
-            
-            datos_reserva = {
-                'id': id_reserva,
-                'nombre': miReserva.get('nombre'),
-                'fecha': miReserva.get('fecha'),
-                'hora': miReserva.get('hora'),
-                'mesa': miReserva.get('mesa'), 
-                'personas': miReserva.get('cantidad_personas')
-            }
-
-            enviado = enviarQrPorMail(correoUsuario, datos_reserva, qr_base64)
-            
-            if enviado:
-                flash("¡Comprobante enviado con éxito a tu casilla de correo!", "success")
-            else:
-                flash("Tu reserva está segura, pero hubo un problema técnico al enviar el correo.", "error")
-            
-            return redirect(url_for('reservas.reservaExitosa', id_reserva=id_reserva))
-
-        return render_template('reserva_exito.html', reserva=miReserva, qr_code=qr_base64)
-
-    except requests.exceptions.RequestException:
-        abort(500)
