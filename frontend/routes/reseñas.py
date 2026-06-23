@@ -172,7 +172,7 @@ def eliminar_resena(id_comentario):
 def eliminar_resena_id(id_usuario, id_comentario):
     try:
         response = requests.delete(
-            f"{API_BASE_URL}/resenas/{id_comentario}",
+            f"{URL_BACKEND}/resenas/{id_comentario}",
             json={"id_usuario": id_usuario},
             timeout=10,
         )
@@ -180,7 +180,7 @@ def eliminar_resena_id(id_usuario, id_comentario):
         return response.status_code
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
 
         return 500
 
