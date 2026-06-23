@@ -1,0 +1,30 @@
+<div class="formulario_modificar_resena">
+    
+    <div id="aparecer_resena"> 
+        <button type="button" class="boton_cancelar_modificar" > X </button>
+        
+    </div>
+    <h1> Editar Reseña </h1>
+    <form action="{{ url_for('resenas.modificar_resena', id_comentario=resena['id_comentario']) }}" method="POST">
+        <div>
+            <label for="nuevo_comentario"></label>
+
+            <input type="text" id= "nuevo_comentario" name="ucomentario" placeholder="Nueva reseña">
+        </div>
+            
+        <div class="contenedor_estrellas"> 
+            <label> Valoración </label> <br>
+            {% for i in range(1, 6) %}
+                <label>
+                    <input type="radio" class="estrellas" name="uestrellas" value="{{ i }}"> 
+                    <span class="iluminable"> ☆ </span>
+                </label>
+            {% endfor %}
+        </div>
+
+        <div>
+            <button type="submit" id="boton_publicar"> Publicar </button>     
+        </div>
+
+    </form>
+</div>
