@@ -158,25 +158,36 @@ def listarPlatos():
         abort(500)
 
 
-@platos_bp.route('/admin/platos/eliminar/<int:idPlato>', methods=['POST'])
-@adminRequired  # Solo el administrador puede borrar platos
-def eliminarPlato(idPlato):
+@platos_bp.route('/admin/eliminar/plato', methods=['POST'])
+@loginRequired
+@adminRequired  
+def eliminarPlato():
+    
+    id_plato = request.form.get("id_plato")
+    if not id_plato:
+        flash("Seleccione el plato")
+        return redirect("/admin/dashboard")
+    
+    payload = {"id_plato": int(id_plato)}
+
     try:
-        respuesta = apiBackend.delete(f"{URL_BACKEND}/platos/{idPlato}", timeout=5)
+        respuesta = requests.delete(f"{URL_BACKEND}/platos/admin/eliminar", json=payload)
 
-        if respuesta.status_code == 200:
-            flash("Plato borrado exitosamente", "success")
-
-            return redirect(url_for('platos.listarPlatosAdmin'))
+        if respuesta.status_code == 204:
+            flash("El plato se elimino", "success")
+            return redirect("/admin/dashboard")
         
-        elif respuesta.status_code == 404:
-            abort(404) 
-        
+        elif respuesta.status_code in [400, 404, 409]:
+            data = respuesta.json()
+            message = data.get("errors", [{}])[0].get("description", "No se pudo eliminar")
+            flash(message, "error")
         else:
-            abort(500)
+            flash("Error al eliminar", "error")
 
     except requests.exceptions.RequestException:
-        abort(500)
+        flash("No se pudo conectar con el servidor", "error")
+
+    return redirect("/admin/dashboard")
 
 @platos_bp.route('/admin/platos/buscar', methods=['GET', 'POST'])
 @adminRequired  
