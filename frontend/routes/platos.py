@@ -1,0 +1,228 @@
+from flask import Flask, render_template, Blueprint, flash, request, redirect, url_for, abort, session 
+from decorators import adminRequired
+import requests 
+from constantes import URL_BACKEND
+
+platos_bp = Blueprint("platos", __name__)
+apiBackend = requests.Session()
+
+# Consultar por los server error en la parte backend
+@platos_bp.errorhandler(405)
+def method_not_allowed(e):
+
+    return render_template('400.html'), 405
+
+@platos_bp.errorhandler(500)
+def internal_server_error(e):
+    return render_template('errors/500_serverError.html'), 500
+
+@platos_bp.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404_notFound.html'), 404
+
+@platos_bp.errorhandler(403)
+def acces_forbidden(e):
+    return render_template('errors/403_forbidden.html'), 403
+
+@platos_bp.errorhandler(400)
+def bad_request(e):
+    return render_template('errors/400_badRequest.html'), 400
+
+@platos_bp.route('/admin/platos/crear', methods=['GET', 'POST'])
+@adminRequired
+def crearPlato():
+
+    if request.method == 'GET':
+        return render_template('platos/formularioCrearPlato.html')
+    
+    if request.method == 'POST':
+        nombre = request.form.get('nombre', '').strip()
+        precio = request.form.get('precio', '').strip()
+        idCategoria = request.form.get('id_categoria', '').strip()
+        descripcion = request.form.get('descripcion', '').strip()
+        imagen = request.form.get('imagen', '').strip()
+        disponible = False
+
+        if request.form.get('disponible') == 'on': # Por defecto el formulario viaja con 'on', sino None
+            disponible = True
+
+        else:
+            disponible = False
+
+        if not all([nombre, precio, idCategoria]):
+            abort(400)
+
+        try:
+            payload = {
+                "nombre": nombre,
+                "precio": float(precio),
+                "id_categoria": int(idCategoria),
+                "descripcion": descripcion if descripcion else None,
+                "disponible": disponible,
+                "imagen": imagen if imagen else None
+            }
+            respuesta = apiBackend.post(f"{URL_BACKEND}/platos", json=payload, timeout=5)
+
+            if respuesta.status_code == 201:
+                flash("Plato agregado exitosamente", "success")
+                return redirect(url_for('platos.listarPlatos'))
+            elif respuesta.status_code == 400:
+                abort(400)
+            else:
+                abort(500)
+
+        except (requests.exceptions.RequestException, ValueError):
+            abort(500)
+
+@platos_bp.route('/admin/platos/editar/<int:idPlato>', methods=['GET', 'POST'])
+@adminRequired
+def editarPlato(idPlato):
+    if request.method == 'GET':
+        respuestaPlato = apiBackend.get(f"{URL_BACKEND}/platos/{idPlato}", timeout=5)
+        
+        if respuestaPlato.status_code == 200:
+            platoActual = respuestaPlato.json()
+            return render_template('formularioEditarPlato.html', plato=platoActual)
+        else:
+            abort(404)
+
+    if request.method == 'POST':
+        nombreNuevo = request.form.get('nombre', '').strip()
+        descripcionNueva = request.form.get('descripcion', '').strip()
+        precioNuevo = request.form.get('precio', '').strip()
+        idCategoriaNueva = request.form.get('id_categoria', '').strip()
+        nuevaImagen = request.form.get('imagen', '').strip()
+
+        if request.form.get('disponible') == 'on':
+            disponible_nuevo = True
+        else:
+            disponible_nuevo = False
+
+        if not all([nombreNuevo, precioNuevo, idCategoriaNueva]):
+            abort(400)
+
+        try:
+            nuevaDescripcion = None
+            if descripcionNueva:
+                nuevaDescripcion = descripcionNueva
+            else:
+                nuevaDescripcion = None
+
+
+            payload = {
+                "nombre": nombreNuevo,
+                "descripcion": nuevaDescripcion,
+                "precio": float(precioNuevo),
+                "id_categoria": int(idCategoriaNueva),
+                "disponible": disponible_nuevo,
+                "imagen": nuevaImagen 
+            }
+            
+
+            respuesta = apiBackend.patch(f"{URL_BACKEND}/platos/{idPlato}", json=payload, timeout=5)
+            
+            if respuesta.status_code == 200:
+                flash("Plato editado exitosamente", "success")
+                return redirect(url_for('platos.listarPlatosAdmin'))
+            elif respuesta.status_code == 404:
+                abort(404)
+            else:
+                abort(500)
+                
+        except (requests.exceptions.RequestException, ValueError):
+            abort(500)
+
+@platos_bp.route('/admin/platos', methods=['GET'])
+@adminRequired  # Tu decorador para que solo el admin lo vea
+def listarPlatosAdmin():
+    try:
+
+        respuesta = apiBackend.get(f"{URL_BACKEND}/platos", timeout=5)
+
+        if respuesta.status_code == 200:
+            lista_platos = respuesta.json()
+            
+            return render_template('listaPlatosAdmin.html', platos=lista_platos)
+        
+        elif respuesta.status_code == 404:
+            abort(404)
+        else:
+            abort(500)
+
+    except requests.exceptions.RequestException:
+        abort(500)
+
+@platos_bp.route('/menu', methods=['GET']) # Menu/Carta -> Lo pueden ver todos
+def listarPlatos():
+    parametros = {
+        "disponible": "true" # Para que solo aparezcan los que estan disponibles
+    }
+
+    try:
+        respuesta = apiBackend.get(f"{URL_BACKEND}/platos", params=parametros, timeout=5)
+
+        if respuesta.status_code == 200:
+            cartaPlatos = respuesta.json()
+            
+            return render_template('menuClientes.html', platos=cartaPlatos)
+        
+        else:
+            abort(500)
+
+    except requests.exceptions.RequestException:
+        abort(500)
+
+
+@platos_bp.route('/admin/platos/eliminar/<int:idPlato>', methods=['POST'])
+@adminRequired  # Solo el administrador puede borrar platos
+def eliminarPlato(idPlato):
+    try:
+        respuesta = apiBackend.delete(f"{URL_BACKEND}/platos/{idPlato}", timeout=5)
+
+        if respuesta.status_code == 200:
+            flash("Plato borrado exitosamente", "success")
+
+            return redirect(url_for('platos.listarPlatosAdmin'))
+        
+        elif respuesta.status_code == 404:
+            abort(404) 
+        
+        else:
+            abort(500)
+
+    except requests.exceptions.RequestException:
+        abort(500)
+
+@platos_bp.route('/admin/platos/buscar', methods=['GET', 'POST'])
+@adminRequired  
+def buscarPlatoPorId():
+    if request.method == 'GET':
+        return render_template('buscadorAdmin.html', plato=None)
+
+    if request.method == 'POST':
+        idIngresado = request.form.get('id_plato', '').strip()
+
+        if not idIngresado:
+            abort(400)
+
+        try:
+            idEntero = int(idIngresado)
+
+            if idEntero <= 0:
+                abort(400)
+
+            urlBusqueda = f"{URL_BACKEND}/platos/{idEntero}"
+            respuesta = apiBackend.get(urlBusqueda, timeout=5)
+
+            if respuesta.status_code == 200:
+                platoEncontrado = respuesta.json()
+
+                return render_template('buscadorAdmin.html', plato=platoEncontrado)
+            
+            elif respuesta.status_code == 404:
+                abort(404)
+            else:
+                abort(500)
+
+        except (requests.exceptions.RequestException, ValueError):
+            abort(400)

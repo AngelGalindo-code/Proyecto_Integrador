@@ -3,6 +3,7 @@ from routes.decorators import adminRequired, loginRequired
 from validaciones.reservas import *
 import requests 
 from constantes import URL_BACKEND
+from flask_mail import Message
 # from app import mail ---> Se importa en la duncion de mail 
 
 # Para el QR
@@ -333,19 +334,12 @@ def cancelarReserva(id_reserva):
     except requests.exceptions.RequestException:
         abort(500)
 
-<<<<<<< HEAD
-
-
-@reservas_bp.route('/<int:id_reserva>/exito', methods=['GET'])
-def reservaExitosa(id_reserva):
-=======
 @reservas_bp.route('/<int:id_reserva>/confirmar-asistencia', methods=['GET', 'POST'])
 @loginRequired
 def confirmarAsistenciaQR(id_reserva):
 
     if session.get('rol') != 'admin':
         abort(403) 
->>>>>>> feature/admin-categorias
 
     idValido = validarId(id_reserva)
     if not idValido:
@@ -421,42 +415,7 @@ def reservaExitosa(id_reserva):
 
         if sesion.status_code == 404:
             abort(404)
-<<<<<<< HEAD
-        
-        if sesion.status_code == 200:
-            miReserva = sesion.json()
-           
-            id_sesion = session.get('id_usuario')
-            id_reserva_user = miReserva.get('id_usuario')
-
-            if id_sesion is None or id_reserva_user is None or int(id_sesion) != int(id_reserva_user):
-                abort(403)
-
-            informacion_qr = (
-                f"--- CONFIRMACIÓN DE RESERVA ---\n"
-                f"ID de Reserva: {miReserva.get('id')}\n"
-                f"Nombre: {miReserva.get('nombre')}\n"
-                f"Fecha: {miReserva.get('fecha')}\n"
-                f"Hora: {miReserva.get('hora')} hs\n"
-                f"Mesa: {miReserva.get('mesa')}\n"
-                f"Personas: {miReserva.get('cantidad_personas')} personas"
-            )
-            
-            qr.add_data(informacion_qr)
-            qr.make(fit=True)
-            imagen_qr = qr.make_image(fill_color="black", back_color="white")
-            buffer_memoria = io.BytesIO()
-            imagen_qr.save(buffer_memoria, format="PNG")
-            buffer_memoria.seek(0)
-            qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
-            qr.clear()
-
-            return render_template('reserva_exito.html', reserva=miReserva, qr_code=qr_base64)
-        
-        else:
-=======
         if sesion.status_code != 200:
->>>>>>> feature/admin-categorias
             abort(500)
             
         miReserva = sesion.json()
