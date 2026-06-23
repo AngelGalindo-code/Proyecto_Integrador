@@ -43,12 +43,15 @@ def ver_ranking():
     except Exception as e:
         return jsonify({"mensaje": f"Error del servidor: {e}"}), 500
 
-@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking", methods=["GET"])
+@ranking_usuarios_bp.route("/usuarios/<int:id_usuario>/ranking", methods=["GET"])
 def ver_ranking_usuario(id_usuario):
     try:
         usuario = ejecutar_query(RANKING_OBTENER_POR_USUARIO, (id_usuario,), fetch_one=True)
+        #Si el usuario es nuevo y no tiene historial de ranking, devolvemos 
+        # una estructura limpia en 0 con 200 OK para no trabar el Frontend
         if not usuario:
-            return jsonify({"mensaje": "Usuario no encontrado en el ranking"}), 404
+            return jsonify({"id_usuario": id_usuario, "puntos": 0, "cancelaciones": 0}), 200
+            
         return jsonify(usuario), 200
     except Exception as e:
         return jsonify({"mensaje": f"Error del servidor: {e}"}), 500

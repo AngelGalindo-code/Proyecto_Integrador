@@ -13,8 +13,8 @@ CORS(app)
 
 app.register_blueprint(categorias_bp, url_prefix='/categorias')
 app.register_blueprint(platos_bp, url_prefix='/platos')
-app.register_blueprint(ranking_bp, url_prefix='/ranking')
-app.register_blueprint(reseñas_bp, url_prefix='/reseñas')
+app.register_blueprint(ranking_bp)
+app.register_blueprint(reseñas_bp)
 app.register_blueprint(reservas_bp)
 app.register_blueprint(usuarios_bp)
 
