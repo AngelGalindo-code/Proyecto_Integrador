@@ -148,6 +148,44 @@ def obtener_resena_id(id_usuario):
         return {}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def modificar_resena_id(id_comentario, comentario, valoracion, id_usuario):
+    try:
+        response = requests.put(
+            f"{URL_BACKEND}/resenas/{id_comentario}",
+            json={
+                "id_usuario": id_usuario,
+                "comentario": comentario,
+                "valoracion": valoracion,
+            },
+            timeout=10,
+        )
+
+        return response.status_code
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
+
+        return 500
+
+    except Exception as e:
+        logger.error(f"Error inesperado al eliminar la resena: {e}")
+        return 500
+
 @resenas_bp.route("/eliminar/<int:id_comentario>", methods=["POST"])
 def eliminar_resena(id_comentario):
 
@@ -181,7 +219,6 @@ def eliminar_resena_id(id_usuario, id_comentario):
 
     except requests.exceptions.ConnectionError:
         logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
-
         return 500
 
     except Exception as e:
