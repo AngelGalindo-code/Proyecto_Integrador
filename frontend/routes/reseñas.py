@@ -147,6 +147,28 @@ def obtener_resena_id(id_usuario):
         logger.error(f"Error inesperado al obtener las resenas: {e}")
         return {}
 
+
+@resenas_bp.route("/eliminar/<int:id_comentario>", methods=["POST"])
+def eliminar_resena(id_comentario):
+
+    id_usuario = session["usuario"]["id"]
+    resultado = eliminar_resena_id(id_usuario, id_comentario)
+
+    if resultado == 400:
+        flash("Faltan campos en el body", "error")
+
+    elif resultado == 404:
+        flash("La reseña no existe", "error")
+
+    elif resultado == 204:
+        flash("Reseña eliminada con exito", "success")
+
+    else:
+        flash("Error en el servidor", "error")
+
+    return redirect(url_for("panel_usuario.obtener_info_usuario"))
+
+
 def eliminar_resena_id(id_usuario, id_comentario):
     try:
         response = requests.delete(
