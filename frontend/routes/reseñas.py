@@ -147,3 +147,21 @@ def obtener_resena_id(id_usuario):
         logger.error(f"Error inesperado al obtener las resenas: {e}")
         return {}
 
+def eliminar_resena_id(id_usuario, id_comentario):
+    try:
+        response = requests.delete(
+            f"{API_BASE_URL}/resenas/{id_comentario}",
+            json={"id_usuario": id_usuario},
+            timeout=10,
+        )
+
+        return response.status_code
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+
+        return 500
+
+    except Exception as e:
+        logger.error(f"Error inesperado al eliminar la resena: {e}")
+        return 500
