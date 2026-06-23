@@ -68,12 +68,8 @@ input[type=radio]{
     
 }
 
-.boton_cancelar_modificar:hover {
-    cursor: pointer;
-    background-color: gray;
-}
 
-#boton_publicar:hover {
+#boton_publicar:hover, .boton_cancelar_modificar:hover{
     cursor: pointer;
     background-color: rgb(83, 219, 83);
     border-color: rgb(83, 219, 83)
