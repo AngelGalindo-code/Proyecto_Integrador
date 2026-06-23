@@ -134,8 +134,142 @@
                 </div>
             </div>
 
-        </section>
+                        <!-- Sección de categorias -->
+            <div class="seccion-tabla">
+                <h2>Gestión de Categorías</h2>
+                <div class="tablas-contenedor-vertical">
+                    <div class="tarjeta">
+                        <h3>Crear Categoría</h3>
+                        <form action="/admin" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre de la Categoría</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="nombre_categoria" placeholder="Nueva Categoría" list="categorias-existentes" required>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-guardar">Agregar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                
+                    <div class="tarjeta">
+                        <h3>Editar Categoría</h3>
+                        <form action="/admin/editar" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Seleccionar Categoría</th>
+                                        <th>Nuevo Nombre</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="id_categoria" required>
+                                                <option value="" disabled selected>Selecciona categoría</option>
+                                                {% for cat in categorias %}
+                                                    <option value="{{ cat.id_categoria }}">ID: {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="nombre_categoria" placeholder="Nuevo Nombre" required>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-guardar">Guardar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                
+                    <div class="tarjeta">
+                        <h3>Eliminar Categoría</h3>
+                        <form action="/admin/eliminar" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Seleccionar Categoría</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="id_categoria" required>
+                                                <option value="" disabled selected>Selecciona categoría</option>
+                                                {% for cat in categorias %}
+                                                    <option value="{{ cat.id_categoria }}">ID: {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-eliminar">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
 
+                <div class="tabla-scroll">
+                    <table class="tabla-admin">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre de la Categoría</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in categorias %}
+                                <tr>
+                                    <td>{{ cat.id_categoria }}</td>
+                                    <td>{{ cat.nombre_categoria }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="2" class="sin-datos">No hay categorías registradas en el sistema.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+                <datalist id="categorias-existentes">
+                    {% for cat in categorias %}
+                        <option value="{{ cat.nombre_categoria }}"></option>
+                    {% endfor %}
+                </datalist>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="mensajes-flash">
+                                    {% for category, message in messages %}
+                                        <div class="alerta-{{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+
+        </section>
     </main>
 
 </body>
