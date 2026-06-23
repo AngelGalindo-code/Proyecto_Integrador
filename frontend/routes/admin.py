@@ -4,14 +4,14 @@ from constantes import URL_BACKEND
 
 admin_bp = Blueprint("admin", __name__)
 
-@admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
-
-
-@admin_bp.route('/admin/dashboard', methods=['GET'])
+@admin_bp.route('/admin', methods=['GET']) 
 def panelAdmin():
-    #ver temporalmente
-    return render_template('admin_dashboard.html', title='Panel de Administracion')
-
+    
+    if session.get('usuario', {}).get('rol') != 'admin':
+        flash('Acceso denegado')
+        return redirect('/')
+        
+    return render_template('admin_dashboard.html', title='Panel de Administración')
 
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
 
