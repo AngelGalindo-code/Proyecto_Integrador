@@ -81,19 +81,25 @@ def getReservas():
         with conexion.cursor() as cursor:
             cursor.execute(SQL_BASE_RESERVAS)
             reservas = cursor.fetchall()
-
-            if not reservas:
-                abort(404, description='No se encontraron reservas registradas') # abort le pasa directamente el error a handle_exception
             
+            for reserva in reservas:
+                
+                # Si 'hora' existe, lo transformamos a un string común y corriente
+                if reserva.get('hora') is not None:
+                    reserva['hora'] = str(reserva['hora'])[:5]
+
+                # Hacemos lo mismo con la fecha para que JSON no se queje
+                if reserva.get('fecha') is not None:
+                    reserva['fecha'] = str(reserva['fecha'])
+
             return jsonify(reservas), 200
             
     except Exception as e:
-
+        print(f"error: {str(e)}")
         abort(500, description='Error al consultar la base de datos')
     
     finally:
         conexion.close()
-
 
 
 @reservas_bp.route('/reservas/<int:id_reserva>', methods=['GET'])

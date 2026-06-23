@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Usuario - {{ usuario.nombre }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/adminUsuario.css') }}">
+</head>
+<body>
+
+    <main class="detalle-container">
+        <header class="detalle-header">
+            <h1>Ficha del Usuario: {{ usuario.nombre }}</h1>
+            <p>ID de Registro: #{{ usuario.id }}</p>
+        </header>
+
+        <section class="tarjeta-detalle">
+            <h2>Datos de Contacto</h2>
+            <p><strong>Nombre / Alias:</strong> {{ usuario.nombre }}</p>
+            <p><strong>Correo Electrónico:</strong> {{ usuario.email }}</p>
+            <p><strong>Teléfono / Celular:</strong> {{ usuario.numero }}</p>
+            <p><strong>Rol en el Sistema:</strong> <span class="etiqueta">{{ usuario.rol }}</span></p>
+        </section>
+
+        <footer class="acciones-detalle">
+            <a href="{{ url_for('admin.panelAdmin') }}" class="btn-volver">Volver al Panel</a>
+        </footer>
+    </main>
+
+</body>
+</html>

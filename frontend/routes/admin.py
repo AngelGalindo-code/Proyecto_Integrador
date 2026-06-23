@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session
 import requests
 from constantes import URL_BACKEND
+from routes.reservas import obtener_reservas_backend
+from datetime import datetime
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -18,10 +20,39 @@ def panelAdmin():
     except Exception as e:
         print("Error al conectar con el backend:", str(e))
 
-    
-    return render_template('admin_dashboard.html', title='Panel de Administración', lista_usuarios=usuarios)
+    todas_las_reservas = obtener_reservas_backend()
 
+    fecha_actual_str = datetime.now().strftime("%Y-%m-%d")
 
+    reservas_hoy = []
+    for reserva in todas_las_reservas:
+        # Si la fecha de la reserva coincide con el día de hoy, la guardamos
+        if str(reserva.get('fecha')) == fecha_actual_str:
+            reservas_hoy.append(reserva)
+
+    total_reservas = len(reservas_hoy)
+    total_comensales = 0
+    total_cancelaciones = 0
+
+    for reserva in reservas_hoy:
+        # Sumamos la cantidad de comensales de forma segura
+        cantidad = reserva.get('cantidad_personas', 0)
+        total_comensales = total_comensales + int(cantidad)
+        
+        # Contamos si la reserva fue cancelada
+        if reserva.get('estado') == 'cancelado':
+            total_cancelaciones = total_cancelaciones + 1
+
+    # Renderizamos el Dashboard enviándole todas las variables limpias
+    return render_template(
+        'admin_dashboard.html', 
+        title='Panel de Administración', 
+        lista_usuarios=usuarios,
+        lista_reservas_hoy=reservas_hoy,           # Puebla la tabla de reservas activas
+        total_reservas_hoy=total_reservas,         # Tarjeta 1
+        total_comensales_hoy=total_comensales,     # Tarjeta 2
+        total_cancelaciones_hoy=total_cancelaciones # Tarjeta 3
+    )
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
 def eliminarUsuario(id):
 
@@ -47,61 +78,28 @@ def eliminarUsuario(id):
 
     except Exception:
         return render_template('errorGenerico.html', message='Error inesperado al eliminar usuario')
-        
-         
-@admin_bp.route('/admin/usuarios', methods=['GET'])
-def adminUsuarios():
-
-
-    if session.get('rol') != 'admin':
-
-        flash('Acceso denegado')
-
-        return redirect('/')
-        
-    try:
-        respuesta = requests.get(f"{URL_BACKEND}/admin/usuarios", timeout=5)
-        
-        if respuesta.status_code == 404:
-            flash('No hay usuarios registrados')
-            return render_template('errors/sinusuarios.html')
-
-        if respuesta.status_code == 200:
-            usuarios = respuesta.json()  
-            return render_template('adminUsuarios.html', title='Usuarios', usuarios=usuarios)
-
-        return render_template('errorGenerico.html', message='Error al obtener usuarios')
     
-    except Exception:
-        return render_template('errorGenerico.html', message='Error inesperado al obtener usuarios')       
-        
-        
+
 @admin_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
-
 def adminUsuarioPorId(id):
-
-    if session.get('rol') != 'admin':
-
+    
+    if session.get('usuario', {}).get('rol') != 'admin': 
         flash('Acceso denegado')
-        
         return redirect('/')
         
     try:
         respuesta = requests.get(f"{URL_BACKEND}/admin/usuarios/{id}", timeout=5)
 
         if respuesta.status_code == 404:
-
             flash('El usuario no fue encontrado')
-
             return render_template('errors/404_notFound.html')
 
         if respuesta.status_code == 200:
 
             usuario = respuesta.json()
-
             return render_template('adminUsuario.html', title='Usuario', usuario=usuario)
         
-        return render_template('errorGenerico.html', message='No se pudo procesar la busqueda del usuario')
+        return render_template('errorGenerico.html', message='No se pudo procesar la búsqueda del usuario')
     
     except Exception:
         return render_template('errorGenerico.html', message='Error inesperado al obtener el usuario')

@@ -1,13 +1,15 @@
 SQL_BASE_RESERVAS = """
     SELECT 
-        r.id_reserva     AS id_reserva,
-        u.nombre         AS usuario,
-        r.id_usuario     AS id_usuario,
-        r.fecha          AS fecha,
-        r.mesa           AS mesa,
-        r.cantidad_personas AS cantidad_personas
+        r.id_reserva        AS id_reserva,
+        u.nombre            AS usuario,
+        r.id_usuario        AS id_usuario,
+        r.fecha             AS fecha,
+        r.hora              AS hora,
+        r.mesa              AS mesa,
+        r.cantidad_personas AS cantidad_personas,
+        r.estado            AS estado
     FROM reservas r
-    JOIN usuarios u ON r.id_usuario = u.id_usuario
+    JOIN usuarios u ON r.id_usuario = u.id  
 """
 
 SQL_GET_POR_ID = """

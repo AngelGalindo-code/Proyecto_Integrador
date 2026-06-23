@@ -101,40 +101,24 @@ def acces_forbidden(e):
 def bad_request(e):
     return render_template('errors/400_badRequest.html'), 400
 
-
-
-@reservas_bp.route('/admin', methods=['GET'])
-@adminRequired
-def reservasList():
-
+def obtener_reservas_backend():
     try:
-        respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/admin", timeout=5)
-
-        if respuesta.status_code == 404:
-            abort(404)
-        
-        if respuesta.status_code == 403:
-            abort(403)
-
-        if respuesta.status_code == 400:
-            abort(400)
+        # Hacemos el pedido al backend
+        respuesta = requests.get(f"{URL_BACKEND}/reservas", timeout=5)
 
         if respuesta.status_code == 200:
             reservas = respuesta.json()
-            
-            if not reservas:
-                flash("No se encontraron reservas")
-                return render_template("listaVacia.html")
-            
-            flash("Aca se encuentra el listado de todas las reservas")
-            return render_template("listas.html", reservas=reservas)
+
+            if reservas:
+                return reservas
+            else:
+                return []
+                
+        return []
         
-        else:
-            abort(500)
-        
-    except requests.exceptions.RequestException:
-        abort(500)
-        
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión con el backend de reservas: {e}")
+        return []
 
 @reservas_bp.route('/<int:id_reserva>/mireserva', methods=['GET'])
 @loginRequired

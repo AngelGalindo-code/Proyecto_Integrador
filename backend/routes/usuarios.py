@@ -192,25 +192,18 @@ def obtener_todos_los_usuarios():
 @usuarios_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
 def adminUsuarioPorId(id):
     try:
-        id_entero = int(id)
-        if id_entero <= 0:
-            return jsonify({"message": "El ID es invalido."}), 400
-            
-        # Comentado temporalmente para pruebas en Postman
-        # if session.get('rol') != 'admin':
-        #     return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
-
-        usuario = getUsuarioPorId(id_entero)
+        usuario = getUsuarioPorId(id)
 
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
     
-        return jsonify({"message": "Usuario encontrado.", "usuario": usuario }), 200
+        return jsonify(usuario), 200
 
     except Exception as e:
         print(f"Error en ruta adminUsuarioPorId: {e}")
         return jsonify({"message": "Error al obtener el usuario."}), 500
-
+    
+    
 @usuarios_bp.route('/usuarios/<int:id_usuario>/reservas', methods=['GET'])
 def obtenerReservasPorUsuario(id_usuario):
     if id_usuario <= 0:
