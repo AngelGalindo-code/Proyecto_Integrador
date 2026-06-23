@@ -77,11 +77,14 @@ def editarCategoria():
 def eliminarCategoria():
 
     id_cat = request.form.get("id_categoria")
-
+    if not id_cat:
+        flash("Seleccione la categoria a eliminar", "error")
+        return redirect("/admin/categoria")
+    
     payload = {"id_categoria": int(id_cat)}
 
     try:
-        response = request.delete(f"{URL_BACKEND}/admin/eliminar", json = payload)
+        response = requests.delete(f"{URL_BACKEND}/categorias/admin/eliminar", json = payload)
 
         if response.status_code == 204:
             flash("La categoria se elimino", "success")

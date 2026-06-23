@@ -350,7 +350,7 @@ def eliminar_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         query_borrar_categoria = """
 DELETE FROM categorias 
 WHERE id_categoria = %s
