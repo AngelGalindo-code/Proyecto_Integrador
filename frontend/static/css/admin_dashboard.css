@@ -183,7 +183,7 @@ tr:hover {
     padding: 0;
 }
 
-.btn-tabla-accion {
+.btn-tabla-accion, .btn-eliminar{
     background-color: transparent;
     border: 1px solid var(--color-sistema-alerta);
     border-radius: 4px;
@@ -228,4 +228,60 @@ tr:hover {
 
 .font-bold {
     font-weight: bold;
+}
+/* botones de categoria */
+.btn-guardar{
+    background-color: transparent;
+    border: 1px solid #2ecc71;;
+    border-radius: 4px;
+    color: #2ecc71;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.btn-guardar:hover{
+    background-color:   #2ecc71;
+    color: var(--color-texto-blanco);
+}
+.sin-datos {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+}
+/* estilos de los inputs de categorias */
+.tarjeta input[type="text"], .tarjeta select {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: var(--color-fondo-principal);
+    color: var(--color-texto-blanco);
+    border: var(--borde-sutil); 
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+.tarjeta input[type="text"]::placeholder {
+    color: var(--color-texto-gris); 
+    opacity: 0.5;
+}
+.tabla-admin td {
+    vertical-align: middle;
+}
+.alerta-success {
+    background-color: #d4edda;
+    color: #2ecc71;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.alerta-error {
+    background-color: #f8d7da;
+    color: var(--color-sistema-alerta);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
 }
