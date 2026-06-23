@@ -82,7 +82,7 @@ def editarPlato(idPlato):
         
         if respuestaPlato.status_code == 200:
             platoActual = respuestaPlato.json()
-            return render_template('platos/formularioEditarPlato.html', plato=platoActual)
+            return render_template('formularioEditarPlato.html', plato=platoActual)
         else:
             abort(404)
 
@@ -142,7 +142,7 @@ def listarPlatosAdmin():
         if respuesta.status_code == 200:
             lista_platos = respuesta.json()
             
-            return render_template('platos/listaPlatosAdmin.html', platos=lista_platos)
+            return render_template('listaPlatosAdmin.html', platos=lista_platos)
         
         elif respuesta.status_code == 404:
             abort(404)
@@ -164,7 +164,7 @@ def listarPlatos():
         if respuesta.status_code == 200:
             cartaPlatos = respuesta.json()
             
-            return render_template('platos/menuClientes.html', platos=cartaPlatos)
+            return render_template('menuClientes.html', platos=cartaPlatos)
         
         else:
             abort(500)
@@ -197,7 +197,7 @@ def eliminarPlato(idPlato):
 @adminRequired  
 def buscarPlatoPorId():
     if request.method == 'GET':
-        return render_template('platos/buscadorAdmin.html', plato=None)
+        return render_template('buscadorAdmin.html', plato=None)
 
     if request.method == 'POST':
         idIngresado = request.form.get('id_plato', '').strip()
@@ -217,7 +217,7 @@ def buscarPlatoPorId():
             if respuesta.status_code == 200:
                 platoEncontrado = respuesta.json()
 
-                return render_template('platos/buscadorAdmin.html', plato=platoEncontrado)
+                return render_template('buscadorAdmin.html', plato=platoEncontrado)
             
             elif respuesta.status_code == 404:
                 abort(404)
