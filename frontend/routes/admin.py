@@ -6,16 +6,23 @@ admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route('/admin', methods=['GET']) 
 def panelAdmin():
-    
     if session.get('usuario', {}).get('rol') != 'admin':
         flash('Acceso denegado')
         return redirect('/')
         
-    return render_template('admin_dashboard.html', title='Panel de Administración')
+    usuarios = [] 
+    try:
+        respuesta = requests.get(f"{URL_BACKEND}/admin/usuarios", timeout=5)
+        if respuesta.status_code == 200:
+            usuarios = respuesta.json()
+    except Exception as e:
+        print("Error al conectar con el backend:", str(e))
+
+    
+    return render_template('admin_dashboard.html', title='Panel de Administración', lista_usuarios=usuarios)
+
 
 @admin_bp.route('/admin/usuarios/<int:id>/eliminar', methods=['POST'])
-
-
 def eliminarUsuario(id):
 
     if session.get('rol') != 'admin':

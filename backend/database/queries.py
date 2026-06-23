@@ -40,7 +40,7 @@ OBTENER_USUARIO_POR_EMAIL = "SELECT id, nombre, numero, email, rol FROM usuarios
 
 OBTENER_USUARIO_POR_ID = "SELECT id, nombre, numero, email, rol FROM usuarios WHERE id = %s"
 
-LISTAR_TODOS_LOS_USUARIOS = "SELECT id, nombre, email, rol FROM usuarios"
+LISTAR_TODOS_LOS_USUARIOS = "SELECT id, nombre, numero, email, rol FROM usuarios;"
 
 INSERTAR_USUARIO = """
     INSERT INTO usuarios (nombre, numero, email, rol) 

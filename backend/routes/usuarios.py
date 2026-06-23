@@ -177,23 +177,16 @@ def eliminarUsuario(id):
         return jsonify({"message": "Error al eliminar usuario."}), 500
          
 @usuarios_bp.route('/admin/usuarios', methods=['GET'])
-def adminUsuarios():
-    try:
-        # Comentado temporalmente para pruebas en Postman
-        # if session.get('rol') != 'admin':
-        #if session.get('rol') != 'admin':
-        #    return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
-
-        usuarios = getUsuarios()
-
-        if not usuarios:
-            return jsonify({"message": "No hay usuarios registrados.", "usuarios": []}), 200
-
+def obtener_todos_los_usuarios():
+    usuarios_db = getUsuarios() 
     
-        return jsonify({"message": "Usuarios obtenidos correctamente.", "usuarios": usuarios}), 200
+    if usuarios_db is None:
+        return jsonify({"message": "Error interno del servidor al obtener usuarios"}), 500
+        
+    if not usuarios_db:
+        return jsonify({"message": "No hay usuarios registrados"}), 404
 
-    except Exception:
-        return jsonify({"message": "Error al obtener usuarios."}), 500       
+    return jsonify(usuarios_db), 200
         
         
 @usuarios_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
