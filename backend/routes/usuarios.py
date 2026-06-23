@@ -229,7 +229,14 @@ def obtenerReservasPorUsuario(id_usuario):
         cursor = conexion.cursor()
         
       
-        sql = "SELECT * FROM reservas WHERE id_usuario = %s"
+        sql = """
+        SELECT id_reserva AS id, id_usuario, nombre, 
+               CAST(fecha AS CHAR) AS fecha, 
+               CAST(hora AS CHAR) AS hora, 
+               mesa, cantidad_personas, estado 
+        FROM reservas 
+        WHERE id_usuario = %s
+    """
         cursor.execute(sql, (id_usuario,))
         mis_reservas = cursor.fetchall()
 

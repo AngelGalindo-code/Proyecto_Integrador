@@ -1,0 +1,3 @@
+ALTER TABLE reservas MODIFY COLUMN fecha DATE;
+
+ALTER TABLE reservas MODIFY COLUMN hora TIME;
