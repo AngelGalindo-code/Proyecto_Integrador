@@ -209,10 +209,11 @@ INSERT INTO categorias (nombre_categoria) VALUES
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/<int:id>", methods=["PUT"]) #usuario admin
-def modificar_nombre(id):
+@categorias_bp.route("/admin/editar", methods=["PUT"]) #usuario admin
+def modificar_nombre():
+
     data = request.json
-    if not data or id <= 0 or "nombre_categoria" not in data:
+    if not data or "id_categoria" not in data or "nombre_categoria" not in data:
         error_400 = {
             "errors": [
                 {
@@ -224,8 +225,23 @@ def modificar_nombre(id):
             ]
         }
         return jsonify(error_400), 400
+    
+    id = data.get("id_categoria")
+    nombre_categoria = data.get("nombre_categoria")
 
-
+    if not isinstance(id, int) or id <= 0:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido o no se recibio el nombre de la categoria a cambiar.",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+    
     conn = None
     cur = None
     try:
@@ -295,9 +311,27 @@ WHERE id_categoria = %s
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/<int:id>", methods=["DELETE"]) #usuario admin
-def eliminar_categoria(id):
-    if id <= 0:
+@categorias_bp.route("/admin/eliminar", methods=["DELETE"]) #usuario admin
+def eliminar_categoria():
+
+    data = request.json
+
+    if not data or "id_categoria" not in data:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+
+    id = data.get("id_categoria")
+    
+    if not isinstance(id, int) or id <= 0:
         error_400 = {
             "errors": [
                 {

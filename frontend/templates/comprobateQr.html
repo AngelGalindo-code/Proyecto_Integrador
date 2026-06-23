@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f7; font-family: Arial, sans-serif;">
+
+    <div style="max-width: 500px; margin: 30px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #2c3e50; margin: 0; font-size: 24px;">¡Reserva Confirmada!</h1>
+            <p style="color: #7f8c8d; margin: 5px 0 0 0;">Código de reserva: <strong>#{{ reserva.id_reserva or reserva.id }}</strong></p>
+        </div>
+
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px; color: #2c3e50; font-size: 15px; line-height: 1.5;">
+            <p style="margin: 8px 0;"><strong>Nombre del Titular:</strong> {{ reserva.nombre or reserva.usuario }}</p>
+            <p style="margin: 8px 0;"><strong>Fecha del Turno:</strong> {{ reserva.fecha }}</p>
+            <p style="margin: 8px 0;"><strong>Hora:</strong> {{ reserva.hora }} hs</p>
+            <p style="margin: 8px 0;"><strong>Mesa Asignada:</strong> {{ reserva.mesa or "A asignar por recepción" }}</p>
+            <p style="margin: 8px 0;"><strong>Comensales:</strong> {{ reserva.cantidad_personas or reserva.personas }} personas</p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <p style="font-size: 13px; color: #7f8c8d; margin-bottom: 10px;">Presentá este código QR al llegar al restaurante:</p>
+            
+            <img src="cid:codigo_qr" alt="Código QR de la reserva" style="max-width: 200px; width: 100%; height: auto; background: white; padding: 5px; border: 1px solid #ddd; display: inline-block;">
+        </div>
+
+        <div style="text-align: center; border-top: 1px solid #edf2f7; padding-top: 15px;">
+            <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.4;">
+                ¡Te esperamos en <strong>Los Horneros</strong>! Recuerda tener este correo a mano al momento de tu llegada para agilizar el ingreso.
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

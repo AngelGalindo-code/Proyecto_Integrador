@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_reserva.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/publicar_resena.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
     <title>Los Horneros</title>
 </head>
 <body>
@@ -120,40 +122,35 @@
                         </p>
                     </div>
                 </div>  
-                
-                <div class="reseñas">
-                    <h1>Algunas reseñas de nuestros mejores clientes</h1>
-                    <div class="contenedor_reseñas">
-                        <div class="tarjeta_reseña">
-                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                            <div class="estrellas">★★★★☆</div>
-                        </div>
-
-                        <div class="tarjeta_reseña">
-                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                            <div class="estrellas">★★★★☆</div>
-                        </div>
-
-                        <div class="tarjeta_reseña">
-                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                            <div class="estrellas">★★★★☆</div>
-                        </div>
             
-                        <div class="tarjeta_reseña">
-                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rem, nemo saepe laboriosam dolorem</p>
-                            <div class="estrellas">★★★★★</div>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="reseñas">
+                <h1>Algunas reseñas de nuestros mejores clientes</h1>
+      
+                    <div class="contenedor_reseñas">       
+                        {% for nombre, datos in resenas.items() %} 
+                            <div class="tarjeta_reseña"> 
+                                <p> {{ nombre }} </p>
+                                <p> {{ datos['comentario'] }} </p>
+                                <div class="estrellas"> {{ datos['valoracion'] }} </div>
+                            </div>            
+                        {% endfor %}
+                    </div>    
             </div>
+
         </div>
     </section>
 
+    
     {% include 'menu.html' %}
 
     {% include 'formulario_reserva.html' %}
 
     {% include 'components/footer.html' %}
+
+    {% if activar_resena %}
+        {% include 'publicar_resena.html' %}
+    {% endif %}
 
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/formulario_reserva.js') }}"></script>

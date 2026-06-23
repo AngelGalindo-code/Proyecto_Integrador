@@ -1,0 +1,28 @@
+<div id="formulario_resena">
+    <div id="aparecer_resena">
+        <button type="button" id="cerrar_ventana" > X </button>
+    </div>
+    <div id="parrafo_resena">
+        <h2> TU EXPERIENCIA NOS IMPORTA </h2>
+        <p> Esperamos que te haya gustado, si le gustaria podria dejar una reseña </p>
+    </div>
+    <form action="{{ url_for('resenas.publicar_resena') }}" method="POST">
+        <div id="dato_ingreso">
+            <label for="comentario"> Comentario </label>
+        
+            <input type="text" id="comentario" name="ucomentario" placeholder="Escribe aqui">
+        </div>
+       
+        <div id="estrellas">
+            <label> Valoración </label> <br>
+            {% for i in range(1, 6) %}
+                <input type="radio" id="estrellas{{ i }}" name="uestrellas" value="{{ i }}"> <label for="estrellas{{ i }}" class="iluminable"> ☆ </label>
+            {% endfor %}
+        </div>
+    
+        <div>
+            <button type="submit" id="boton_publicar"> Publicar </button>     
+        </div>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='js/publicar_resena.js') }}" ></script>
