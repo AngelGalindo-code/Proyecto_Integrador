@@ -56,8 +56,8 @@ def mostrar_todas_reseñas(id_usuario):
 
         return jsonify(reseñas), 200
 
-    except Exception:
-        return jsonify({"mensaje": "Error del servidor"}), 500
+    except Exception as e:
+        return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
         if cursor:
@@ -87,8 +87,8 @@ def mostrar_reseña(id_comentario):
 
         return jsonify(reseña), 200
 
-    except Exception:
-        return jsonify({"mensaje": "Error del servidor"}), 500
+    except Exception as e:
+        return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
         if cursor:
@@ -154,8 +154,8 @@ def crear_reseña():
 
         return "", 201
 
-    except Exception:
-        return jsonify({"mensaje": "Error del servidor"}), 500
+    except Exception as e:
+        return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
         if cursor:
@@ -216,8 +216,8 @@ def modificar_reseña(id_comentario):
 
         return "", 204
 
-    except Exception:
-        return jsonify({"mensaje": "Error del servidor"}), 500
+    except Exception as e:
+        return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
         if cursor:
@@ -267,9 +267,9 @@ def eliminar_reseña(id_comentario):
 
         return "", 204
 
-    except Exception:
+    except Exception as e:
 
-        return jsonify({"mensaje": "Error del servidor"}), 500
+        return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
 
