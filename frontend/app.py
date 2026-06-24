@@ -33,11 +33,22 @@ def index():
 
 @app.route('/home')
 def home():
-    # diccionario vacio para que no explote
-    id_usuario = session["usuario"]["id"]
-    estado_reserva_usuario = obtener_estado_resena(id_usuario)
+    usuario_sesion = session.get("usuario")
+    
+    if usuario_sesion:
+        id_usuario = usuario_sesion.get("id")
+        estado_reserva_usuario = obtener_estado_resena(id_usuario)
+    else:
+        id_usuario = None
+        estado_reserva_usuario = False
+
     resenas_del_home = resenas_destacadas()
 
-    return render_template('home.html', menu={'comidas': []}, resenas=resenas_del_home, activar_resena=estado_reserva_usuario)
+    return render_template(
+        'home.html', 
+        menu={'comidas': []}, 
+        resenas=resenas_del_home, 
+        activar_resena=estado_reserva_usuario
+    )
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
