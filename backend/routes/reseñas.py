@@ -47,7 +47,7 @@ def mostrar_todas_reseñas(id_usuario):
         con = get_connection()
         cursor = con.cursor()
 
-        cursor.execute("SELECT * FROM resenas WHERE id_usuario = %s", (id_usuario,))
+        cursor.execute("SELECT * FROM resenas WHERE id_usuario = %s ORDER BY fecha_publicacion DESC ", (id_usuario,))
         reseñas = cursor.fetchall()
 
         if not reseñas:
