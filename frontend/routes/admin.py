@@ -28,40 +28,41 @@ def panelAdmin():
     except Exception as e:
         print("Error al conectar con el backend (categorías):", str(e))
 
+    # 📥 Traemos el universo completo de reservas
     todas_las_reservas = obtener_reservas_backend()
 
     fecha_actual_str = datetime.now().strftime("%Y-%m-%d")
 
-    reservas_hoy = []
+    # Calculamos las métricas de HOY para los contadores superiores
+    total_reservas_hoy = 0
+    total_comensales_hoy = 0
+    total_cancelaciones_hoy = 0
+
     for reserva in todas_las_reservas:
-        # Si la fecha de la reserva coincide con el día de hoy, la guardamos
         if str(reserva.get('fecha')) == fecha_actual_str:
-            reservas_hoy.append(reserva)
+            total_reservas_hoy += 1
+            cantidad = reserva.get('cantidad_personas', 0)
+            total_comensales_hoy += int(cantidad)
+            if reserva.get('estado') == 'cancelado':
+                total_cancelaciones_hoy += 1
 
-    total_reservas = len(reservas_hoy)
-    total_comensales = 0
-    total_cancelaciones = 0
+    ranking_usuarios = []
+    platos = []
 
-    for reserva in reservas_hoy:
-        # Sumamos la cantidad de comensales de forma segura
-        cantidad = reserva.get('cantidad_personas', 0)
-        total_comensales = total_comensales + int(cantidad)
-        
-        # Contamos si la reserva fue cancelada
-        if reserva.get('estado') == 'cancelado':
-            total_cancelaciones = total_cancelaciones + 1
-
-    # Renderizamos el Dashboard enviándole todas las variables limpias
+    # Renderizamos el Dashboard enviándole TODO el listado a la tabla
     return render_template(
         'admin_dashboard.html', 
         title='Panel de Administración', 
         lista_usuarios=usuarios,
         categorias=categorias,                     
-        lista_reservas_hoy=reservas_hoy,
-        total_reservas_hoy=total_reservas,
-        total_comensales_hoy=total_comensales,
-        total_cancelaciones_hoy=total_cancelaciones
+        lista_reservas_hoy=todas_las_reservas, # 🌟 CAMBIO CLAVE: Mandamos la lista completa
+        total_reservas_hoy=total_reservas_hoy,
+        total_comensales_hoy=total_comensales_hoy,
+        total_cancelaciones_hoy=total_cancelaciones_hoy,
+        ranking_usuarios=ranking_usuarios,  
+        platos=platos                        
     )
+
 @admin_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
 def eliminarUsuario(id):
    

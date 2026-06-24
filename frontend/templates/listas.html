@@ -1,64 +1,81 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="form-container wide">
-    <h1>{{ title or "Panel de Control: Reservas" }}</h1>
+<main class="detalle-container wide">
+    
+    <!-- Encabezado con la misma estética del perfil de usuario -->
+    <header class="detalle-header">
+        <h1>{{ title or "Panel de Control: Reservas" }}</h1>
+        <p>Administración general del restaurante</p>
+    </header>
 
+    <!-- Sección de Mensajes Flash para alertas -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category if category != 'error' else 'error' }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <section class="alertas-contenedor" style="margin-bottom: 20px;">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </section>
         {% endif %}
     {% endwith %}
 
-    {% if reservas and reservas|length > 0 %}
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Fecha del Turno</th>
-                        <th style="text-align: center;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for reserva in reservas %}
+    <!-- Cuerpo principal: Cambiamos a la lógica de tarjetas del admin de usuarios -->
+    <section class="tarjeta-detalle">
+        {% if reservas and reservas|length > 0 %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td class="text-bold">
-                                <a href="{{ url_for('reservas.getReservaPorId', id_reserva=reserva['id_reserva'] or reserva['id']) }}" class="reserva-detalle-link">
-                                     {{ reserva['usuario'] or reserva['nombre'] }}
-                                </a>
-                            </td>
-                            <td> {{ reserva['fecha'] }}</td>
-                            <td style="text-align: center;">
-                                
-                                <form class="form-eliminar-admin" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn-action-delete">
-                                        Cancelar Reserva
-                                    </button>
-                                </form>
-
-                            </td>
+                            <th>Cliente</th>
+                            <th>Fecha del Turno</th>
+                            <th style="text-align: center;">Acciones</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="no-data-box" style="text-align: center; padding: 40px; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px;">
-            <p style="font-size: 1.2rem; color: #666;">No hay ninguna reserva registrada en el sistema actualmente.</p>
-        </div>
-    {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                            <tr>
+                                <td class="text-bold">
+                                    <!-- Mantiene tus enlaces dinámicos controlando fallos de IDs y nombres -->
+                                    <a href="{{ url_for('reservas.getReservaPorId', id_reserva=reserva['id_reserva'] or reserva['id']) }}" class="reserva-detalle-link" style="color: inherit; font-weight: bold;">
+                                         {{ reserva['usuario'] or reserva['nombre'] }}
+                                    </a>
+                                </td>
+                                <td>{{ reserva['fecha'] }}</td>
+                                <td style="text-align: center;">
+                                    
+                                    <!-- Formulario POST seguro para cancelar, igual que el eliminar usuario -->
+                                    <form class="form-eliminar-admin" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn-action-delete btn-eliminar" style="padding: 6px 12px; font-size: 0.9rem;" onclick="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+                                            Cancelar Reserva
+                                        </button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <!-- El cartel de "No hay datos" ahora se adapta de forma sobria si la lista viene vacía -->
+            <div class="no-data-box" style="text-align: center; padding: 40px; background-color: transparent;">
+                <p style="font-size: 1.2rem; color: #666; margin: 0;">No hay ninguna reserva registrada en el sistema actualmente.</p>
+            </div>
+        {% endif %}
+    </section>
     
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{{ url_for('reservas.crearReserva') }}" class="table-footer-link" style="font-weight: bold; text-decoration: none;"> 
-            + Crear una nueva reserva
+    <!-- Pie de página con las acciones globales de la vista -->
+    <footer class="acciones-detalle" style="margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{{ url_for('admin.panelAdmin') }}" class="btn-volver">Volver al Panel</a>
+        <a href="{{ url_for('url_for('reservas.crearReserva')') if false else url_for('reservas.crearReserva') }}" class="table-footer-link btn-volver" style="background-color: #2ecc71; color: white; border: none; font-weight: bold;"> 
+            + Nueva Reserva
         </a>
-    </div>
-</div>
+    </footer>
+
+</main>
 
 <script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
 {% endblock %}
