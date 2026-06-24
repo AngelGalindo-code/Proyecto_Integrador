@@ -76,7 +76,6 @@ def crearReserva():
                 
                 return render_template('home.html', menu={'comidas': []}, resenas={}, error="Error al procesar el identificador de la reserva.")
             
-            # 🌟 Esta es la línea exacta que te fallaba en image_6d9dfa.png:
             return render_template('home.html', menu={'comidas': []}, resenas={}, error="El sistema de reservas rechazó la petición.")
                 
         except requests.exceptions.RequestException:
@@ -135,7 +134,7 @@ def getReservaPorId(id_reserva):
     esAdmin = session.get('rol') == 'admin' # Se mantiene tu chequeo de rol
 
     try:
-        # 🔌 Si es admin, le pega a la ruta general; si no, al endpoint de usuario común
+        
         if esAdmin:
             respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
         else:
@@ -154,7 +153,7 @@ def getReservaPorId(id_reserva):
             if not (esUsuario or esAdmin):
                 abort(403)
             
-            # 🎫 GENERACIÓN EN VIVO DEL QR (Tu código original intacto)
+   
             url_asistencia = f"http://192.168.1.50:5000/reservas/{id_reserva}/confirmar-asistencia"
             qr.add_data(url_asistencia)
             qr.make(fit=True)
@@ -187,9 +186,6 @@ def modificarReserva(id_reserva):
         abort(400)
 
     try:
-        # ==========================================
-        # 📥 PROCESAMIENTO DEL FORMULARIO (POST)
-        # ==========================================
         if request.method == "POST":
             nombre = request.form.get('nombre', '').strip()
             fecha = request.form.get('fecha', '').strip()  
@@ -222,7 +218,7 @@ def modificarReserva(id_reserva):
             reserva_api = verificada.json()
             esUsuario = session.get('id_usuario') == reserva_api.get('id_usuario')
 
-            # 🔐 Candado estricto: Solo el dueño modifica
+            # Candado estricto: Solo el dueño modifica
             if not esUsuario:
                 abort(403) 
             
@@ -241,12 +237,9 @@ def modificarReserva(id_reserva):
                 flash("¡Reserva actualizada con éxito!", "success")
                 return redirect(url_for("reservas.getReservaPorId", id_reserva=id_reserva))
             else:
-                # 🛠️ Restaurado el abort(500) estándar
+                #  Restaurado el abort(500) estándar
                 abort(500)
 
-        # ==========================================
-        # 🖥️ CARGA DE LA VISTA DEL FORMULARIO (GET)
-        # ==========================================
         respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
 
         if respuesta.status_code == 404:
@@ -256,7 +249,7 @@ def modificarReserva(id_reserva):
             miReserva = respuesta.json()
             esUsuario = session.get('id_usuario') == miReserva.get('id_usuario')
 
-            # 🔐 Candado estricto para ver la vista
+            # Candado estricto para ver la vista
             if not esUsuario:
                 abort(403)
 
@@ -265,7 +258,7 @@ def modificarReserva(id_reserva):
             abort(500)
 
     except requests.exceptions.RequestException as e:
-        print(f"❌ Error de conexión: {e}")
+        print(f" Error de conexión: {e}")
         abort(500)
 
 @reservas_bp.route('/<int:id_reserva>/eliminar', methods=['POST', 'GET']) # 🌟 Agregamos GET por si acaso
@@ -293,7 +286,7 @@ def cancelarReserva(id_reserva):
             # Si es admin, lo mandamos al detalle para que use el botón de cancelar original tipo POST
             return redirect(url_for('reservas.getReservaPorId', id_reserva=id_reserva))
 
-        # 🗑️ Si es POST, le pegamos al DELETE del backend
+        
         respuesta = apiBackend.delete(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
         
         if respuesta.status_code == 200:
@@ -323,20 +316,20 @@ def confirmarAsistenciaQR(id_reserva):
 
     try:
         if request.method == 'POST':
-            # 1. 🔍 Traemos primero los datos actuales desde el backend
+     
             respuesta_get = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
             
             if respuesta_get.status_code == 200:
                 datos_originales = respuesta_get.json()
                 
-                # 📅 Corregimos la fecha de "AAAA-MM-DD" a "DD-MM"
+              
                 fecha_original = datos_originales.get('fecha', '')
                 fecha_para_api = fecha_original
                 if '-' in fecha_original and len(fecha_original) == 10:
                     partes = fecha_original.split('-')
                     fecha_para_api = f"{partes[2]}-{partes[1]}"
 
-                # ⏰ Corregimos la hora: removemos los segundos ("HH:MM:SS" -> "HH:MM")
+    
                 hora_original = datos_originales.get('hora', '')
                 hora_para_api = hora_original
                 if hora_original and len(hora_original) == 8 and hora_original.count(':') == 2:
