@@ -270,6 +270,12 @@
                 </div>
             </div>
 
+            <div class="contenedor-logout">
+                <a href="{{ url_for('auth.cerrar_sesion') }}" class="btn-logout">
+                    Cerrar Sesión
+                </a>
+            </div>
+
         </section>
     </main>
     {% with messages = get_flashed_messages() %}
