@@ -1,0 +1,16 @@
+<div class="formulario_eliminar_resena">
+
+    <div>
+        <h1>Eliminar reseña</h1>
+
+        <p id="comprobacion"> ¿Estas seguro que quieres eliminar esta reseña? </p>
+    </div>
+
+    <div>  
+        <button type="button" class="boton_cancelar_eliminar"> Cancelar </button>
+        <form action="{{ url_for('resenas.eliminar_resena', id_comentario=resena['id_comentario']) }}", method="POST">
+            <button type="submit" class="boton"> Eliminar </button>
+        </form>
+    </div> 
+
+</div>

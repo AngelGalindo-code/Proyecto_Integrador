@@ -153,71 +153,75 @@ def actualizar_parcialmente_ususario(id):
         print("error:", str(e)) 
         return jsonify({"message": f"Error del servidor: {str(e)}"}), 500 
     
-@usuarios_bp.route('/usuarios/<int:id>/eliminar', methods=['POST'])
+@usuarios_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
 def eliminarUsuario(id):
+    if id <= 0:
+        return jsonify({"message": "El ID es inválido."}), 400
+
+    conexion = None
+    cursor = None
     try:
-        
-        id_entero = int(id)
-        if id_entero <= 0:
-            return jsonify({"message": "El ID es invalido."}), 400
-        
-    
-        eliminado = eliminarUsuarioPorId(id_entero) 
-        if not eliminado:
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        # 1. Verificar si el usuario existe antes de mover un dedo
+        cursor.execute(OBTENER_USUARIO_POR_ID, (id,))
+        usuario = cursor.fetchone()
+        if not usuario:
             return jsonify({"message": "No existe un usuario con ese ID."}), 404
 
-        return jsonify({"message": "Usuario eliminado correctamente."}), 200
+        # Borrar primero las reservas (Hijo de usuarios)
+        sql_eliminar_reservas = "DELETE FROM reservas WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_reservas, (id,))
 
-    except ValueError:
-        
-        return jsonify({"message": "El ID debe ser un numero entero."}), 400
+        #  Borrar del ranking si existe (Hijo de usuarios)
+        sql_eliminar_ranking = "DELETE FROM ranking_usuarios WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_ranking, (id,))
 
-    except Exception:
-       
-        return jsonify({"message": "Error al eliminar usuario."}), 500
-         
-@usuarios_bp.route('/admin/usuarios', methods=['GET'])
-def adminUsuarios():
-    try:
-        # Comentado temporalmente para pruebas en Postman
-        # if session.get('rol') != 'admin':
-        #if session.get('rol') != 'admin':
-        #    return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
 
-        usuarios = getUsuarios()
-
-        if not usuarios:
-            return jsonify({"message": "No hay usuarios registrados.", "usuarios": []}), 200
-
+        cursor.execute(ELIMINAR_USUARIO_POR_ID, (id,))
     
-        return jsonify({"message": "Usuarios obtenidos correctamente.", "usuarios": usuarios}), 200
+        conexion.commit()
 
-    except Exception:
-        return jsonify({"message": "Error al obtener usuarios."}), 500       
+        return jsonify({"message": "Usuario y sus datos asociados eliminados en cascada con éxito."}), 200
+
+    except Exception as e:
+        if conexion: 
+            conexion.rollback() # Si algo falla, deshace todo para no romper la consistencia
+        print("Error en eliminarUsuario:", str(e))
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500
+        
+    finally:
+        if cursor: cursor.close()
+        if conexion: conexion.close()
+@usuarios_bp.route('/admin/usuarios', methods=['GET'])
+def obtener_todos_los_usuarios():
+    usuarios_db = getUsuarios() 
+    
+    if usuarios_db is None:
+        return jsonify({"message": "Error interno del servidor al obtener usuarios"}), 500
+        
+    if not usuarios_db:
+        return jsonify({"message": "No hay usuarios registrados"}), 404
+
+    return jsonify(usuarios_db), 200
         
         
 @usuarios_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
 def adminUsuarioPorId(id):
     try:
-        id_entero = int(id)
-        if id_entero <= 0:
-            return jsonify({"message": "El ID es invalido."}), 400
-            
-        # Comentado temporalmente para pruebas en Postman
-        # if session.get('rol') != 'admin':
-        #     return jsonify({"message": "Acceso denegado. Se requieren permisos de administrador."}), 403
-
-        usuario = getUsuarioPorId(id_entero)
+        usuario = getUsuarioPorId(id)
 
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
     
-        return jsonify({"message": "Usuario encontrado.", "usuario": usuario }), 200
+        return jsonify(usuario), 200
 
     except Exception as e:
         print(f"Error en ruta adminUsuarioPorId: {e}")
         return jsonify({"message": "Error al obtener el usuario."}), 500
-
+    
+    
 @usuarios_bp.route('/usuarios/<int:id_usuario>/reservas', methods=['GET'])
 def obtenerReservasPorUsuario(id_usuario):
     if id_usuario <= 0:
