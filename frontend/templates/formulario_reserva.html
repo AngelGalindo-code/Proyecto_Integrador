@@ -1,0 +1,36 @@
+<section class="fondo-reserva">
+    <div class="carta-seccion">
+        <div class="carta-contenedor">
+            <div class="carta-col-izq">
+                <div class="carta-izq-top">
+                    <h3> {{ subtitulo_reserva }} </h3>
+                    <h1 class="tit-izq"> {{ titulo_principal }} </h1>
+                    <h3>Horario</h3>
+                    <h3>{{ horario }}</h3>
+                </div>
+                <h3>Direccion</h3>
+                <h3 class="ubicacion"> {{ direccion }} </h3>
+            </div>
+            <div class="form-col-der">
+                <div class="inputs-contenedor">
+                    <h1 class="tit-reserva">Haz una Reserva</h1>
+                    <form action="{{ url_for('reservas.crearReserva') }}" method="post">
+                        <div class="fecha">
+                            <input type="text" name="fecha_hora" placeholder="Indica el dia y la hora">
+                        </div>
+                        <div class="comensales">
+                            <input type="text" name="cantidad_personas" placeholder="N° de comensales">
+                        </div>
+                        <div class="nombre">
+                            <input type="text" name="nombre" placeholder="Escribe tu nombre">
+                        </div>
+                        <div class="mesa">
+                            <input type="number" name="mesa" placeholder="Elija una mesa">
+                        </div>
+                        <button type="submit">RESERVAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 550px; margin: 40px auto; padding: 30px;">
+    
+    <div class="ticket-header">
+        <h1 style="color: var(--color-texto-oscuro, #1e293b); font-size: 24px; margin-bottom: 5px;">📋 {{ title or "Detalle de Reserva" }}</h1>
+        <p class="ticket-subtitle">Presentá este comprobante en la entrada</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'error' }}" style="margin-bottom: 20px; padding: 12px; border-radius: var(--radio-borde);">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="detail-label">Código de Reserva</span>
+            <span class="detail-value" style="font-weight: bold; color: #3498db;">#{{ reserva.id_reserva or reserva.id }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Cliente / Usuario</span>
+            <span class="detail-value" style="font-weight: 600;">{{ reserva.nombre or reserva.usuario }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Fecha del Turno</span>
+            <span class="detail-value">📅 {{ reserva.fecha }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Horario</span>
+            <span class="detail-value">⏰ {{ reserva.hora }} hs</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Comensales</span>
+            <span class="detail-value">👥 {{ reserva.cantidad_personas or reserva.personas }} personas</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Ubicación</span>
+            <span class="detail-value">Mesa {{ reserva.mesa or "A asignar por recepción" }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Estado</span>
+    
+            {% if reserva.estado == 'confirmada' %}
+                <span style="font-weight: bold; color: #2ecc71; text-transform: uppercase;">
+                  {{ reserva.estado }}
+                </span>
+            {% else %}
+                <span style="font-weight: bold; color: #f39c12; text-transform: uppercase;">
+                    {{ reserva.estado or 'Pendiente' }}
+                </span>
+            {% endif %}
+        </div>
+
+    <div style="text-align: center; margin: 25px 0; border-bottom: 1px dashed var(--color-borde); padding-bottom: 25px;">
+        <div style="background: white; padding: 12px; display: inline-block; border: 1px solid var(--color-borde); border-radius: var(--radio-borde); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <img src="data:image/png;base64,{{ qr_code }}" alt="Código QR de la reserva" style="width: 160px; height: 160px; display: block;">
+        </div>
+        <p style="font-size: 13px; color: #64748b; margin-top: 10px;">Código único para validación de asistencia</p>
+    </div>
+
+    <div class="ticket-actions">
+        
+        <a href="{{ url_for('reservas.editarReserva', id_reserva=reserva.id_reserva or reserva.id) }}" 
+           style="display: block; width: 100%; text-align: center; padding: 12px; background-color: #3498db; color: white; border-radius: var(--radio-borde); font-weight: 600; text-decoration: none; margin-bottom: 12px; box-sizing: border-box; font-size: 15px;">
+            Modificar datos de la reserva
+        </a>
+
+        <form class="form-eliminar-admin" method="POST" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva.id_reserva or reserva.id) }}" style="margin-bottom: 20px;">
+            <button type="submit" class="btn-cancel-ticket">
+                Cancelar reserva 
+            </button>
+        </form>
+
+        <div style="text-align: center;">
+            {% if session.get('rol') == 'admin' %}
+                <a href="{{ url_for('reservas.reservasList') }}" style="color: #64748b; text-decoration: none; font-weight: 500; font-size: 14px;">
+                    ⬅ Volver al Panel de Control
+                </a>
+            {% else %}
+                <a href="{{ url_for('reservas.crearReserva') }}" style="color: #64748b; text-decoration: none; font-weight: 500; font-size: 14px;">
+                    ⬅ Volver a Inicio
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
+{% endblock %}

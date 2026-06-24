@@ -1,3 +1,5 @@
+USE defaultdb;
+
 CREATE TABLE usuarios(
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre VARCHAR(50) NOT NULL,
@@ -8,10 +10,12 @@ CREATE TABLE usuarios(
 CREATE TABLE reservas(
     id_reserva INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     id_usuario INT NOT NULL,
-    fecha DATETIME NOT NULL,
-    hora DATETIME NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
     mesa INT NOT NULL,
     cantidad_personas INT NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'pendiente',
 
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
 );

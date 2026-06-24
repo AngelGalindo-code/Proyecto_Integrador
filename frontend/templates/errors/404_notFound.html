@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container" style="text-align: center; max-width: 600px; margin: 50px auto; padding: 40px;">
+    
+    <div class="error-code" style="font-size: 96px; font-weight: bold; color: #6c757d; line-height: 1; margin-bottom: 10px;">
+        404
+    </div>
+
+    <h1 style="font-size: 28px; margin-bottom: 15px; color: #333;">Página no encontrada</h1>
+    
+    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 25px;">
+
+    <p style="font-size: 16px; color: #495057; line-height: 1.6; margin-bottom: 30px;">
+        Lo sentimos, la sección o la reserva que estás intentando buscar no existe, fue eliminada o la dirección URL está mal escrita.
+    </p>
+
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('reservas.reservasList') }}" class="btn-back-home" 
+           style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: background-color 0.2s;">
+            📋 Volver al listado de reservas
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

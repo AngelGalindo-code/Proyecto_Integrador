@@ -1,13 +1,10 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from database.conexion import get_connection
+from database.queries_entidades.db_usuarios import *
+from datetime import datetime, timezone, timedelta
+import jwt
+import os
 
-from database.queries_entidades.db_usuarios import (
-    obtener_usuario_por_email,
-    obtener_usuario_por_id,
-    insertar_usuario,
-    actualizar_usuario_completo,
-    actualizar_usuario_parcial
-)
 usuarios_bp = Blueprint("usuarios", __name__)
 @usuarios_bp.route('/usuarios', methods=['POST'])
 
@@ -44,7 +41,8 @@ def crear_usuario():
 
         return jsonify({"message": "Usuario creado con exito!"}), 201
     
-    except Exception:
+    except Exception as e:
+        print("error:", str(e)) 
         return jsonify({"message": "Error del servidor al intentar crear el usuario."}), 500
     finally:
         if cursor:
@@ -76,7 +74,7 @@ def login():
     cursor = None
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         usuario = obtener_usuario_por_email(cursor, email)
 
@@ -123,177 +121,138 @@ def login():
             cursor.close()
         if conn:
             conn.close()
-
-@usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-
-def actualizar_completamente_usuario(id):
-
-    if id <= 0:
-        return jsonify({"message": "ID de usuario invalido."}), 400
-    
-    data = request.get_json()
-    if not data:
-        return jsonify({"message": "No se recibieron datos para actualizar."}), 400
-    
-    nombre = data.get("nombre")
-    numero = data.get("numero")
-    email = data.get("email")
-
-    if not nombre or not numero or not email:
-        return jsonify({"message": "Faltan datos obligatorios para la actualizacion completa."}), 400
-    
-    conn = None
-    cursor = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        usuario = obtener_usuario_por_id(cursor, id)
-        if not usuario:
-            return jsonify({"message": "El usuario no fue encontrado."}), 404
-
-        actualizar_usuario_completo(cursor, id, nombre, numero, email)
-        conn.commit()
-        
-        return jsonify({"message": "Tus datos se actualizaron correctamente."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario."}), 500
-    
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-   
             
 @usuarios_bp.route('/usuarios/<int:id>', methods=['POST'])
-
 def actualizar_parcialmente_ususario(id):
-    
     if id <= 0:
         return jsonify({"message": "ID de usuario invalido."}), 400
     
     data = request.get_json()
     if not data:
         return jsonify({"message": "No se recibio informacion para editar."}), 400
-     
-    conn = None
-    cursor = None
     try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        usuario = obtener_usuario_por_id(cursor, id)
+        usuario = getUsuarioPorId(id)
         if not usuario:
             return jsonify({"message": "El usuario no fue encontrado."}), 404
         
         campos_a_editar = {}
-
         if "nombre" in data:
             campos_a_editar["nombre"] = data["nombre"]
-
-        if "numero" in data:
+        if "numero" in data: 
             campos_a_editar["numero"] = data["numero"]
-
-        if "email" in data:
+        if "email" in data:  
             campos_a_editar["email"] = data["email"]
-
-        actualizar_usuario_parcial(cursor, id, campos_a_editar)
-        conn.commit()
 
         if not campos_a_editar:
             return jsonify({"message": "No se enviaron campos validos para modificar."}), 400
 
-        actualizar_usuario_parcial(cursor, id, campos_a_editar)
-        conn.commit()
+        actualizar_usuario_parcial(id, campos_a_editar)
 
         return jsonify({"message": "Campos modificados con exito."}), 200
-    except Exception:
-        return jsonify({"message": "Error al actualizar usuario parcialmente."}), 500
-        
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-   
-   
-@usuarios_bp.route('/usuarios/<id>/eliminar', methods=['POST'])
-
-def eliminarUsuario(id):
-
-    if id <= 0:
-        return jsonify({"message": "El ID es invalido."}), 400
+    except Exception as e:
+        print("error:", str(e)) 
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500 
     
+@usuarios_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
+def eliminarUsuario(id):
+    if id <= 0:
+        return jsonify({"message": "El ID es inválido."}), 400
+
+    conexion = None
+    cursor = None
     try:
-        
-        eliminado = eliminarUsuarioPorId(id) 
-        if not eliminado:
+        conexion = get_connection()
+        cursor = conexion.cursor()
+
+        # 1. Verificar si el usuario existe antes de mover un dedo
+        cursor.execute(OBTENER_USUARIO_POR_ID, (id,))
+        usuario = cursor.fetchone()
+        if not usuario:
             return jsonify({"message": "No existe un usuario con ese ID."}), 404
 
-        return jsonify({"message": "Usuario eliminado correctamente."}), 200
-    except Exception:
-        return jsonify({"message": "Error al eliminar usuario."}), 50
+        # Borrar primero las reservas (Hijo de usuarios)
+        sql_eliminar_reservas = "DELETE FROM reservas WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_reservas, (id,))
+
+        #  Borrar del ranking si existe (Hijo de usuarios)
+        sql_eliminar_ranking = "DELETE FROM ranking_usuarios WHERE id_usuario = %s"
+        cursor.execute(sql_eliminar_ranking, (id,))
+
+
+        cursor.execute(ELIMINAR_USUARIO_POR_ID, (id,))
+    
+        conexion.commit()
+
+        return jsonify({"message": "Usuario y sus datos asociados eliminados en cascada con éxito."}), 200
+
+    except Exception as e:
+        if conexion: 
+            conexion.rollback() # Si algo falla, deshace todo para no romper la consistencia
+        print("Error en eliminarUsuario:", str(e))
+        return jsonify({"message": f"Error del servidor: {str(e)}"}), 500
         
-         
+    finally:
+        if cursor: cursor.close()
+        if conexion: conexion.close()
 @usuarios_bp.route('/admin/usuarios', methods=['GET'])
+def obtener_todos_los_usuarios():
+    usuarios_db = getUsuarios() 
+    
+    if usuarios_db is None:
+        return jsonify({"message": "Error interno del servidor al obtener usuarios"}), 500
+        
+    if not usuarios_db:
+        return jsonify({"message": "No hay usuarios registrados"}), 404
 
-def adminUsuarios():
-
-    try:
-
-        if session.get('rol') != 'admin':
-
-            flash('Acceso denegado')
-
-            return redirect('/')
-
-        usuarios = getUsuarios()
-
-        if not usuarios:
-
-            flash('No hay usuarios registrados')
-
-            return render_template('errors/sinusuarios.html')
-
-        return render_template('adminUsuarios.html', title='Usuarios',usuarios=usuarios)
-
-    except Exception:
-        return render_template('errorGenerico.html',message='Error al obtener usuarios')       
+    return jsonify(usuarios_db), 200
         
         
-        
-            
-@usuarios_bp.route('/admin/usuarios/<id>', methods=['GET'])
-
+@usuarios_bp.route('/admin/usuarios/<int:id>', methods=['GET'])
 def adminUsuarioPorId(id):
-
     try:
-
-        id = int(id)
-
-        if session.get('rol') != 'admin':
-
-            flash('Acceso denegado')
-
-            return redirect('/')
-
         usuario = getUsuarioPorId(id)
 
         if not usuario:
-
-            flash('El usuario no fue encontrado')
-
-            return render_template('errors/404_notFound.html')
-
-        return render_template('adminUsuario.html',title='Usuario', usuario=usuario)
-
-    except ValueError:
-
-        flash('El ID es invalido')
-
-        return render_template('errors/404_notFound.html')
-
-    except Exception:
-        return render_template('errorGenerico.html', message='Error al obtener el usuario')
+            return jsonify({"message": "El usuario no fue encontrado."}), 404
     
+        return jsonify(usuario), 200
+
+    except Exception as e:
+        print(f"Error en ruta adminUsuarioPorId: {e}")
+        return jsonify({"message": "Error al obtener el usuario."}), 500
+    
+    
+@usuarios_bp.route('/usuarios/<int:id_usuario>/reservas', methods=['GET'])
+def obtenerReservasPorUsuario(id_usuario):
+    if id_usuario <= 0:
+        return jsonify({"message": "El ID es invalido."}), 400
+
+    conexion = get_connection()
+    cursor = None  
+    try:
+        cursor = conexion.cursor()
+        
+      
+        sql = """
+        SELECT id_reserva AS id, id_usuario, nombre, 
+               CAST(fecha AS CHAR) AS fecha, 
+               CAST(hora AS CHAR) AS hora, 
+               mesa, cantidad_personas, estado 
+        FROM reservas 
+        WHERE id_usuario = %s
+    """
+        cursor.execute(sql, (id_usuario,))
+        mis_reservas = cursor.fetchall()
+
+   
+        return jsonify(mis_reservas), 200
+            
+    except Exception as e:
+        print(f"Error en el servidor: {str(e)}")
+        return jsonify({"message": "Error al obtener las reservas del usuario."}), 500
+        
+    finally:
+    
+        if cursor:
+            cursor.close()
+        conexion.close()

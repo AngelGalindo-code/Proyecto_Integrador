@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="form-container wide">
+    <h1>{{ title or "Panel de Control: Reservas" }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if reservas and reservas|length > 0 %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Fecha del Turno</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reservas %}
+                        <tr>
+                            <td class="text-bold">
+                                <a href="{{ url_for('reservas.getReservaPorId', id_reserva=reserva['id_reserva'] or reserva['id']) }}" class="reserva-detalle-link">
+                                     {{ reserva['usuario'] or reserva['nombre'] }}
+                                </a>
+                            </td>
+                            <td> {{ reserva['fecha'] }}</td>
+                            <td style="text-align: center;">
+                                
+                                <form class="form-eliminar-admin" action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn-action-delete">
+                                        Cancelar Reserva
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="no-data-box" style="text-align: center; padding: 40px; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px;">
+            <p style="font-size: 1.2rem; color: #666;">No hay ninguna reserva registrada en el sistema actualmente.</p>
+        </div>
+    {% endif %}
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('reservas.crearReserva') }}" class="table-footer-link" style="font-weight: bold; text-decoration: none;"> 
+            + Crear una nueva reserva
+        </a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/reservas.js') }}"></script>
+{% endblock %}

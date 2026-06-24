@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
-
-import mysql.connector
+from database.conexion import get_connection
 
 reseñas_bp = Blueprint("reseñas", __name__)
 
@@ -40,19 +39,19 @@ ORDER BY valoracion DESC
 
 
 # Muestra todas las reseñas de un usuario.
-@reseñas_bp.route("/usuarios/reseñas/<int:id_usuario>", methods=["GET"])
+@reseñas_bp.route("/usuarios/<int:id_usuario>/resenas", methods=["GET"])
 def mostrar_todas_reseñas(id_usuario):
     con = None
     cursor = None
     try:
         con = get_connection()
-        cursor = con.cursor(dictionary=True)
+        cursor = con.cursor()
 
         cursor.execute("SELECT * FROM resenas WHERE id_usuario = %s", (id_usuario,))
         reseñas = cursor.fetchall()
 
-        if len(reseñas) == 0:
-            return jsonify({"mensaje": "Actualmente no existen reseñas."}), 404
+        if not reseñas:
+            return jsonify([]), 200
 
         return jsonify(reseñas), 200
 
@@ -60,10 +59,8 @@ def mostrar_todas_reseñas(id_usuario):
         return jsonify({"mensaje": f"Error del servidor {str(e)}"}), 500
 
     finally:
-        if cursor:
-            cursor.close()
-        if con:
-            con.close()
+        if cursor: cursor.close()
+        if con: con.close()
 
 
 # Usuario quiere ver una reseña en especifico.

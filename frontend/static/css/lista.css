@@ -1,0 +1,34 @@
+.reserva-detalle-link {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.reserva-detalle-link:hover {
+    color: #3498db; 
+    text-decoration: underline;
+}
+
+/* Para cancelar */
+.btn-action-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-action-delete:hover {
+    background-color: #bd2130;
+}
+
+/* Si no hay datos */
+.no-data-box {
+    border: 2px dashed #ccc;
+    background-color: #fafafa;
+}

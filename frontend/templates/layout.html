@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>My Application</title>
+    <link rel="stylesheet" href="{ url_for('static', filename='css/reserva_exito.css') }
+</head>
+<body>
+<main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="alert alert-info">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %} {% block content %}
+        {% endblock %} 
+    </main>
+</body>
+</html>
+
+</body>
+</html>

@@ -89,17 +89,18 @@ def obtener_nombres_categorias():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_obtener_categorias =  """
-        SELECT * FROM categorias ORDER BY nombre_categoria
+        SELECT id_categoria, nombre_categoria FROM categorias ORDER BY id_categoria
         """
 
         cur.execute(
            query_obtener_categorias
         )
 
-        categorias = cur.fetchall()
+        filas = cur.fetchall()
+        categorias = list(filas)
 
         if not categorias:
             error_404 = {
@@ -138,7 +139,8 @@ def obtener_nombres_categorias():
 
 @categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
-    data = request.json
+    
+    data = request.get_json()
     nombre_categoria = data.get("nombre_categoria")
 
     if (
@@ -162,7 +164,7 @@ def agregar_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_validar_existencia_id = """
         SELECT * FROM categorias 
@@ -209,10 +211,11 @@ INSERT INTO categorias (nombre_categoria) VALUES
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/<int:id>", methods=["PUT"]) #usuario admin
-def modificar_nombre(id):
+@categorias_bp.route("/admin/editar", methods=["PUT"]) #usuario admin
+def modificar_nombre():
+
     data = request.json
-    if not data or id <= 0 or "nombre_categoria" not in data:
+    if not data or "id_categoria" not in data or "nombre_categoria" not in data:
         error_400 = {
             "errors": [
                 {
@@ -224,13 +227,28 @@ def modificar_nombre(id):
             ]
         }
         return jsonify(error_400), 400
+    
+    id = data.get("id_categoria")
+    nombre_categoria = data.get("nombre_categoria")
 
-
+    if not isinstance(id, int) or id <= 0:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido o no se recibio el nombre de la categoria a cambiar.",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+    
     conn = None
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         nombre_categoria = data.get("nombre_categoria")
         cur.execute("SELECT * FROM categorias WHERE nombre_categoria = %s", (nombre_categoria,))
 
@@ -295,9 +313,27 @@ WHERE id_categoria = %s
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/<int:id>", methods=["DELETE"]) #usuario admin
-def eliminar_categoria(id):
-    if id <= 0:
+@categorias_bp.route("/admin/eliminar", methods=["DELETE"]) #usuario admin
+def eliminar_categoria():
+
+    data = request.json
+
+    if not data or "id_categoria" not in data:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "Se ha mandado un dato invalido",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+
+    id = data.get("id_categoria")
+    
+    if not isinstance(id, int) or id <= 0:
         error_400 = {
             "errors": [
                 {
@@ -314,7 +350,7 @@ def eliminar_categoria(id):
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         query_borrar_categoria = """
 DELETE FROM categorias 
 WHERE id_categoria = %s

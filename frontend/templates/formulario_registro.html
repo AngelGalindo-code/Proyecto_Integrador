@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> crear cuenta usuario </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_registro.css') }}">
+</head>
+<body>
+    <div>
+        <h1 class="header"> Los Horneros </h1>
+    </div>
+    
+    <div class="formulario">
+        <form action="{{ url_for('auth.crear_usuario') }}" method="POST">
+            <h2> CREAR CUENTA </h2>
+            <div class="nombre dato_ingreso">
+                <label > Nombre de usuario </label>
+            
+                <input type="text" id="usuario" name="unombre" placeholder="Ingresa tu usuario">
+            </div>
+
+            <div class="gmail dato_ingreso">        
+                <label > Email </label> 
+        
+                <input type="text" id="email" name="uemail" placeholder="Ingresa tu email">
+            </div>
+
+            <div class="telefono dato_ingreso">        
+                <label > Telefono </label> 
+        
+                <input type="text" id="telefono" name="utelefono" placeholder="Ingresa tu teléfono">
+            </div>
+
+            <div>
+                <button type="submit" id="boton_ingresar" class="boton_ingresar"> Crear cuenta </button> 
+                
+                <div>
+                    <span class="separador"> o </span> 
+                </div>              
+            
+                <a class="link_login_usuario" href="{{ url_for('auth.mostrar_login') }}"> 
+                    Acceder a la  cuenta 
+                </a> 
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/registro.js') }}"></script>
+</body>
+</html>
