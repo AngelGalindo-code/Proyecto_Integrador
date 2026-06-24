@@ -1,12 +1,13 @@
-FROM python:3.13-slim
-
+FROM python:3.11-slim
 WORKDIR /app
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
 
+# Cambiamos al puerto 8080
 EXPOSE 8080
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+# Le indicamos a Flask que escuche en el 8080
+CMD ["flask", "run", "--port", "8080"]
