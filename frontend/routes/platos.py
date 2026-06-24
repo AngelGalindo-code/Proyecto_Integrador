@@ -57,7 +57,7 @@ def crearPlato():
                 "descripcion": descripcion if descripcion else None,
                 "disponible": True if disponible == "1" else False
             }
-            respuesta = requests.post(f"{URL_BACKEND}/platos/platos", json=payload, timeout=5)
+            respuesta = requests.post(f"{URL_BACKEND}/platos", json=payload, timeout=5)
 
             if respuesta.status_code == 201:
                 flash("Plato agregado con exito", "success")

@@ -3,6 +3,7 @@ from routes.decorators import adminRequired, loginRequired
 from validaciones.reservas import *
 import requests 
 from constantes import URL_BACKEND
+from flask_mail import Message
 
 # Para el QR
 import qrcode
