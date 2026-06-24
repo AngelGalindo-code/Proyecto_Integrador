@@ -107,7 +107,7 @@ def bad_request(e):
 
 def obtener_reservas_backend():
     try:
-        # Hacemos el pedido al backend
+        
         respuesta = requests.get(f"{URL_BACKEND}/reservas", timeout=5)
 
         if respuesta.status_code == 200:
@@ -132,7 +132,7 @@ def getReservaPorId(id_reserva):
     if not id_valido:
         abort(404)
 
-    esAdmin = session.get('rol') == 'admin' # Se mantiene tu chequeo de rol
+    esAdmin = session.get('rol') == 'admin' 
 
     try:
         
@@ -166,7 +166,7 @@ def getReservaPorId(id_reserva):
             qr_base64 = base64.b64encode(buffer_memoria.read()).decode('utf-8')
             qr.clear() # Limpiamos el objeto QR
 
-            # Le pasamos la reserva de la API y el QR recién horneado a miReserva.html
+
             flash("Estos son los detalles de su reserva", "success")
             return render_template("miReserva.html", title="Mi reserva", reserva=miReserva, qr_code=qr_base64)
         else:
@@ -219,7 +219,7 @@ def modificarReserva(id_reserva):
             reserva_api = verificada.json()
             esUsuario = session.get('id_usuario') == reserva_api.get('id_usuario')
 
-            # Candado estricto: Solo el dueño modifica
+            # Candado estricto, solo el dueño modifica
             if not esUsuario:
                 abort(403) 
             
@@ -238,7 +238,7 @@ def modificarReserva(id_reserva):
                 flash("¡Reserva actualizada con éxito!", "success")
                 return redirect(url_for("reservas.getReservaPorId", id_reserva=id_reserva))
             else:
-                #  Restaurado el abort(500) estándar
+               
                 abort(500)
 
         respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
@@ -262,7 +262,7 @@ def modificarReserva(id_reserva):
         print(f" Error de conexión: {e}")
         abort(500)
 
-@reservas_bp.route('/<int:id_reserva>/eliminar', methods=['POST', 'GET']) # 🌟 Agregamos GET por si acaso
+@reservas_bp.route('/<int:id_reserva>/eliminar', methods=['POST', 'GET'])
 @loginRequired
 def cancelarReserva(id_reserva):
     idValido = validarId(id_reserva)
@@ -293,7 +293,6 @@ def cancelarReserva(id_reserva):
         if respuesta.status_code == 200:
             flash('Reserva eliminada correctamente', 'success')
             
-            # 🌟 CORREGIDO: Redirección limpia sin usar reservasList
             if esAdmin:
                 return redirect('/admin') 
             
@@ -336,7 +335,7 @@ def confirmarAsistenciaQR(id_reserva):
                 if hora_original and len(hora_original) == 8 and hora_original.count(':') == 2:
                     hora_para_api = hora_original[:5]
 
-                # 2. 📝 Pisamos el campo 'estado' con el string en minúsculas válido
+               
                 payload = {
                     'id_usuario': datos_originales.get('id_usuario'),
                     'nombre': datos_originales.get('nombre'),
@@ -344,10 +343,10 @@ def confirmarAsistenciaQR(id_reserva):
                     'hora': hora_para_api,
                     'mesa': int(datos_originales.get('mesa')) if str(datos_originales.get('mesa')).isdigit() else datos_originales.get('mesa'),
                     'cantidad_personas': int(datos_originales.get('cantidad_personas')),
-                    'estado': 'completada'  # 👈 Cambiado a minúsculas para respetar tu DB
+                    'estado': 'completada' 
                 }
                 
-                # 3. 🚀 Enviamos la actualización limpia mediante PUT
+                
                 respuesta_put = apiBackend.put(f"{URL_BACKEND}/reservas/{id_reserva}", json=payload, timeout=5)
 
                 if respuesta_put.status_code in [200, 204]:
@@ -358,7 +357,7 @@ def confirmarAsistenciaQR(id_reserva):
             flash("El servidor de reservas rechazó la actualización.", "danger")
             return redirect('/admin')
 
-        # Método GET original
+        
         respuesta_get = apiBackend.get(f"{URL_BACKEND}/reservas/{id_reserva}", timeout=5)
         if respuesta_get.status_code == 404:
             abort(404)
@@ -424,7 +423,7 @@ def reservaExitosa(id_reserva):
 def enviarQrPorMail(destinatario, datos, qr_base64):
     from app import mail  # Para evitar importaciones circulares
     try:
-        # 1. Armamos el objeto Message indicando el asunto y el destinatario
+       
         mensaje = Message(
             subject=f"Reserva Nro. #{datos.get('id_reserva') or datos.get('id')} - Los Horneros",
             recipients=[destinatario]
@@ -466,13 +465,13 @@ def enviar_comprobante():
         return redirect(url_for('home'))
 
     try:
-        # Consultamos al Backend para tener los datos de la reserva limpios y actualizados
+        
         respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{reserva_id}", timeout=5)
         
         if respuesta.status_code == 200:
             datos_reserva = respuesta.json()
             
-            # 2. Invocamos tu función para despachar el mail con el QR adjunto
+            
             enviado = enviarQrPorMail(email_destinatario, datos_reserva, qr_base64)
             
             if enviado:
