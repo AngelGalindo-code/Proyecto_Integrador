@@ -165,7 +165,7 @@ def obtener_estado_resena(id_usuario):
 
 def confirmar_reseña(id_usuario):
     try:
-        payload = {"estado_reserva": "RESEÑADO"}
+        payload = {"estado": "RESEÑADO"}
         respuesta = requests.post(
             f"{URL_BACKEND}/usuario/{id_usuario}", json=payload, timeout=5
         )
@@ -248,7 +248,7 @@ def modificar_resena_id(id_comentario, comentario, valoracion, id_usuario):
         return 500
 
     except Exception as e:
-        logger.error(f"Error inesperado al eliminar la resena: {e}")
+        logger.error(f"Error inesperado al modificar la resena: {e}")
         return 500
 
 @resenas_bp.route("/eliminar/<int:id_comentario>", methods=["POST"])
