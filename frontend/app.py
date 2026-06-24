@@ -1,6 +1,8 @@
 from flask import Flask, render_template, redirect, url_for
 from dotenv import load_dotenv 
 import os
+import requests
+from constantes import URL_BACKEND
 
 # Cargamos las variables del archivo .env al sistema operativo
 load_dotenv()
@@ -31,9 +33,16 @@ def index():
 
 @app.route('/home')
 def home():
-    # diccionario vacio para que no explote
     resenas_del_home = {} 
+    platos_dinamicos = []
 
-    return render_template('home.html', menu={'comidas': []}, resenas=resenas_del_home)
-if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    try:
+        parametros = {"disponible": "true"}
+        respuesta = requests.get(f"{URL_BACKEND}/platos", params=parametros, timeout=5)
+        
+        if respuesta.status_code == 200:
+            platos_dinamicos = respuesta.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error al conectar con el backend para buscar a los platos: {e}")
+
+    return render_template('home.html', menu={'comidas': platos_dinamicos}, resenas=resenas_del_home)
