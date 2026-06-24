@@ -15,7 +15,7 @@ def crearCategoria():
 
     if not nombre_categoria or not nombre_categoria.strip():
         flash("Indique el nombre de la categoria")
-        return render_template("admin_dashboard.html")
+        return redirect("/admin/dashboard")
     
     try:
         response = requests.post(f"{URL_BACKEND}/admin", json = {"nombre_categoria": nombre_categoria.strip()})
@@ -78,7 +78,10 @@ def editarCategoria():
 def eliminarCategoria():
 
     id_cat = request.form.get("id_categoria")
-
+    if not id_cat:
+        flash("Seleccione la categoria a eliminar", "error")
+        return redirect("/admin/categoria")
+    
     payload = {"id_categoria": int(id_cat)}
 
     try:

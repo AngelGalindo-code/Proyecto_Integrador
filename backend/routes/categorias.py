@@ -138,7 +138,8 @@ def obtener_nombres_categorias():
 
 @categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
-    data = request.json
+    
+    data = request.get_json()
     nombre_categoria = data.get("nombre_categoria")
 
     if (

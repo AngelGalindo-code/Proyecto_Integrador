@@ -9,7 +9,19 @@
 <body>
 
     <main class="dashboard-container">
-        
+        <div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mensajes-flash">
+                        {% for category, message in messages %}
+                            <div class="alerta-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
         <header class="dashboard-header">
             <h1>Panel de Control de Administrador</h1>
             <p>Interfaz gráfica exclusiva para la gestión de usuarios, comensales y reincidencia de cancelaciones.</p>
@@ -135,13 +147,13 @@
                 </div>
             </div>
 
-                        <!-- Sección de categorias -->
+            <!-- Sección de categorias -->
             <div class="seccion-tabla">
                 <h2>Gestión de Categorías</h2>
                 <div class="tablas-contenedor-vertical">
                     <div class="tarjeta">
                         <h3>Crear Categoría</h3>
-                        <form action="/admin" method="POST" class="form-sincronico">
+                        <form action="{{ url_for("categoria.crearCategoria") }}" method="POST" class="form-sincronico">
                             <table class="tabla-admin">
                                 <thead>
                                     <tr>
@@ -180,7 +192,7 @@
                                             <select name="id_categoria" required>
                                                 <option value="" disabled selected>Selecciona categoría</option>
                                                 {% for cat in categorias %}
-                                                    <option value="{{ cat.id_categoria }}">ID: {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
+                                                    <option value="{{ cat.id_categoria }}"> {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>
@@ -212,7 +224,7 @@
                                             <select name="id_categoria" required>
                                                 <option value="" disabled selected>Selecciona categoría</option>
                                                 {% for cat in categorias %}
-                                                    <option value="{{ cat.id_categoria }}">ID: {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
+                                                    <option value="{{ cat.id_categoria }}"> {{ cat.id_categoria }} - {{ cat.nombre_categoria }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>
@@ -223,49 +235,180 @@
                                 </tbody>
                             </table>
                         </form>
+                        
                     </div>
 
-                <div class="tabla-scroll">
-                    <table class="tabla-admin">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre de la Categoría</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="tabla-scroll">
+                        <table class="tabla-admin">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre de la Categoría</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in categorias %}
+                                    <tr>
+                                        <td>{{ cat.id_categoria }}</td>
+                                        <td>{{ cat.nombre_categoria }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2" class="sin-datos">No hay categorías registradas en el sistema.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    </div>
+                        <datalist id="categorias-existentes">
                             {% for cat in categorias %}
-                                <tr>
-                                    <td>{{ cat.id_categoria }}</td>
-                                    <td>{{ cat.nombre_categoria }}</td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="2" class="sin-datos">No hay categorías registradas en el sistema.</td>
-                                </tr>
+                                <option value="{{ cat.nombre_categoria }}"></option>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </datalist>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
-                <datalist id="categorias-existentes">
-                    {% for cat in categorias %}
-                        <option value="{{ cat.nombre_categoria }}"></option>
-                    {% endfor %}
-                </datalist>
+                <!-- Sección de platos -->
+                <div class="seccion-tabla">
+                    <h2>Gestión de Platos</h2>
+                <div class="tablas-contenedor-vertical">
+                    <div class="tarjeta">
+                        <h3>Crear Plato</h3>
+                        <form action="/admin/platos/crear" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Disponible</th>
+                                        <th>Descripción</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="nombre" placeholder="Nombre del plato" required>
+                                        </td>
+                                        <td>
+                                            <select name="id_categoria" required>
+                                                <option value="" disabled selected>Selecciona categoría</option>
+                                                {% for cat in categorias %}
+                                                    <option value="{{ cat.id_categoria }}">{{ cat.nombre_categoria }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="precio" placeholder="Precio" min="0" required>
+                                        </td>
+                                        <td>
+                                            <select name="disponible" required>
+                                                <option value="" disabled selected>Disponibilidad</option>
+                                                <option value="1">Disponible</option>
+                                                <option value="0">No disponible</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="descripcion" placeholder="Descripción del plato">
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-guardar">Agregar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
 
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                <div class="mensajes-flash">
-                                    {% for category, message in messages %}
-                                        <div class="alerta-{{ category }}">
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endwith %}
+                    <div class="tarjeta">
+                        <h3>Editar Plato</h3>
+                        <form action="/admin/platos/editar" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Seleccionar Plato</th>
+                                        <th>Nuevo Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Disponible</th>
+                                        <th>Descripción</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="id_plato" required>
+                                                <option value="" disabled selected>Selecciona plato</option>
+                                                {% for plato in platos %}
+                                                    <option value="{{ plato.id_plato }}">{{ plato.id_plato }} - {{ plato.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="nombre" placeholder="Nuevo Nombre">
+                                        </td>
+                                        <td>
+                                            <select name="id_categoria">
+                                                <option value="" disabled selected>Selecciona categoría</option>
+                                                {% for cat in categorias %}
+                                                    <option value="{{ cat.id_categoria }}">{{ cat.nombre_categoria }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="precio" placeholder="Precio nuevo" min="0">
+                                        </td>
+                                        <td>
+                                            <select name="disponible">
+                                                <option value="" disabled selected>Disponibilidad</option>
+                                                <option value="1">Disponible</option>
+                                                <option value="0">No disponible</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="descripcion" placeholder="Nueva descripción">
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-guardar">Guardar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+
+                    <div class="tarjeta">
+                        <h3>Eliminar Plato</h3>
+                        <form action="/admin/eliminar/plato" method="POST" class="form-sincronico">
+                            <table class="tabla-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Seleccionar Plato</th>
+                                        <th>Acción Sincrónica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="id_plato" required>
+                                                <option value="" disabled selected>Selecciona plato</option>
+                                                {% for plato in platos %}
+                                                    <option value="{{ plato.id_plato }}">{{ plato.id_plato }} - {{ plato.nombre }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn-eliminar">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
                 </div>
             </div>

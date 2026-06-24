@@ -7,7 +7,7 @@ platos_bp = Blueprint("platos", __name__)
 def _construir_query_platos(
     categoria_id=None, disponible=None, precio_max=None, precio_min=None
 ):
-    query = "SELECT * FROM platos WHERE eliminado = 0"
+    query = "SELECT * FROM platos WHERE 1=1"
     valores = []
 
     if categoria_id:
@@ -39,7 +39,7 @@ def obtener_todos_platos():
         precio_min = request.args.get("precio_min")
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         query, valores = _construir_query_platos(
             categoria_id=categoria_id,
@@ -49,15 +49,21 @@ def obtener_todos_platos():
         )
 
         cursor.execute(query, valores)
-        platos = cursor.fetchall()
+        filas = cursor.fetchall()
+        platos = list(filas)
 
         cursor.close()
         conn.close()
 
-        return jsonify(platos), 200
+        return jsonify({"platos":platos}), 200
 
     except Exception as e:
-        return jsonify(server_error), 500
+        return jsonify({
+            "code":"500",
+            "message":"Internal Server Error",
+            "level": "error",
+            "description": str(e)
+        }), 500
 
 
 @platos_bp.route("/platos/<int:id>", methods=["GET"])
@@ -88,7 +94,17 @@ def crear_plato():
             or "precio" not in datos
             or "id_categoria" not in datos
         ):
-            return jsonify(bad_request), 400
+            error_400 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_400), 400
 
         nombre = datos["nombre"]
         descripcion = datos.get("descripcion", None)
@@ -101,10 +117,10 @@ def crear_plato():
         cursor = conn.cursor()
 
         query = """
-            INSERT INTO platos (nombre, descripcion, precio, disponible, imagen, id_categoria)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO platos (nombre, descripcion, precio, disponible, id_categoria)
+            VALUES (%s, %s, %s, %s, %s)
         """
-        valores = (nombre, descripcion, precio, disponible, imagen, id_categoria)
+        valores = (nombre, descripcion, precio, disponible, id_categoria)
 
         cursor.execute(query, valores)
         conn.commit()
@@ -120,7 +136,17 @@ def crear_plato():
         )
 
     except Exception as e:
-        return jsonify(server_error), 500
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
 
 
 @platos_bp.route("/platos/<int:id>", methods=["PATCH"])
@@ -128,13 +154,22 @@ def actualizar_plato(id):
     try:
         datos = request.get_json()
         if not datos:
-            return jsonify(bad_request), 400
+            error_400 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_400), 400
         campos_permitidos = [
             "nombre",
             "descripcion",
             "precio",
             "disponible",
-            "imagen",
             "id_categoria",
         ]
 
@@ -146,10 +181,30 @@ def actualizar_plato(id):
                 clausulas.append(f"{llave} = %s")
                 valores.append(valor)
             else:
-                return jsonify(bad_request), 400  # campo no permitido
+                error_400 = {
+                    "errors": [
+                {
+                        "code": "400",
+                        "message": "Bad Request",
+                        "level": "error",
+                        "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+                return jsonify(error_400), 400 
 
         if not clausulas:
-            return jsonify(bad_request), 400  # no se enviaron campos para actualizar
+            error_400 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_400), 400
 
         query = f"UPDATE platos SET {', '.join(clausulas)} WHERE id_plato = %s"
         valores.append(id)
@@ -180,37 +235,97 @@ def actualizar_plato(id):
         return jsonify({"mensaje": "Plato actualizado exitosamente"}), 200
 
     except Exception as e:
-        return jsonify(server_error), 500
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
 
 
-@platos_bp.route("/platos/<int:id>", methods=["DELETE"])
-def eliminar_plato(id):
+@platos_bp.route("/admin/eliminar", methods=["DELETE"])
+def eliminar_plato():
+
+    data = request.json
+
+    if not data:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+    
+    id = data.get("id_plato")
+    
+    if not isinstance(id, int) or id <= 0:
+        error_400 = {
+            "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+        return jsonify(error_400), 400
+    
     try:
         conn = get_connection()
         cursor = conn.cursor()
 
-        # soft delete
+        
         query = """
-            UPDATE platos 
-            SET eliminado = 1, disponible = 0 
-            WHERE id_plato = %s AND eliminado = 0
+            DELETE FROM platos 
+            WHERE id_plato = %s
         """
 
         cursor.execute(query, (id,))
+
+        if cursor.rowcount == 0:
+            error_404 = {
+                "errors": [
+                {
+                    "code": "400",
+                    "message": "Bad Request",
+                    "level": "error",
+                    "description": "No se ha mandado el nombre de la categoria o se mandado un dato invalido",
+                }
+            ]
+        }
+            return jsonify(error_404), 404
+        
         conn.commit()
-
-        filas_afectadas = cursor.rowcount
-
-        cursor.close()
-        conn.close()
-
-        if filas_afectadas == 0:
-            return (
-                jsonify(not_found),
-                404,
-            )  # El plato no existe o ya fue eliminado anteriormente
-
-        return jsonify({"mensaje": f"Plato con ID {id} eliminado exitosamente"}), 200
-
+        return "", 204
+    
     except Exception as e:
-        return jsonify(server_error), 500
+        print("ERROR", str(e))
+        error_500 = {
+            "errors": [
+                {
+                    "code": "500",
+                    "message": "Internal Server Error",
+                    "level": "error",
+                    "description": str(e),
+                }
+            ]
+        }
+        return jsonify(error_500), 500
+    
+    finally:
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
+

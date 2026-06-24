@@ -85,29 +85,30 @@
                     </thead>
                     <tbody>
                         {% for resena in resenas %}
+                           <table>
+                    <thead>
+                        <tr>
+                            <th> Valoración </th>
+                            <th> Comentario </th>
+                            <th> Fecha </th>
+                            <th> acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resena in resenas %}
                             <tr>
-                                <form method="POST" action="/resenas/{{ resena.id_comentario }}/editar">
-                                    <td>
-                                        <input type="number" name="valoracion" value="{{ resena.valoracion }}" min="1" max="5">
-                                    </td>
-
-                                    <td>
-                                        <input type="text" name="comentario" value="{{ resena.comentario }}">
-                                    </td>
-
-                                    <td>Sin fecha registrada</td>
-
-                                    <td>
-                                        <button type="submit">Guardar</button>
-                                    </td>
-                                </form>
-
+                                <td>{{ resena['valoracion'] }}</td>
+                                <td>{{ resena['comentario'] }}</td>
+                                <td>{{ resena['fecha_publicacion'] }}</td>
                                 <td>
-                                    <form method="POST" action="/resenas/{{ resena.id_comentario }}/eliminar">
-                                        <button type="submit">Eliminar</button>
-                                    </form>
+                                    
+                                    <button type="button" class="boton_modificar"> Editar </button> <br>
+                                    {% include 'modificar_resena.html' %}
+                                    
+                                    <button type="button"  class="boton_eliminar"> Eliminar </button> 
+                                    {% include 'eliminar_resena.html' %} 
+                                                                                 
                                 </td>
-                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
