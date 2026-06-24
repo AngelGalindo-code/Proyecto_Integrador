@@ -43,13 +43,5 @@ def validarFecha(fecha):
         return False
 
 
-def validarMesaDisponible(fecha, mesa, hora):
 
-    disponibilidad = verDisponibilidadMesa(fecha, mesa, hora)
-
-    if not disponibilidad:
-        return False # No damos mensaje, ya que se encuentra en validarDisponibilidadMesa
-    
-    return True
-    
         
