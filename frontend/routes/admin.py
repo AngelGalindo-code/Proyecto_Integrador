@@ -28,6 +28,23 @@ def panelAdmin():
     except Exception as e:
         print("Error al conectar con el backend (categorías):", str(e))
 
+    ranking_usuarios = []
+    try:
+  
+        res_rank = requests.get(f"{URL_BACKEND}/admin/usuarios/ranking", timeout=5)
+        if res_rank.status_code == 200:
+            ranking_usuarios = res_rank.json()
+    except Exception as e:
+        print("Error al traer el ranking de usuarios:", str(e))
+
+    platos = []
+    try:
+        res_platos = requests.get(f"{URL_BACKEND}/platos", timeout=5)
+        if res_platos.status_code == 200:
+            platos = res_platos.json().get("platos", [])
+    except Exception as e:
+        print("Error al traer la lista de platos:", str(e))
+
     todas_las_reservas = obtener_reservas_backend()
 
     fecha_actual_str = datetime.now().strftime("%Y-%m-%d")
@@ -57,6 +74,8 @@ def panelAdmin():
         title='Panel de Administración', 
         lista_usuarios=usuarios,
         categorias=categorias,                     
+        ranking_usuarios=ranking_usuarios,        
+        platos=platos,                
         lista_reservas_hoy=reservas_hoy,
         total_reservas_hoy=total_reservas,
         total_comensales_hoy=total_comensales,
