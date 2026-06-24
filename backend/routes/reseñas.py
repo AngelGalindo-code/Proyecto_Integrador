@@ -21,7 +21,7 @@ def obtener_resenas():
 FROM resenas r 
 INNER JOIN usuarios u
 ON r.id_usuario = u.id 
-ORDER BY valoracion DESC
+ORDER BY valoracion DESC, fecha_publicacion DESC
 """)
 
         resenas = cursor.fetchall()
@@ -47,7 +47,7 @@ def mostrar_todas_reseñas(id_usuario):
         con = get_connection()
         cursor = con.cursor()
 
-        cursor.execute("SELECT * FROM resenas WHERE id_usuario = %s", (id_usuario,))
+        cursor.execute("SELECT * FROM resenas WHERE id_usuario = %s ORDER BY fecha_publicacion DESC", (id_usuario,))
         reseñas = cursor.fetchall()
 
         if not reseñas:

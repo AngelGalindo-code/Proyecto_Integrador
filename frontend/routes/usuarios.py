@@ -38,10 +38,6 @@ def perfil_usuario():
                 # el HTML busca "id_reserva", pero la base de datos devuelve "id" o "id_reserva"
                 if 'id_reserva' not in reserva and 'id' in reserva:
                     reserva['id_reserva'] = reserva['id']
-
-        repuestas_resenas = requests.get(f"{URL_BACKEND}/usuarios/{user_actual['id']}/resenas", headers=autorizacion_headers, timeout=5)
-        if repuestas_resenas.status_code == 200:
-            lista_resenas = repuestas_resenas.json()
             
     except requests.exceptions.RequestException as e:
         print(f"Error al conectar con los servicios del backend: {e}")
