@@ -1,6 +1,8 @@
 from flask import Flask, session, render_template, redirect, url_for
 from dotenv import load_dotenv 
 import os
+import requests
+from constantes import URL_BACKEND
 
 # Cargamos las variables del archivo .env al sistema operativo
 load_dotenv()

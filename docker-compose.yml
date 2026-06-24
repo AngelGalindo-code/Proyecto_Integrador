@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: app_backend
+    restart: always
+    ports:
+      - "10599:10599" # Mapea el puerto 10599 hacia afuera de tu PC también
+    env_file:
+      - .env
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+
+  frontend:
+    build: ./frontend
+    container_name: app_frontend
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - backend

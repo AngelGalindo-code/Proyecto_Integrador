@@ -40,7 +40,6 @@ def obtener_todos_platos():
 
         conn = get_connection()
         cursor = conn.cursor()
-
         query, valores = _construir_query_platos(
             categoria_id=categoria_id,
             disponible=disponible,
@@ -70,9 +69,9 @@ def obtener_todos_platos():
 def obtener_plato_por_id(id):
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
-        query = "SELECT * FROM platos WHERE id = %s AND eliminado = 0"
+        query = "SELECT * FROM platos WHERE id_plato = %s"
         cursor.execute(query, (id,))
         plato = cursor.fetchone()
 
