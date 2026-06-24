@@ -86,6 +86,10 @@ form {
     margin-top: 20px; 
 }
 
+.boton_modificar, .boton_eliminar { /*agregado*/
+    margin-top: 5px;
+    width: 80px;
+}
 
 .btn-logout {
     background: #c72137; 

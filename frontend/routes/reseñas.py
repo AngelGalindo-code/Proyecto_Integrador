@@ -1,4 +1,4 @@
-from flask import Blueprint, session, request, flash, abort, redirect, url_for
+from flask import Blueprint, session, request, flash, redirect, url_for
 from constantes import URL_BACKEND
 import logging
 import requests
@@ -21,12 +21,19 @@ def publicar_resena():
             "No se han ingresado todos los datos o la valoracion no es valida",
             "error",
         )
+        return redirect(url_for("home.pagina_principal"))
 
-    if resultado == 404:
+
+    elif resultado == 404:
         flash("No se encontró el usuario", "error")
+        return redirect(url_for("home.pagina_principal"))
 
-    if resultado == 201:
+    elif resultado == 201:
         flash("Reseña cargada", "success")
+
+    else:
+        flash("Hubo un error con el servidor", "error")
+        return redirect(url_for("home.pagina_principal"))
 
 
     respuesta_resena = confirmar_reseña(id_usuario)
@@ -140,13 +147,13 @@ def confirmar_reseña(id_usuario):
     try:
         payload = {"estado_reserva": "RESEÑADO"}
         respuesta = requests.patch(
-            f"{API_BASE_URL}/reservas/usuario/{id_usuario}", json=payload, timeout=5
+            f"{URL_BACKEND}/reservas/usuario/{id_usuario}", json=payload, timeout=5
         )
 
         return respuesta.status_code
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
         return 500
 
     except Exception as e:
@@ -156,7 +163,7 @@ def confirmar_reseña(id_usuario):
 
 def obtener_resena_id(id_usuario):
     try:
-        response = requests.get(f"{API_BASE_URL}/resenas/usuario/{id_usuario}", timeout=10)
+        response = requests.get(f"{URL_BACKEND}/resenas/usuario/{id_usuario}", timeout=10)
 
         if response.status_code == 200:
             data = response.json()
@@ -166,7 +173,7 @@ def obtener_resena_id(id_usuario):
         return {}
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
 
         return {}
 

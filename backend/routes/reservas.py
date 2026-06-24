@@ -213,3 +213,4 @@ def eliminarReserva(id_reserva):
         return jsonify({"error": "Internal Server Error", "message": "Error en el servidor al intentar eliminar la reserva"}), 500
     finally:
         conexion.close()
+
