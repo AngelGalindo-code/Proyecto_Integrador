@@ -168,12 +168,12 @@
                         </thead>
                         <tbody>
                             {% for rank in ranking_usuarios %}
-                            <tr class="{% if rank.cant_cancelado > 3 %}fila-peligro{% endif %}">
+                            <tr class="{% if rank.cant_cancelaciones | int > 3 %}fila-peligro{% endif %}">
                                 <td>{{ rank.nombre }}</td>
                                 <td>{{ rank.gmail }}</td>
-                                <td class="texto-centro font-bold">{{ rank.cant_cancelado }}</td>
+                                <td class="texto-centro font-bold">{{ rank.cant_cancelaciones }}</td>
                                 <td>
-                                    <form action="/admin/usuarios/{{ rank.id_usuario }}/ranking/reiniciar" method="POST" class="form-sincronico">
+                                    <form action="/admin/usuarios/{{ rank.id }}/ranking/reiniciar" method="POST" class="form-sincronico">
                                         <button type="submit" class="btn-tabla-accion">Reiniciar Contador</button>
                                     </form>
                                 </td>

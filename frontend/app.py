@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, session, render_template, redirect, url_for
 from dotenv import load_dotenv 
 import os
 
@@ -14,6 +14,8 @@ from routes.reservas import reservas_bp
 from routes.reseñas import resenas_bp
 from routes.categoria import categoria_bp
 from routes.platos import platos_bp
+
+from routes.reseñas import resenas_destacadas, obtener_estado_resena
 
 app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
 
@@ -31,9 +33,22 @@ def index():
 
 @app.route('/home')
 def home():
-    # diccionario vacio para que no explote
-    resenas_del_home = {} 
+    usuario_sesion = session.get("usuario")
+    
+    if usuario_sesion:
+        id_usuario = usuario_sesion.get("id")
+        estado_reserva_usuario = obtener_estado_resena(id_usuario)
+    else:
+        id_usuario = None
+        estado_reserva_usuario = False
 
-    return render_template('home.html', menu={'comidas': []}, resenas=resenas_del_home)
+    resenas_del_home = resenas_destacadas()
+
+    return render_template(
+        'home.html', 
+        menu={'comidas': []}, 
+        resenas=resenas_del_home, 
+        activar_resena=estado_reserva_usuario
+    )
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

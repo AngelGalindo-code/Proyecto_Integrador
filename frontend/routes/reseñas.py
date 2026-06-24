@@ -1,4 +1,4 @@
-from flask import Blueprint, session, request, flash, abort, redirect, url_for
+from flask import Blueprint, session, request, flash, redirect, url_for
 from constantes import URL_BACKEND
 import logging
 import requests
@@ -21,12 +21,19 @@ def publicar_resena():
             "No se han ingresado todos los datos o la valoracion no es valida",
             "error",
         )
+        return redirect(url_for("home"))
 
-    if resultado == 404:
+
+    elif resultado == 404:
         flash("No se encontró el usuario", "error")
+        return redirect(url_for("home"))
 
-    if resultado == 201:
+    elif resultado == 201:
         flash("Reseña cargada", "success")
+
+    else:
+        flash("Hubo un error con el servidor ja  aj", "error")
+        return redirect(url_for("home"))
 
 
     respuesta_resena = confirmar_reseña(id_usuario)
@@ -42,7 +49,7 @@ def publicar_resena():
 
     else:
         flash("Hubo un error con el servidor", "error")
-    return redirect(url_for("home.pagina_principal"))
+    return redirect(url_for("home"))
 
 
 def resenas_destacadas():
@@ -114,7 +121,7 @@ def obtener_resenas():
 def guardar_resena(id_usuario, comentario, valoracion):
     try:
         response = requests.post(
-            f"{URL_BACKEND}/resenas",
+            f"{URL_BACKEND}/reseñas",
             json={
                 "id_usuario": id_usuario,
                 "comentario": comentario,
@@ -135,18 +142,38 @@ def guardar_resena(id_usuario, comentario, valoracion):
 
         return 500
     
+def obtener_estado_resena(id_usuario): 
+    try:
+        response = requests.get(
+            f"{URL_BACKEND}/reserva_usuario",
+            json={"id_usuario": id_usuario},
+            timeout=10,
+        )
+
+        if response.status_code == 200:
+            return True
+        return False
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
+
+        return False
+
+    except Exception as e:
+        logger.error(f"Error inesperado al obtener las reseñas: {e}")
+        return False
 
 def confirmar_reseña(id_usuario):
     try:
         payload = {"estado_reserva": "RESEÑADO"}
-        respuesta = requests.patch(
-            f"{API_BASE_URL}/reservas/usuario/{id_usuario}", json=payload, timeout=5
+        respuesta = requests.post(
+            f"{URL_BACKEND}/usuario/{id_usuario}", json=payload, timeout=5
         )
 
         return respuesta.status_code
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
         return 500
 
     except Exception as e:
@@ -156,7 +183,7 @@ def confirmar_reseña(id_usuario):
 
 def obtener_resena_id(id_usuario):
     try:
-        response = requests.get(f"{API_BASE_URL}/resenas/usuario/{id_usuario}", timeout=10)
+        response = requests.get(f"{URL_BACKEND}/resenas/usuario/{id_usuario}", timeout=10)
 
         if response.status_code == 200:
             data = response.json()
@@ -166,7 +193,7 @@ def obtener_resena_id(id_usuario):
         return {}
 
     except requests.exceptions.ConnectionError:
-        logger.error(f"No se pudo conectar con la API en {API_BASE_URL}")
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
 
         return {}
 
@@ -198,13 +225,13 @@ def modificar_resena(id_comentario):
         flash("Error en el servidor", "error")
 
 
-    return redirect(url_for("panel_usuario.obtener_info_usuario"))
+    return redirect(url_for("usuarios.perfil_usuario"))
 
 
 def modificar_resena_id(id_comentario, comentario, valoracion, id_usuario):
     try:
         response = requests.put(
-            f"{URL_BACKEND}/resenas/{id_comentario}",
+            f"{URL_BACKEND}/reseñas/{id_comentario}",
             json={
                 "id_usuario": id_usuario,
                 "comentario": comentario,
@@ -242,13 +269,13 @@ def eliminar_resena(id_comentario):
     else:
         flash("Error en el servidor", "error")
 
-    return redirect(url_for("panel_usuario.obtener_info_usuario"))
+    return redirect(url_for("usuarios.perfil_usuario"))
 
 
 def eliminar_resena_id(id_usuario, id_comentario):
     try:
         response = requests.delete(
-            f"{URL_BACKEND}/resenas/{id_comentario}",
+            f"{URL_BACKEND}/reseñas/{id_comentario}",
             json={"id_usuario": id_usuario},
             timeout=10,
         )

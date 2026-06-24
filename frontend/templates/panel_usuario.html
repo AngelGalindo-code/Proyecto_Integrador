@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Panel del usuario</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/panel_usuario.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eliminar_resena.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modificar_resena.css') }}">
 </head>
 <body>
 
@@ -94,7 +97,7 @@
                                     {% include 'modificar_resena.html' %}
                                     
                                     <button type="button" class="boton_eliminar"> Eliminar </button> 
-                                    {% include 'eliminar_resena.html' %} 
+                                    {% include 'eliminar_resena.html' %}                                                 
                                 </td>
                             </tr>
                         {% endfor %}
@@ -121,5 +124,6 @@
     {% endwith %}
 
     <script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/eliminar_editar_resena.js') }}"></script>
 </body>
 </html>

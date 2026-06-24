@@ -5,13 +5,13 @@ reseñas_bp = Blueprint("reseñas", __name__)
 
 
 # Obtiene todas las reseñas existentes
-@reseñas_bp.route("/", methods=["GET"])
+@reseñas_bp.route("/resenas", methods=["GET"])
 def obtener_resenas():
     conn = None
     cursor = None
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         cursor.execute("""
         SELECT u.nombre,
@@ -71,7 +71,7 @@ def mostrar_reseña(id_comentario):
 
     try:
         con = get_connection()
-        cursor = con.cursor(dictionary=True)
+        cursor = con.cursor()
 
         # verificamos que exista la reseña
         cursor.execute(
@@ -118,7 +118,7 @@ def crear_reseña():
 
     try:
         con = get_connection()
-        cursor = con.cursor(dictionary=True)
+        cursor = con.cursor()
 
         # verificar que exista el usuario
         cursor.execute("SELECT * FROM usuarios WHERE id = %s", (id_usuario,))
@@ -129,7 +129,7 @@ def crear_reseña():
 
         # solo se puede reseñar si existe la reserva y el estado esta en estado finalizada.
         cursor.execute(
-            "SELECT * FROM reservas WHERE id_usuario = %s AND estado_reserva = %s",
+            "SELECT * FROM reservas WHERE id_usuario = %s AND estado = %s",
             (id_usuario, "Finalizada"),
         )
 
@@ -170,7 +170,7 @@ def modificar_reseña(id_comentario):
 
     try:
         con = get_connection()
-        cursor = con.cursor(dictionary=True)
+        cursor = con.cursor()
         data = request.json
 
         if not data:
@@ -231,7 +231,7 @@ def eliminar_reseña(id_comentario):
 
     try:
         con = get_connection()
-        cursor = con.cursor(dictionary=True)
+        cursor = con.cursor()
         data = request.json
 
         if not data:
@@ -275,3 +275,4 @@ def eliminar_reseña(id_comentario):
 
         if con:
             con.close()
+

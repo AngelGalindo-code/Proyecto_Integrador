@@ -64,7 +64,7 @@ def sumar_cancelacion(id_usuario):
     except Exception as e:
         return jsonify({"mensaje": f"Error del servidor: {e}"}), 500
 
-@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking/reiniciar", methods=["PUT"])
+@ranking_usuarios_bp.route("/admin/usuarios/<int:id_usuario>/ranking/reiniciar", methods=["POST"])
 def reiniciar_ranking(id_usuario):
     try:
         ejecutar_query(RANKING_REINICIAR, (id_usuario,), commit=True)

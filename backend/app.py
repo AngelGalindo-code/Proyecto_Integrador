@@ -12,11 +12,11 @@ app = Flask(__name__)
 CORS(app) 
 
 app.register_blueprint(categorias_bp)
-app.register_blueprint(platos_bp, url_prefix='/platos')
+app.register_blueprint(platos_bp)
 app.register_blueprint(ranking_bp)
 app.register_blueprint(reseñas_bp)
 app.register_blueprint(reservas_bp)
 app.register_blueprint(usuarios_bp)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=10599)
