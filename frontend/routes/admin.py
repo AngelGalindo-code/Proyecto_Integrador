@@ -131,3 +131,24 @@ def adminUsuarioPorId(id):
     
     except Exception:
         return render_template('errorGenerico.html', message='Error inesperado al obtener el usuario')
+    
+@admin_bp.route('/admin/usuarios/<int:id>/ranking/reiniciar', methods=['POST'])
+def reiniciarContadorUsuario(id):
+    if session.get('usuario', {}).get('rol') != 'admin':
+        flash('Acceso denegado')
+        return redirect('/')
+        
+    try:
+        # Llama al endpoint del backend para reiniciar a cero en Aiven
+        respuesta = requests.post(f"{URL_BACKEND}/admin/usuarios/{id}/ranking/reiniciar", timeout=5)
+
+        if respuesta.status_code == 200:
+            flash('Contador de cancelaciones reiniciado con éxito', 'success')
+        else:
+            flash('No se pudo reiniciar el contador en el servidor', 'danger')
+
+    except Exception as e:
+        print(f"Error al conectar con backend para reiniciar ranking: {str(e)}")
+        flash('Error inesperado al intentar reiniciar el contador', 'danger')
+
+    return redirect(url_for('admin.panelAdmin'))
