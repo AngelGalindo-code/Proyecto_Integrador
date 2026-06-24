@@ -21,19 +21,19 @@ def publicar_resena():
             "No se han ingresado todos los datos o la valoracion no es valida",
             "error",
         )
-        return redirect(url_for("home.pagina_principal"))
+        return redirect(url_for("home"))
 
 
     elif resultado == 404:
         flash("No se encontró el usuario", "error")
-        return redirect(url_for("home.pagina_principal"))
+        return redirect(url_for("home"))
 
     elif resultado == 201:
         flash("Reseña cargada", "success")
 
     else:
-        flash("Hubo un error con el servidor", "error")
-        return redirect(url_for("home.pagina_principal"))
+        flash("Hubo un error con el servidor ja  aj", "error")
+        return redirect(url_for("home"))
 
 
     respuesta_resena = confirmar_reseña(id_usuario)
@@ -49,7 +49,7 @@ def publicar_resena():
 
     else:
         flash("Hubo un error con el servidor", "error")
-    return redirect(url_for("home.pagina_principal"))
+    return redirect(url_for("home"))
 
 
 def resenas_destacadas():
@@ -121,7 +121,7 @@ def obtener_resenas():
 def guardar_resena(id_usuario, comentario, valoracion):
     try:
         response = requests.post(
-            f"{URL_BACKEND}/resenas",
+            f"{URL_BACKEND}/reseñas",
             json={
                 "id_usuario": id_usuario,
                 "comentario": comentario,
@@ -142,12 +142,32 @@ def guardar_resena(id_usuario, comentario, valoracion):
 
         return 500
     
+def obtener_estado_resena(id_usuario): 
+    try:
+        response = requests.get(
+            f"{URL_BACKEND}/reserva_usuario",
+            json={"id_usuario": id_usuario},
+            timeout=10,
+        )
+
+        if response.status_code == 200:
+            return True
+        return False
+
+    except requests.exceptions.ConnectionError:
+        logger.error(f"No se pudo conectar con la API en {URL_BACKEND}")
+
+        return False
+
+    except Exception as e:
+        logger.error(f"Error inesperado al obtener las reseñas: {e}")
+        return False
 
 def confirmar_reseña(id_usuario):
     try:
         payload = {"estado_reserva": "RESEÑADO"}
-        respuesta = requests.patch(
-            f"{URL_BACKEND}/reservas/usuario/{id_usuario}", json=payload, timeout=5
+        respuesta = requests.post(
+            f"{URL_BACKEND}/usuario/{id_usuario}", json=payload, timeout=5
         )
 
         return respuesta.status_code

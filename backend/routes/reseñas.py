@@ -129,7 +129,7 @@ def crear_reseña():
 
         # solo se puede reseñar si existe la reserva y el estado esta en estado finalizada.
         cursor.execute(
-            "SELECT * FROM reservas WHERE id_usuario = %s AND estado_reserva = %s",
+            "SELECT * FROM reservas WHERE id_usuario = %s AND estado = %s",
             (id_usuario, "Finalizada"),
         )
 

@@ -134,6 +134,62 @@ def obtenerReservaPorId(id_reserva):
         conexion.close()
 
 
+@reservas_bp.route('/reserva_usuario', methods=['GET'])
+def obtener_estado_reservas_usuario():
+    body = request.get_json()
+
+    id_usuario = body.get("id_usuario")
+
+    if id_usuario is None or id_usuario <= 0:
+        return (
+            jsonify(
+                {
+                    "error": "Bad Request",
+                    "message": "el id no han sido ingresados o es invalido",
+                }
+            ),
+            400,
+        )
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        query = """
+        SELECT * FROM reservas WHERE id_usuario = %s AND estado = %s
+        """
+        cursor.execute(query, (id_usuario, "FINALIZADO"))
+
+        reservas = cursor.fetchall()
+
+        if not reservas:
+            return (
+                jsonify(
+                    {"error": "Not Found", "message": "No hay reservas finalizadas"}
+                ),
+                404,
+            )
+
+        for reserva in reservas:
+            if reserva.get("fecha"):
+                reserva["fecha"] = str(reserva["fecha"])
+            if reserva.get("hora"):
+                reserva["hora"] = str(reserva["hora"])
+
+        return jsonify({"reservas": reservas}), 200
+
+    except Exception as e:
+        return jsonify({"message": f"Error del servidor {str(e)}"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close() 
+
 
 @reservas_bp.route('/reservas/<int:id_reserva>', methods=['PUT'])
 def actualizarReserva(id_reserva):
@@ -189,6 +245,75 @@ def actualizarReserva(id_reserva):
     finally:
         conexion.close()
 
+
+@reservas_bp.route("/usuario/<int:id_usuario>", methods=["POST"])
+def actualizar_reserva_id_usuario(id_usuario):
+    if id_usuario <= 0:
+        return abort(400, description="Id no valida")
+
+    data = request.get_json(silent=True)
+
+    if data == None:
+        abort(400, descripcion="No se recibio nada en el body")
+
+    conn = None
+    cursor = None
+
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        fecha = data.get("fecha")
+        hora = data.get("hora")
+        mesa = data.get("mesa")
+        cantidad_personas = data.get("cantidad_personas")
+        estado_reserva = data.get("estado")
+
+        query_validar_existencia_reserva = """
+        SELECT * FROM reservas 
+        WHERE id_usuario = %s
+        """
+        cursor.execute(query_validar_existencia_reserva, (id_usuario,))
+
+        resultado = cursor.fetchall()
+
+        if not resultado:
+            abort(404, "La reserva no existe")
+
+        query = """
+        UPDATE reservas 
+        SET
+            fecha = COALESCE(%s, fecha),
+            hora = COALESCE(%s, hora),
+            mesa = COALESCE(%s, mesa),
+            cantidad_personas = COALESCE(%s, cantidad_personas),
+            estado = COALESCE(%s, estado)
+        WHERE id_usuario = %s 
+        """
+
+        cursor.execute(
+            query,
+            (
+                fecha,
+                hora,
+                mesa,
+                cantidad_personas,
+                estado_reserva,
+                id_usuario,
+            ),
+        )
+        conn.commit()
+
+        return "", 204
+    
+    except Exception as e:
+        
+        return abort(500, f"error interno con el servidor: {str(e)}")
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
 @reservas_bp.route('/reservas/<int:id_reserva>/eliminar', methods=['POST'])
