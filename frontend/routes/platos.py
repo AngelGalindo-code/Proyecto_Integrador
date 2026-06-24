@@ -71,7 +71,7 @@ def crearPlato():
         except (requests.exceptions.RequestException, ValueError):
             flash("No se pudo conectar con el servidor", "error")
         
-        return redirect("/admin/dashboard")
+        return redirect(url_for('admin.panelAdmin'))
     
 @platos_bp.route('/admin/platos/editar', methods=['POST'])
 @loginRequired
