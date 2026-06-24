@@ -13,3 +13,4 @@ python-dotenv==1.2.2
 qrcode==8.2
 requests==2.34.2
 urllib3==2.7.0
+Flask-Mail
