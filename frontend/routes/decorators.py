@@ -1,12 +1,13 @@
 from flask import session, abort
 from functools import wraps
 
-# Creamos nuestro decorador para que solo el admin pueda ver la lista de reservas
 def adminRequired(f):
-    @wraps(f) # PAra que no confunda el nombre de las funciones
-
+    @wraps(f) 
     def decorarFuncion(*args, **kwargs):
-        if session.get('rol') != 'admin':
+        # Busca el rol de forma segura adentro del diccionario 'usuario'
+        rol_usuario = session.get('usuario', {}).get('rol')
+        
+        if rol_usuario != 'admin':
             abort(403)
         
         return f(*args, **kwargs)
@@ -16,9 +17,11 @@ def adminRequired(f):
 
 def loginRequired(f):
     @wraps(f)
-
     def decorarFuncion(*args, **kwargs):
-        if not session.get('id_usuario'):
+
+        id_usuario = session.get('id_usuario') or session.get('usuario', {}).get('id')
+        
+        if not id_usuario:
             abort(403)
 
         return f(*args, **kwargs)

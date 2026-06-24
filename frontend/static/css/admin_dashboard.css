@@ -285,7 +285,18 @@ tr:hover {
     border-radius: 5px;
     margin-top: 10px;
 }
-.btn-eliminar:hover{
-    background-color: var(--color-sistema-alerta);
+
+.contenedor-logout {
+    text-align: center;
+    margin-top: 20px; 
+}
+
+
+.btn-logout {
+    background: #c72137; 
     color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
 }

@@ -114,7 +114,7 @@ def obtener_nombres_categorias():
                 ]
             }
             return jsonify(error_404), 404
-        
+
 
         return jsonify({"categoria": categorias}), 200
 
@@ -135,7 +135,6 @@ def obtener_nombres_categorias():
             cur.close()
         if conn:
             conn.close()
-
 
 @categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
@@ -211,7 +210,7 @@ INSERT INTO categorias (nombre_categoria) VALUES
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/editar", methods=["PUT"]) #usuario admin
+@categorias_bp.route("/admin/editar", methods=["POST"]) #usuario admin
 def modificar_nombre():
 
     data = request.json
@@ -313,7 +312,7 @@ WHERE id_categoria = %s
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/eliminar", methods=["DELETE"]) #usuario admin
+@categorias_bp.route("/admin/eliminar", methods=["POST"]) #usuario admin
 def eliminar_categoria():
 
     data = request.json
