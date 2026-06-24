@@ -13,7 +13,7 @@
             {% if session['usuario']['rol'] == 'admin' %}
                 <li><a href="/admin" class="btn-perfil">Panel Admin</a></li>
             {% else %}
-                {# 👤 Si es un usuario común (user), ve su perfil normal #}
+                {# Si es un usuario común (user), ve su perfil normal #}
                 <li><a href="/perfil" class="btn-perfil">Mi Perfil</a></li>
             {% endif %}
         {% else %}

@@ -28,6 +28,23 @@ def panelAdmin():
     except Exception as e:
         print("Error al conectar con el backend (categorías):", str(e))
 
+    ranking_usuarios = []
+    try:
+  
+        res_rank = requests.get(f"{URL_BACKEND}/admin/usuarios/ranking", timeout=5)
+        if res_rank.status_code == 200:
+            ranking_usuarios = res_rank.json()
+    except Exception as e:
+        print("Error al traer el ranking de usuarios:", str(e))
+
+    platos = []
+    try:
+        res_platos = requests.get(f"{URL_BACKEND}/platos", timeout=5)
+        if res_platos.status_code == 200:
+            platos = res_platos.json().get("platos", [])
+    except Exception as e:
+        print("Error al traer la lista de platos:", str(e))
+
     todas_las_reservas = obtener_reservas_backend()
 
     fecha_actual_str = datetime.now().strftime("%Y-%m-%d")
@@ -57,6 +74,8 @@ def panelAdmin():
         title='Panel de Administración', 
         lista_usuarios=usuarios,
         categorias=categorias,                     
+        ranking_usuarios=ranking_usuarios,        
+        platos=platos,                
         lista_reservas_hoy=reservas_hoy,
         total_reservas_hoy=total_reservas,
         total_comensales_hoy=total_comensales,
@@ -112,3 +131,24 @@ def adminUsuarioPorId(id):
     
     except Exception:
         return render_template('errorGenerico.html', message='Error inesperado al obtener el usuario')
+    
+@admin_bp.route('/admin/usuarios/<int:id>/ranking/reiniciar', methods=['POST'])
+def reiniciarContadorUsuario(id):
+    if session.get('usuario', {}).get('rol') != 'admin':
+        flash('Acceso denegado')
+        return redirect('/')
+        
+    try:
+        # Llama al endpoint del backend para reiniciar a cero en Aiven
+        respuesta = requests.post(f"{URL_BACKEND}/admin/usuarios/{id}/ranking/reiniciar", timeout=5)
+
+        if respuesta.status_code == 200:
+            flash('Contador de cancelaciones reiniciado con éxito', 'success')
+        else:
+            flash('No se pudo reiniciar el contador en el servidor', 'danger')
+
+    except Exception as e:
+        print(f"Error al conectar con backend para reiniciar ranking: {str(e)}")
+        flash('Error inesperado al intentar reiniciar el contador', 'danger')
+
+    return redirect(url_for('admin.panelAdmin'))

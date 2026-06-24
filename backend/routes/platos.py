@@ -148,7 +148,7 @@ def crear_plato():
         return jsonify(error_500), 500
 
 
-@platos_bp.route("/platos/<int:id>", methods=["PATCH"])
+@platos_bp.route("/platos/<int:id>/editar", methods=["POST"])
 def actualizar_plato(id):
     try:
         datos = request.get_json()
@@ -247,7 +247,7 @@ def actualizar_plato(id):
         return jsonify(error_500), 500
 
 
-@platos_bp.route("/admin/eliminar", methods=["DELETE"])
+@platos_bp.route("/platos/admin/eliminar", methods=["POST"])
 def eliminar_plato():
 
     data = request.json

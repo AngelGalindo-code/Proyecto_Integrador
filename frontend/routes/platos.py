@@ -101,11 +101,11 @@ def editarPlato():
             payload["descripcion"] = descrip_nuevo
 
         try:
-            respuesta = requests.patch(f"{URL_BACKEND}/platos/platos/{id_plato}", json=payload, timeout=5)
+            respuesta = requests.post(f"{URL_BACKEND}/platos/{id_plato}/editar", json=payload, timeout=5)
             
             if respuesta.status_code == 200:
                 flash("Plato editado con exito", "success")
-                return redirect("/admin/dashboard")
+                return redirect(url_for('admin.panelAdmin'))
             elif respuesta.status_code == 400:
                 data =  respuesta.json()
                 message = data.get("errors", [{}])[0].get("descripcion", "Datos invalidos")
@@ -115,7 +115,7 @@ def editarPlato():
                 
         except (requests.exceptions.RequestException, ValueError):
             flash("No se pudo conectar con el servidor", "error")
-        return redirect("/admin/dashboard")
+        return redirect(url_for('admin.panelAdmin'))
     
 @platos_bp.route('/admin/platos', methods=['GET'])
 @adminRequired  # Tu decorador para que solo el admin lo vea
@@ -171,11 +171,11 @@ def eliminarPlato():
     payload = {"id_plato": int(id_plato)}
 
     try:
-        respuesta = requests.delete(f"{URL_BACKEND}/platos/admin/eliminar", json=payload)
+        respuesta = requests.post(f"{URL_BACKEND}/platos/admin/eliminar", json=payload)
 
         if respuesta.status_code == 204:
             flash("El plato se elimino", "success")
-            return redirect("/admin/dashboard")
+            return redirect(url_for('admin.panelAdmin'))
         
         elif respuesta.status_code in [400, 404, 409]:
             data = respuesta.json()
@@ -187,7 +187,7 @@ def eliminarPlato():
     except requests.exceptions.RequestException:
         flash("No se pudo conectar con el servidor", "error")
 
-    return redirect("/admin/dashboard")
+    return redirect(url_for('admin.panelAdmin'))
 
 @platos_bp.route('/admin/platos/buscar', methods=['GET', 'POST'])
 @adminRequired  

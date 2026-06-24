@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, session, render_template, redirect, url_for
 from dotenv import load_dotenv 
 import os
 import requests
@@ -17,6 +17,8 @@ from routes.reseñas import resenas_bp
 from routes.categoria import categoria_bp
 from routes.platos import platos_bp
 
+from routes.reseñas import resenas_destacadas, obtener_estado_resena
+
 app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
 
 app.register_blueprint(auth_bp)
@@ -33,17 +35,22 @@ def index():
 
 @app.route('/home')
 def home():
-    resenas_del_home = {} 
-    platos_dinamicos = []
+    usuario_sesion = session.get("usuario")
+    
+    if usuario_sesion:
+        id_usuario = usuario_sesion.get("id")
+        estado_reserva_usuario = obtener_estado_resena(id_usuario)
+    else:
+        id_usuario = None
+        estado_reserva_usuario = False
 
-    try:
-        parametros = {"disponible": "true"}
-        respuesta = requests.get(f"{URL_BACKEND}/platos", params=parametros, timeout=5)
-        
-        if respuesta.status_code == 200:
-            datos = respuesta.json()
-            platos_dinamicos = datos.get("platos", []) 
-    except requests.exceptions.RequestException as e:
-        print(f"Error al conectar con el backend: {e}")
+    resenas_del_home = resenas_destacadas()
 
-    return render_template('home.html', menu={'comidas': platos_dinamicos}, resenas=resenas_del_home)
+    return render_template(
+        'home.html', 
+        menu={'comidas': []}, 
+        resenas=resenas_del_home, 
+        activar_resena=estado_reserva_usuario
+    )
+if __name__ == '__main__':
+    app.run(debug=True, port=8080)

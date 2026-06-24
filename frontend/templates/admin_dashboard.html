@@ -47,38 +47,78 @@
             </div>
         </section>
 
-<!-- Sección de Tablas y Datos Relevantes -->
-        <section class="tablas-contenedor-vertical">
-            
-            <div class="seccion-tabla">
-                <h2>Reservas Activas de Hoy</h2>
-                <div class="tabla-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Responsable</th>
-                                <th class="texto-centro">Comensales</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for reserva in lista_reservas_hoy %}
-                            <tr>
-                                <td>{{ reserva.hora }}</td>
-                                <td>{{ reserva.nombre_usuario }}</td>
-                                <td class="texto-centro font-bold">{{ reserva.comensales }}</td>
-                                <td><span class="etiqueta ok">{{ reserva.estado }}</span></td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="4" class="tabla-vacia">No hay reservas activas para el día de hoy.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<tbody>
+
+
+
+
+
+<div class="seccion-tabla">
+    <h2>Reservas Activas de Hoy</h2>
+    <div class="tabla-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Responsable</th>
+                    <th style="text-align: center;">Comensales</th>
+                    <th>Estado</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in lista_reservas_hoy %}
+                <tr>
+                    <!-- 1. Hora -->
+                    <td>{{ reserva.hora[:5] if reserva.hora else 'Ver turno' }}</td>
+                    
+                    <!-- 2. Responsable -->
+                    <td style="font-weight: bold;">
+                        {{ reserva['nombre'] or reserva['usuario'] or 'Cliente Anónimo' }}
+                    </td>
+                    
+                    <!-- 3. Comensales -->
+                    <td style="text-align: center; font-weight: bold;">{{ reserva.cantidad_personas }}</td>
+                    
+                    <!-- 4. Estado -->
+                    <td>
+                        <span class="etiqueta {% if reserva.estado == 'cancelado' %}error{% else %}ok{% endif %}" style="text-transform: uppercase;">
+                            {{ reserva.estado }}
+                        </span>
+                    </td>
+                    
+                    <!-- 5. Acciones en la misma celda -->
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                            
+    
+                                <a href="{{ url_for('reservas.confirmarAsistenciaQR', id_reserva=reserva.id_reserva or reserva.id) }}" class="btn-enlace" style="padding: 4px 10px; font-size: 0.85rem; text-decoration: none; display: inline-block; background-color: #3498db; color: white; border-radius: 4px;">
+                                    Ver Detalle
+                                </a>
+
+                       
+                            <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}" method="POST" class="form-sincronico" style="margin: 0; display: inline;">
+                                <button type="submit" class="btn-tabla-accion btn-eliminar" style="background-color: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; height: 30px; line-height: 1;" onclick="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
+                                    Cancelar
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 20px; color: #aaa;">No hay reservas activas para el día de hoy.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
 
             <div class="seccion-tabla">
                 <h2>Listado General de Usuarios</h2>
@@ -127,12 +167,12 @@
                         </thead>
                         <tbody>
                             {% for rank in ranking_usuarios %}
-                            <tr class="{% if rank.cant_cancelado > 3 %}fila-peligro{% endif %}">
+                            <tr class="{% if rank.cant_cancelaciones | int > 3 %}fila-peligro{% endif %}">
                                 <td>{{ rank.nombre }}</td>
                                 <td>{{ rank.gmail }}</td>
-                                <td class="texto-centro font-bold">{{ rank.cant_cancelado }}</td>
+                                <td class="texto-centro font-bold">{{ rank.cant_cancelaciones }}</td>
                                 <td>
-                                    <form action="/admin/usuarios/{{ rank.id_usuario }}/ranking/reiniciar" method="POST" class="form-sincronico">
+                                    <form action="/admin/usuarios/{{ rank.id }}/ranking/reiniciar" method="POST" class="form-sincronico">
                                         <button type="submit" class="btn-tabla-accion">Reiniciar Contador</button>
                                     </form>
                                 </td>

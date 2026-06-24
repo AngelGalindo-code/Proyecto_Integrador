@@ -5,7 +5,7 @@ reseñas_bp = Blueprint("reseñas", __name__)
 
 
 # Obtiene todas las reseñas existentes
-@reseñas_bp.route("/", methods=["GET"])
+@reseñas_bp.route("/resenas", methods=["GET"])
 def obtener_resenas():
     conn = None
     cursor = None
@@ -129,7 +129,7 @@ def crear_reseña():
 
         # solo se puede reseñar si existe la reserva y el estado esta en estado finalizada.
         cursor.execute(
-            "SELECT * FROM reservas WHERE id_usuario = %s AND estado_reserva = %s",
+            "SELECT * FROM reservas WHERE id_usuario = %s AND estado = %s",
             (id_usuario, "Finalizada"),
         )
 
@@ -275,3 +275,4 @@ def eliminar_reseña(id_comentario):
 
         if con:
             con.close()
+

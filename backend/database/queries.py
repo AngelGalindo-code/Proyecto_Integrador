@@ -61,10 +61,11 @@ ACTUALIZAR_USUARIO_COMPLETO = """
 # QUERIES RANKING DE USUARIOS
 
 RANKING_OBTENER_TODOS = """
-    SELECT u.id, u.nombre, u.email, r.cant_cancelaciones
+    SELECT u.id, u.nombre, u.email, SUM(r.cant_cancelaciones) AS cant_cancelaciones
     FROM ranking_usuarios r
     JOIN usuarios u ON r.id_usuario = u.id
-    ORDER BY r.cant_cancelaciones DESC
+    GROUP BY u.id, u.nombre, u.email
+    ORDER BY cant_cancelaciones DESC
 """
 
 RANKING_OBTENER_POR_USUARIO = """
