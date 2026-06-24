@@ -1,4 +1,5 @@
 from flask import Flask, session, render_template, redirect, url_for
+from flask_mail import Mail  # Configuración del servidor de correos
 from dotenv import load_dotenv 
 import os
 import requests
@@ -8,6 +9,17 @@ from constantes import URL_BACKEND
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
+
+# Configuración del servidor de correos (Gmail SMTP)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")  # Tu correo de Gmail
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")  # Tu Contraseña de Aplicación
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
+
+mail = Mail(app)
 
 from routes.auth import auth_bp
 from routes.usuarios import usuarios_bp
@@ -45,12 +57,24 @@ def home():
         estado_reserva_usuario = False
 
     resenas_del_home = resenas_destacadas()
+    platos_dinamicos = []
+
+    try:
+        parametros = {"disponible": "true"}
+        respuesta = requests.get(f"{URL_BACKEND}/platos", params=parametros, timeout=5)
+        
+        if respuesta.status_code == 200:
+            datos = respuesta.json()
+            platos_dinamicos = datos.get("platos", []) 
+    except requests.exceptions.RequestException as e:
+        print(f"Error al conectar con el backend: {e}")
 
     return render_template(
         'home.html', 
-        menu={'comidas': []}, 
+        menu={'comidas': platos_dinamicos}, 
         resenas=resenas_del_home, 
         activar_resena=estado_reserva_usuario
     )
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

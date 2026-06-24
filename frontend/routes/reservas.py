@@ -367,7 +367,7 @@ def confirmarAsistenciaQR(id_reserva):
         return render_template('confirmarAsistencia.html', reserva=datos_reserva)
 
     except requests.exceptions.RequestException as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         flash("Error de conexión al procesar la asistencia.", "danger")
         return redirect('/admin')
 
@@ -450,3 +450,41 @@ def enviarQrPorMail(destinatario, datos, qr_base64):
     except Exception:
 
         return False
+    
+@reservas_bp.route('/enviar-comprobante', methods=['POST'])
+@loginRequired
+def enviar_comprobante():
+    reserva_id = request.form.get('reserva_id')
+    qr_base64 = request.form.get('qr_base64')
+    
+    # Intentamos recuperar el email del usuario logueado en la sesión de Flask
+    usuario_sesion = session.get('usuario', {})
+    email_destinatario = usuario_sesion.get('email') or session.get('email')
+
+    if not email_destinatario:
+        flash("No se encontró una dirección de correo válida en tu sesión.", "danger")
+        return redirect(url_for('home'))
+
+    try:
+        # Consultamos al Backend para tener los datos de la reserva limpios y actualizados
+        respuesta = apiBackend.get(f"{URL_BACKEND}/reservas/{reserva_id}", timeout=5)
+        
+        if respuesta.status_code == 200:
+            datos_reserva = respuesta.json()
+            
+            # 2. Invocamos tu función para despachar el mail con el QR adjunto
+            enviado = enviarQrPorMail(email_destinatario, datos_reserva, qr_base64)
+            
+            if enviado:
+                flash("¡Comprobante enviado con éxito a tu casilla de correo!", "success")
+            else:
+                flash("El servidor de correos falló al despachar el mensaje.", "danger")
+                
+            return redirect(url_for('reservas.reservaExitosa', id_reserva=reserva_id))
+            
+        else:
+            abort(404)
+            
+    except requests.exceptions.RequestException:
+        flash("Error de comunicación al intentar recuperar los datos para el envío.", "danger")
+        return redirect(url_for('home'))

@@ -28,16 +28,28 @@
             </div>
 
             <div style="margin-top: 20px;">
-                <button id="btn-enviar-correo" class="btn-submit" style="width: 100%; padding: 10px; cursor: pointer;">
-                    Enviar comprobante al email
-                </button>
+                <form action="{{ url_for('reservas.enviar_comprobante') }}" method="POST">
+                    <input type="hidden" name="reserva_id" value="{{ reserva['id'] }}">
+                    <input type="hidden" name="qr_base64" value="{{ qr_code }}">
+                    
+                    <button type="submit" id="btn-enviar-correo" class="btn-submit" style="width: 100%; padding: 10px; cursor: pointer;">
+                        Enviar comprobante al email
+                    </button>
+                </form>
                 <div style="margin-top: 20px;">
 
                 <a href="{{ url_for('home') }}" class="btn-submit" style="display: block; text-align: center; text-decoration: none; width: 100%; padding: 10px; box-sizing: border-box; background-color: #7f8c8d; color: white; border-radius: 4px;">
                     Volver al Inicio
                 </a>
+                </div>
             </div>
-            </div>
+            <script>
+            document.getElementById('btn-enviar-correo').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log("¡Botón presionado! Forzando el envío del formulario...");
+                document.getElementById('form-comprobante').submit();
+            });
+            </script>
         </div>
     </body>
 </html>
