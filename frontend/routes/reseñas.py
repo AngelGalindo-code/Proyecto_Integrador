@@ -183,7 +183,7 @@ def confirmar_reseña(id_usuario):
 
 def obtener_resena_id(id_usuario):
     try:
-        response = requests.get(f"{URL_BACKEND}/resenas/usuario/{id_usuario}", timeout=10)
+        response = requests.get(f"{URL_BACKEND}/usuarios/{id_usuario}/resenas", timeout=10)
 
         if response.status_code == 200:
             data = response.json()
