@@ -5,7 +5,7 @@ reseñas_bp = Blueprint("reseñas", __name__)
 
 
 # Obtiene todas las reseñas existentes
-@reseñas_bp.route("/", methods=["GET"])
+@reseñas_bp.route("/resenas", methods=["GET"])
 def obtener_resenas():
     conn = None
     cursor = None
