@@ -14,7 +14,7 @@
         {% endif %}
     {% endwith %}
 
-    <form id="form-modificar" method="POST" action="{{ url_for('reservas.modificarRerserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}">
+    <form id="form-modificar" method="POST" action="{{ url_for('reservas.modificarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}">
         
         <div class="form-group dato_ingreso" style="margin-bottom: 15px;">
             <label for="nombre" style="display: block; margin-bottom: 5px; font-weight: bold;">Nombre del cliente:</label>
@@ -41,10 +41,12 @@
             <input type="number" id="cantidad_personas" name="cantidad_personas" value="{{ reserva['cantidad_personas'] }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-actions" style="display: flex; gap: 10px; align-items: center;">
-            <button type="submit" id="btn-guardar-cambios" class="btn-submit" style="padding: 10px 20px; cursor: pointer;">Guardar Cambios</button>
-            <a href="{{ url_for('reservas.reservasList') }}" class="btn-cancel" style="text-decoration: none; padding: 10px 20px; background-color: #e74c3c; color: white; border-radius: 4px;">Cancelar</a>
-        </div>
+       <!-- 🌟 Dejalo simplificado así, directo para el usuario común -->
+<a href="{{ url_for('reservas.getReservaPorId', id_reserva=reserva['id_reserva'] or reserva['id']) }}" class="btn-cancel" style="text-decoration: none; padding: 10px 20px; background-color: #e74c3c; color: white; border-radius: 4px;">Cancelar</a>
+<!-- 🌟 Reemplazá tu línea 44 por esta versión para forzar a que aparezca: -->
+<button type="submit" id="btn-guardar-cambios" style="padding: 10px 20px; cursor: pointer; background-color: #2ecc71; color: white; border: none; border-radius: 4px; font-weight: bold; margin-right: 10px;">
+    Guardar Cambios
+</button>
 
     </form>
 </div>
