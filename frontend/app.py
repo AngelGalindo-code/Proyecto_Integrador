@@ -41,8 +41,9 @@ def home():
         respuesta = requests.get(f"{URL_BACKEND}/platos", params=parametros, timeout=5)
         
         if respuesta.status_code == 200:
-            platos_dinamicos = respuesta.json()
+            datos = respuesta.json()
+            platos_dinamicos = datos.get("platos", []) 
     except requests.exceptions.RequestException as e:
-        print(f"Error al conectar con el backend para buscar a los platos: {e}")
+        print(f"Error al conectar con el backend: {e}")
 
     return render_template('home.html', menu={'comidas': platos_dinamicos}, resenas=resenas_del_home)

@@ -3,43 +3,15 @@
 
         <div class="carta">
             <p>Carta</p>
-            <h3>Menu</h3>
+            <h3>Menu Principal</h3>
             {% for plato in menu.comidas %}
-                {% if plato.id_categoria == 1 %} <div class="plato">
-                        <div class="encabezado_plato">
-                            <h2> {{ plato.nombre }} </h2>
-                            <span class="precio"> ${{ plato.precio }} </span>
-                        </div>
-                        <p class="ingredientes"> {{ plato.descripcion }}</p>
-
-                        {% if plato.restricciones and plato.restricciones != 'Ninguna' %}
-                            <span class="tag_restriccion"> {{ plato.restricciones }}</span>
-                        {% else %}
-                            <span class="tag_restriccion generico">Apto Todo Publico</span>
-                        {% endif %}
+                <div class="plato">
+                    <div class="encabezado_plato">
+                        <h2> {{ plato.nombre }} </h2>
+                        <span class="precio"> ${{ plato.precio }} </span>
                     </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <div class="carta">
-            <p>Carta</p>
-            <h3>Bebidas / Postres</h3>
-            {% for plato in menu.comidas %}
-                {% if plato.id_categoria == 2 %} <div class="plato">
-                        <div class="encabezado_plato">
-                            <h2> {{ plato.nombre }} </h2>
-                            <span class="precio"> ${{ plato.precio }} </span>
-                        </div>
-                        <p class="ingredientes"> {{ plato.descripcion }}</p>
-
-                        {% if plato.restricciones and plato.restricciones != 'Ninguna' %}
-                            <span class="tag_restriccion"> {{ plato.restricciones | lower }}  </span>
-                        {% else %}
-                            <span class="tag_restriccion generico">Apto Todo Publico</span>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                    <p class="ingredientes"> {{ plato.descripcion }}</p>
+                </div>
             {% endfor %}
         </div>
     </div>

@@ -9,12 +9,12 @@ def listar_comidas_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
 
         query_platos_por_categoria =  """
         SELECT c.id_categoria,
         c.nombre_categoria, 
-        p.nombre_plato, 
+        p.nombre,
         p.precio 
 FROM categorias c
 INNER JOIN platos p
@@ -45,19 +45,19 @@ ON c.id_categoria = p.id_categoria
 
             id_categoria = categoria["id_categoria"]
             nombre_categoria = categoria["nombre_categoria"]
-            nombre_plato = categoria["nombre_plato"]
+            nombre = categoria["nombre"]
             precio = categoria["precio"]
 
             if id_categoria not in platos_categoria:
                 platos_categoria[id_categoria] = {
                     "id_categoria": id_categoria,
                     "nombre_categoria": nombre_categoria,
-                    "plato": [{"nombre_plato": nombre_plato, "precio": precio}],
+                    "plato": [{"nombre": nombre, "precio": precio}],
                 }
 
             else:
                 platos_categoria[id_categoria]["plato"].append(
-                    {"nombre_plato": nombre_plato, "precio": precio}
+                    {"nombre": nombre, "precio": precio}
                 )
 
         for categoria in platos_categoria.values():
