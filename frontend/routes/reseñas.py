@@ -205,13 +205,13 @@ def modificar_resena(id_comentario):
         flash("Error en el servidor", "error")
 
 
-    return redirect(url_for("panel_usuario.obtener_info_usuario"))
+    return redirect(url_for("usuarios.perfil_usuario"))
 
 
 def modificar_resena_id(id_comentario, comentario, valoracion, id_usuario):
     try:
         response = requests.put(
-            f"{URL_BACKEND}/resenas/{id_comentario}",
+            f"{URL_BACKEND}/reseñas/{id_comentario}",
             json={
                 "id_usuario": id_usuario,
                 "comentario": comentario,
@@ -249,13 +249,13 @@ def eliminar_resena(id_comentario):
     else:
         flash("Error en el servidor", "error")
 
-    return redirect(url_for("panel_usuario.obtener_info_usuario"))
+    return redirect(url_for("usuarios.perfil_usuario"))
 
 
 def eliminar_resena_id(id_usuario, id_comentario):
     try:
         response = requests.delete(
-            f"{URL_BACKEND}/resenas/{id_comentario}",
+            f"{URL_BACKEND}/reseñas/{id_comentario}",
             json={"id_usuario": id_usuario},
             timeout=10,
         )
