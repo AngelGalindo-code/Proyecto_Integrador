@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app) 
 
 app.register_blueprint(categorias_bp)
-app.register_blueprint(platos_bp, url_prefix='/platos')
+app.register_blueprint(platos_bp)
 app.register_blueprint(ranking_bp)
 app.register_blueprint(reseñas_bp)
 app.register_blueprint(reservas_bp)
