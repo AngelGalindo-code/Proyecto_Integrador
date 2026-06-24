@@ -2,6 +2,8 @@ import requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from constantes import URL_BACKEND
 
+from routes.reseñas import obtener_resena_id
+
 usuarios_bp = Blueprint("usuarios", __name__)
 
 @usuarios_bp.route('/perfil', methods=['GET'])
@@ -20,7 +22,7 @@ def perfil_usuario():
     
     datos_ranking = {}
     lista_reservas = []
-    lista_resenas = []
+    lista_resenas = obtener_resena_id(user_actual['id'])
     
     try:
 

@@ -15,6 +15,8 @@ from routes.reseñas import resenas_bp
 from routes.categoria import categoria_bp
 from routes.platos import platos_bp
 
+from routes.reseñas import resenas_destacadas
+
 app.secret_key = os.getenv("SECRET_KEY", "clave_de_desarrollo_local")
 
 app.register_blueprint(auth_bp)
@@ -32,7 +34,7 @@ def index():
 @app.route('/home')
 def home():
     # diccionario vacio para que no explote
-    resenas_del_home = {} 
+    resenas_del_home = resenas_destacadas()
 
     return render_template('home.html', menu={'comidas': []}, resenas=resenas_del_home)
 if __name__ == '__main__':
