@@ -91,13 +91,12 @@
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
                             
-                            <!-- 🔍 BOTÓN VER DETALLE: Reutiliza tu función modificada de forma segura -->
-                           <!-- 🔍 BOTÓN VER DETALLE: Ahora te lleva derecho a confirmarAsistencia.html -->
+    
                                 <a href="{{ url_for('reservas.confirmarAsistenciaQR', id_reserva=reserva.id_reserva or reserva.id) }}" class="btn-enlace" style="padding: 4px 10px; font-size: 0.85rem; text-decoration: none; display: inline-block; background-color: #3498db; color: white; border-radius: 4px;">
                                     Ver Detalle
                                 </a>
 
-                            <!-- 🛑 BOTÓN CANCELAR -->
+                       
                             <form action="{{ url_for('reservas.cancelarReserva', id_reserva=reserva['id_reserva'] or reserva['id']) }}" method="POST" class="form-sincronico" style="margin: 0; display: inline;">
                                 <button type="submit" class="btn-tabla-accion btn-eliminar" style="background-color: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; height: 30px; line-height: 1;" onclick="return confirm('¿Estás seguro de que deseas cancelar esta reserva?');">
                                     Cancelar
