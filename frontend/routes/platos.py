@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Blueprint, flash, request, redirect, url_for, abort, session 
-from decorators import adminRequired
+from decorators.decorators import adminRequired, loginRequired
 import requests 
 from constantes import URL_BACKEND
 
@@ -29,6 +29,7 @@ def bad_request(e):
     return render_template('errors/400_badRequest.html'), 400
 
 @platos_bp.route('/admin/platos/crear', methods=['GET', 'POST'])
+@loginRequired
 @adminRequired
 def crearPlato():
 
@@ -40,17 +41,13 @@ def crearPlato():
         precio = request.form.get('precio', '').strip()
         idCategoria = request.form.get('id_categoria', '').strip()
         descripcion = request.form.get('descripcion', '').strip()
-        imagen = request.form.get('imagen', '').strip()
-        disponible = False
+        disponible = request.form.get("disponible", "0")
 
-        if request.form.get('disponible') == 'on': # Por defecto el formulario viaja con 'on', sino None
-            disponible = True
 
-        else:
-            disponible = False
 
         if not all([nombre, precio, idCategoria]):
-            abort(400)
+            flash("Complete los campos obligatorios", "error")
+            return redirect("/admin/dashboard")
 
         try:
             payload = {
@@ -58,80 +55,68 @@ def crearPlato():
                 "precio": float(precio),
                 "id_categoria": int(idCategoria),
                 "descripcion": descripcion if descripcion else None,
-                "disponible": disponible,
-                "imagen": imagen if imagen else None
+                "disponible": True if disponible == "1" else False
             }
-            respuesta = apiBackend.post(f"{URL_BACKEND}/platos", json=payload, timeout=5)
+            respuesta = requests.post(f"{URL_BACKEND}/platos/platos", json=payload, timeout=5)
 
             if respuesta.status_code == 201:
-                flash("Plato agregado exitosamente", "success")
-                return redirect(url_for('platos.listarPlatos'))
+                flash("Plato agregado con exito", "success")
             elif respuesta.status_code == 400:
-                abort(400)
+                data = respuesta.json()
+                message = data.get("errors", [{}])[0].get("description", "datos invalidos")
+                flash(message, "error")
             else:
-                abort(500)
+                flash("Error al crear el plato", "error")
 
         except (requests.exceptions.RequestException, ValueError):
-            abort(500)
-
-@platos_bp.route('/admin/platos/editar/<int:idPlato>', methods=['GET', 'POST'])
-@adminRequired
-def editarPlato(idPlato):
-    if request.method == 'GET':
-        respuestaPlato = apiBackend.get(f"{URL_BACKEND}/platos/{idPlato}", timeout=5)
+            flash("No se pudo conectar con el servidor", "error")
         
-        if respuestaPlato.status_code == 200:
-            platoActual = respuestaPlato.json()
-            return render_template('formularioEditarPlato.html', plato=platoActual)
-        else:
-            abort(404)
+        return redirect("/admin/dashboard")
+    
+@platos_bp.route('/admin/platos/editar', methods=['POST'])
+@loginRequired
+@adminRequired
+def editarPlato():
+        id_plato = request.form.get("id_plato")
+        nombre_nuevo = request.form.get("nombre", "").strip()
+        id_categoria_nuevo = request.form.get("id_categoria", "").strip()
+        precio_nuevo = request.form.get("precio", "").strip()
+        disponible_nuevo = request.form.get("disponible", "").strip()
+        descrip_nuevo = request.form.get("descripcion", "").strip()
 
-    if request.method == 'POST':
-        nombreNuevo = request.form.get('nombre', '').strip()
-        descripcionNueva = request.form.get('descripcion', '').strip()
-        precioNuevo = request.form.get('precio', '').strip()
-        idCategoriaNueva = request.form.get('id_categoria', '').strip()
-        nuevaImagen = request.form.get('imagen', '').strip()
-
-        if request.form.get('disponible') == 'on':
-            disponible_nuevo = True
-        else:
-            disponible_nuevo = False
-
-        if not all([nombreNuevo, precioNuevo, idCategoriaNueva]):
-            abort(400)
+        if not id_plato:
+            flash("Seleccione el plato a editar")
+            return redirect ("/admin/dashboard")
+        
+        payload = {}
+        if nombre_nuevo:
+            payload["nombre"] = nombre_nuevo
+        if id_categoria_nuevo:
+            payload["id_categoria"] = id_categoria_nuevo
+        if precio_nuevo:
+            payload["precio"] = precio_nuevo
+        if disponible_nuevo:
+            payload["disponible"] = disponible_nuevo
+        if descrip_nuevo:
+            payload["descripcion"] = descrip_nuevo
 
         try:
-            nuevaDescripcion = None
-            if descripcionNueva:
-                nuevaDescripcion = descripcionNueva
-            else:
-                nuevaDescripcion = None
-
-
-            payload = {
-                "nombre": nombreNuevo,
-                "descripcion": nuevaDescripcion,
-                "precio": float(precioNuevo),
-                "id_categoria": int(idCategoriaNueva),
-                "disponible": disponible_nuevo,
-                "imagen": nuevaImagen 
-            }
-            
-
-            respuesta = apiBackend.patch(f"{URL_BACKEND}/platos/{idPlato}", json=payload, timeout=5)
+            respuesta = requests.patch(f"{URL_BACKEND}/platos/platos/{id_plato}", json=payload, timeout=5)
             
             if respuesta.status_code == 200:
-                flash("Plato editado exitosamente", "success")
-                return redirect(url_for('platos.listarPlatosAdmin'))
-            elif respuesta.status_code == 404:
-                abort(404)
+                flash("Plato editado con exito", "success")
+                return redirect("/admin/dashboard")
+            elif respuesta.status_code == 400:
+                data =  respuesta.json()
+                message = data.get("errors", [{}])[0].get("descripcion", "Datos invalidos")
+                flash(message, "error")
             else:
-                abort(500)
+                flash("Error inesperado", "error")
                 
         except (requests.exceptions.RequestException, ValueError):
-            abort(500)
-
+            flash("No se pudo conectar con el servidor", "error")
+        return redirect("/admin/dashboard")
+    
 @platos_bp.route('/admin/platos', methods=['GET'])
 @adminRequired  # Tu decorador para que solo el admin lo vea
 def listarPlatosAdmin():
@@ -173,25 +158,36 @@ def listarPlatos():
         abort(500)
 
 
-@platos_bp.route('/admin/platos/eliminar/<int:idPlato>', methods=['POST'])
-@adminRequired  # Solo el administrador puede borrar platos
-def eliminarPlato(idPlato):
+@platos_bp.route('/admin/eliminar/plato', methods=['POST'])
+@loginRequired
+@adminRequired  
+def eliminarPlato():
+    
+    id_plato = request.form.get("id_plato")
+    if not id_plato:
+        flash("Seleccione el plato")
+        return redirect("/admin/dashboard")
+    
+    payload = {"id_plato": int(id_plato)}
+
     try:
-        respuesta = apiBackend.delete(f"{URL_BACKEND}/platos/{idPlato}", timeout=5)
+        respuesta = requests.delete(f"{URL_BACKEND}/platos/admin/eliminar", json=payload)
 
-        if respuesta.status_code == 200:
-            flash("Plato borrado exitosamente", "success")
-
-            return redirect(url_for('platos.listarPlatosAdmin'))
+        if respuesta.status_code == 204:
+            flash("El plato se elimino", "success")
+            return redirect("/admin/dashboard")
         
-        elif respuesta.status_code == 404:
-            abort(404) 
-        
+        elif respuesta.status_code in [400, 404, 409]:
+            data = respuesta.json()
+            message = data.get("errors", [{}])[0].get("description", "No se pudo eliminar")
+            flash(message, "error")
         else:
-            abort(500)
+            flash("Error al eliminar", "error")
 
     except requests.exceptions.RequestException:
-        abort(500)
+        flash("No se pudo conectar con el servidor", "error")
+
+    return redirect("/admin/dashboard")
 
 @platos_bp.route('/admin/platos/buscar', methods=['GET', 'POST'])
 @adminRequired  

@@ -20,6 +20,14 @@ def panelAdmin():
     except Exception as e:
         print("Error al conectar con el backend:", str(e))
 
+    categorias = []
+    try:
+        res_cat = requests.get(f"{URL_BACKEND}/nombres", timeout=5)
+        if res_cat.status_code == 200:
+            categorias = res_cat.json().get("categoria", [])
+    except Exception as e:
+        print("Error al conectar con el backend (categorías):", str(e))
+
     todas_las_reservas = obtener_reservas_backend()
 
     fecha_actual_str = datetime.now().strftime("%Y-%m-%d")
@@ -48,10 +56,11 @@ def panelAdmin():
         'admin_dashboard.html', 
         title='Panel de Administración', 
         lista_usuarios=usuarios,
-        lista_reservas_hoy=reservas_hoy,           # Puebla la tabla de reservas activas
-        total_reservas_hoy=total_reservas,         # Tarjeta 1
-        total_comensales_hoy=total_comensales,     # Tarjeta 2
-        total_cancelaciones_hoy=total_cancelaciones # Tarjeta 3
+        categorias=categorias,                     
+        lista_reservas_hoy=reservas_hoy,
+        total_reservas_hoy=total_reservas,
+        total_comensales_hoy=total_comensales,
+        total_cancelaciones_hoy=total_cancelaciones
     )
 @admin_bp.route('/admin/usuarios/<int:id>', methods=['POST'])
 def eliminarUsuario(id):

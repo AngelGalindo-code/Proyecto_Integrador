@@ -285,3 +285,7 @@ tr:hover {
     border-radius: 5px;
     margin-top: 10px;
 }
+.btn-eliminar:hover{
+    background-color: var(--color-sistema-alerta);
+    color: white;
+}
