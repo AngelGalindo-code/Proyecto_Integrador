@@ -92,14 +92,15 @@ def obtener_nombres_categorias():
         cur = conn.cursor()
 
         query_obtener_categorias =  """
-        SELECT * FROM categorias ORDER BY nombre_categoria
+        SELECT id_categoria, nombre_categoria FROM categorias ORDER BY id_categoria
         """
 
         cur.execute(
            query_obtener_categorias
         )
 
-        categorias = cur.fetchall()
+        filas = cur.fetchall()
+        categorias = list(filas)
 
         if not categorias:
             error_404 = {
@@ -113,7 +114,7 @@ def obtener_nombres_categorias():
                 ]
             }
             return jsonify(error_404), 404
-        
+
 
         return jsonify({"categoria": categorias}), 200
 
@@ -134,7 +135,6 @@ def obtener_nombres_categorias():
             cur.close()
         if conn:
             conn.close()
-
 
 @categorias_bp.route("/admin", methods=["POST"]) #usuario admin
 def agregar_categoria():
@@ -209,7 +209,7 @@ INSERT INTO categorias (nombre_categoria) VALUES
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/editar", methods=["PUT"]) #usuario admin
+@categorias_bp.route("/admin/editar", methods=["POST"]) #usuario admin
 def modificar_nombre():
 
     data = request.json
@@ -246,7 +246,7 @@ def modificar_nombre():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         nombre_categoria = data.get("nombre_categoria")
         cur.execute("SELECT * FROM categorias WHERE nombre_categoria = %s", (nombre_categoria,))
 
@@ -311,7 +311,7 @@ WHERE id_categoria = %s
         if conn:
             conn.close()
 
-@categorias_bp.route("/admin/eliminar", methods=["DELETE"]) #usuario admin
+@categorias_bp.route("/admin/eliminar", methods=["POST"]) #usuario admin
 def eliminar_categoria():
 
     data = request.json
@@ -348,7 +348,7 @@ def eliminar_categoria():
     cur = None
     try:
         conn = get_connection()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor()
         query_borrar_categoria = """
 DELETE FROM categorias 
 WHERE id_categoria = %s
