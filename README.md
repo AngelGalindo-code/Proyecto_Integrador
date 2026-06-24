@@ -244,7 +244,7 @@ docker compose logs -f frontend
 3. El Frontend envía la solicitud al Backend.
 4. El Backend registra la reserva en MySQL.
 5. Se genera un código QR único.
-6. El personal valida la reserva escaneando el código.
+6. El personal valida la reserva.
 7. La asistencia queda registrada en el sistema.
 
 ---
